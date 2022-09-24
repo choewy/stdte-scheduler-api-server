@@ -5,7 +5,7 @@ import { BaseRepository } from './base.repository';
 @Injectable()
 export class UserRepository extends BaseRepository {
   async findOneByUsername(username: string): Promise<User> {
-    return await this.user.findOne({
+    return await this.user.target.findOne({
       where: { username },
     });
   }
@@ -15,13 +15,13 @@ export class UserRepository extends BaseRepository {
     password: string,
     role: Role,
   ): Promise<void> {
-    const user = new this.User();
-
-    user.nickname = 'master';
-    user.username = username;
-    user.password = password;
-    user.roles = [role];
-
-    await this.user.save(user);
+    await this.user.target.save(
+      this.user.instance({
+        nickname: 'master',
+        username,
+        password,
+        roles: [role],
+      }),
+    );
   }
 }

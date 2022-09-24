@@ -5,7 +5,7 @@ import { BaseRepository } from './base.repository';
 @Injectable()
 export class RoleRepository extends BaseRepository {
   async findDefaultRole(): Promise<Role> {
-    return await this.role.findOne({
+    return await this.role.target.findOne({
       relations: { rolePolicy: true },
       where: {
         rolePolicy: {
@@ -16,7 +16,7 @@ export class RoleRepository extends BaseRepository {
   }
 
   async findMasterRole(): Promise<Role> {
-    return await this.role.findOne({
+    return await this.role.target.findOne({
       relations: { rolePolicy: true },
       where: {
         rolePolicy: {
@@ -27,24 +27,26 @@ export class RoleRepository extends BaseRepository {
   }
 
   async insertDefaultRole(): Promise<void> {
-    const role = new this.Role();
-
-    role.name = '역할없음';
-    role.rolePolicy = new this.RolePolicy();
-    role.rolePolicy.roleId = 1;
-    role.rolePolicy.default = true;
-
-    await this.role.save(role);
+    await this.role.target.save(
+      this.role.instance({
+        name: '역할없음',
+        rolePolicy: this.rolePolicy.instance({
+          roleId: 1,
+          default: true,
+        }),
+      }),
+    );
   }
 
   async insertMasterRole(): Promise<void> {
-    const role = new this.Role();
-
-    role.name = '마스터';
-    role.rolePolicy = new this.RolePolicy();
-    role.rolePolicy.roleId = 2;
-    role.rolePolicy.master = true;
-
-    await this.role.save(role);
+    await this.role.target.save(
+      this.role.instance({
+        name: '마스터',
+        rolePolicy: this.rolePolicy.instance({
+          roleId: 2,
+          master: true,
+        }),
+      }),
+    );
   }
 }
