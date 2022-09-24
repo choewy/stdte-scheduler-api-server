@@ -14,4 +14,7 @@ export class Team extends Relation {
 
   @Column()
   name: string;
+
+  @Column({ default: false })
+  default: boolean;
 }
