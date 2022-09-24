@@ -1,3 +1,1 @@
-export * from './role.repository';
-export * from './user.repository';
-export * from './team.repository';
+export * from './base.repository';

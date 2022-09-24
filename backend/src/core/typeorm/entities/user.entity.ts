@@ -3,6 +3,7 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { DateTimeEntity } from './datetime.entity';
@@ -24,7 +25,7 @@ export class User extends Relation {
   @PrimaryGeneratedColumn()
   readonly id: number;
 
-  @Column()
+  @PrimaryColumn()
   username: string;
 
   @Column()

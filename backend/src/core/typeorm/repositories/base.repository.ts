@@ -11,7 +11,7 @@ export class BaseRepository {
     return {
       target: this.dataSource.getRepository(entity),
       instance: (arg: Partial<T> = {}) => {
-        return Object.assign(entity, arg) as T;
+        return Object.assign(typeof entity as T, arg) as T;
       },
     };
   }

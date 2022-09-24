@@ -11,7 +11,14 @@ export const SwaggerController = (
   const { tag, exclude, ...controllerOptions } = options;
   const decorators = [Controller(controllerOptions)];
 
-  tag && decorators.push(ApiTags(...tag));
+  if (tag) {
+    if (Array.isArray(tag)) {
+      decorators.push(ApiTags(...tag));
+    } else {
+      decorators.push(ApiTags(tag));
+    }
+  }
+
   exclude && decorators.push(ApiExcludeController(true));
 
   return applyDecorators(...decorators);

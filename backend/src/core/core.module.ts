@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { config, ConfigToken } from './config';
-import { RoleRepository, UserRepository } from './typeorm/repositories';
 import { CoreService } from './core.service';
 import { JwtAuthService } from './jwt-auth';
+import { CoreRepository } from './core.repository';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { JwtAuthService } from './jwt-auth';
       },
     }),
   ],
-  providers: [JwtAuthService, RoleRepository, UserRepository, CoreService],
+  providers: [JwtAuthService, CoreRepository, CoreService],
   exports: [JwtAuthService, CoreService],
 })
 export class CoreModule {}

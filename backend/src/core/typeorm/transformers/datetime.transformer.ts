@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 import { FindOperator, ValueTransformer } from 'typeorm';
-import { DateTimeFromJSDate, DateTimeToISO } from '../../datetime';
+import { DateTimeToISO } from '../../datetime';
 
 export class DateTimeTransformer implements ValueTransformer {
   to(
@@ -17,7 +17,7 @@ export class DateTimeTransformer implements ValueTransformer {
     return DateTimeToISO(value);
   }
 
-  from(value: Date | null): DateTime | null {
-    return DateTimeFromJSDate(value);
+  from(value: DateTime | null): DateTime | null {
+    return value;
   }
 }

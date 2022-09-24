@@ -1,39 +1,45 @@
 import { Injectable } from '@nestjs/common';
+import { CoreRepository } from './core.repository';
 import { JwtAuthService } from './jwt-auth';
-import { UserRepository, RoleRepository } from './typeorm/repositories';
 
 @Injectable()
 export class CoreService {
   constructor(
     private readonly jwtAuthService: JwtAuthService,
-    private readonly userRepository: UserRepository,
-    private readonly roleRepositoy: RoleRepository,
+    private readonly repository: CoreRepository,
   ) {}
 
   async initDefaultRole(): Promise<void> {
-    const role = await this.roleRepositoy.findDefaultRole();
+    const role = await this.repository.findDefaultRole();
     if (!role) {
-      await this.roleRepositoy.insertDefaultRole();
+      await this.repository.insertDefaultRole();
     }
   }
 
   async initMasterRole(): Promise<void> {
-    const role = await this.roleRepositoy.findMasterRole();
+    const role = await this.repository.findMasterRole();
     if (!role) {
-      await this.roleRepositoy.insertMasterRole();
+      await this.repository.insertMasterRole();
+    }
+  }
+
+  async initDefaultTeam(): Promise<void> {
+    const team = await this.repository.findDefaultTeam();
+    if (!team) {
+      await this.repository.insertDefaultTeam();
     }
   }
 
   async initMasterUser(username: string, password: string): Promise<void> {
-    const user = await this.userRepository.findOneByUsername(username);
+    const user = await this.repository.findUserByUsername(username);
     if (!user) {
-      const role = await this.roleRepositoy.findMasterRole();
-      await this.userRepository.insertMaster(username, password, role);
+      const role = await this.repository.findMasterRole();
+      await this.repository.insertMaster(username, password, role);
     }
   }
 
   async getGlobalToken(username: string): Promise<string> {
-    const user = await this.userRepository.findOneByUsername(username);
+    const user = await this.repository.findUserByUsername(username);
     return this.jwtAuthService.sign('access', { id: user.id });
   }
 }
