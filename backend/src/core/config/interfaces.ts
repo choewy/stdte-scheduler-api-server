@@ -80,6 +80,11 @@ export interface AuthConfig {
   };
 }
 
+export interface MasterConfig {
+  username: string;
+  password: string;
+}
+
 export interface SwaggerConfig {
   version: string;
   path: string;

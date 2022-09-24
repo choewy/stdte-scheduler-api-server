@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { config } from './config';
-import { ConfigToken } from './config/enums';
+import { config, ConfigToken } from './config';
+import { RoleRepository, UserRepository } from './typeorm/repositories';
 import { CoreService } from './core.service';
-import { RoleRepository } from './typeorm/repositories/role.repository';
 
 @Module({
   imports: [
@@ -19,7 +18,7 @@ import { RoleRepository } from './typeorm/repositories/role.repository';
       },
     }),
   ],
-  providers: [RoleRepository, CoreService],
+  providers: [RoleRepository, UserRepository, CoreService],
   exports: [CoreService],
 })
 export class CoreModule {}

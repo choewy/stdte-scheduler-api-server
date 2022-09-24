@@ -7,6 +7,7 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
+  ManyToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -14,10 +15,14 @@ import {
 import { DateTime } from 'luxon';
 import { RolePolicy } from './role-policy.entity';
 import { DateTimeTransformer } from '../transformers';
+import { User } from './user.entity';
 
 class Relation {
+  @ManyToMany(() => User, (e) => e.roles)
+  users: User[];
+
   @OneToOne(() => RolePolicy, (e) => e.role, { cascade: true })
-  @JoinColumn()
+  @JoinColumn({ name: 'policy' })
   rolePolicy: RolePolicy;
 }
 

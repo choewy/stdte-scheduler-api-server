@@ -3,13 +3,22 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { DateTime } from 'luxon';
+import { Role } from './role.entity';
+
+class Relation {
+  @ManyToMany(() => Role, (e) => e.users)
+  @JoinTable({ name: 'user_roles' })
+  roles: Role[];
+}
 
 @Entity('user')
-export class User {
+export class User extends Relation {
   @PrimaryGeneratedColumn()
   readonly id: number;
 
@@ -22,7 +31,7 @@ export class User {
   @Column()
   nickname: string;
 
-  @Column()
+  @Column({ default: null })
   email: string;
 
   @CreateDateColumn({

@@ -4,6 +4,7 @@ export enum EnvKey {
   TYPEORM = 'TYPEORM',
   ACCESS_TOKEN = 'ACCESS_TOKEN',
   REFRESH_TOKEN = 'REFRESH_TOKEN',
+  MASTER = 'MASTER',
   SWAGGER = 'SWAGGER',
 }
 
@@ -12,5 +13,6 @@ export enum ConfigToken {
   Cors = 'cors',
   Typeorm = 'typeorm',
   Auth = 'auth',
+  Master = 'master',
   Swagger = 'swagger',
 }
