@@ -11,5 +11,6 @@ export default registerAs(ConfigToken.Server, (): ServerConfig => {
     limit: env.limit,
     tempDir: env.tempDir,
     referer: env.referer,
+    timezone: env.timezone,
   };
 });
