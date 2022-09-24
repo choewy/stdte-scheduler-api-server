@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { json, urlencoded } from 'express';
 import { Settings as Luxon } from 'luxon';
-import { CoreService } from '@/core/core.service';
+import { CoreService } from '@/core';
 import { hashPassword } from '@/core/bcrypt';
 import { SwaggerDocument } from '@/core/swagger';
 import { utilities, WinstonModule } from 'nest-winston';
@@ -17,6 +17,7 @@ import {
   MasterConfig,
   ServerConfig,
 } from '@/core/config';
+import { existsSync, mkdirSync } from 'fs';
 
 export class Bootstrap {
   private app: INestApplication;
@@ -30,20 +31,20 @@ export class Bootstrap {
 
   private get options() {
     const appName = 'STDTE-TASK-SCHEDULER-API-SERVER';
+    const winstonConsole = new WinstonTransfort.Console({
+      level: 'info',
+      format: winstonFormat.combine(
+        winstonFormat.timestamp(),
+        utilities.format.nestLike(appName, {
+          prettyPrint: true,
+          colors: true,
+        }),
+      ),
+    });
+
     return {
       logger: WinstonModule.createLogger({
-        transports: [
-          new WinstonTransfort.Console({
-            level: 'info',
-            format: winstonFormat.combine(
-              winstonFormat.timestamp(),
-              utilities.format.nestLike(appName, {
-                prettyPrint: true,
-                colors: true,
-              }),
-            ),
-          }),
-        ],
+        transports: [winstonConsole],
       }),
     };
   }
@@ -57,6 +58,10 @@ export class Bootstrap {
       cors: configService.get<CorsConfig>(ConfigToken.Cors),
       master: configService.get<MasterConfig>(ConfigToken.Master),
     };
+  }
+
+  private async setTempDir(): Promise<void> {
+    !existsSync('./temp') && mkdirSync('./temp');
   }
 
   private async setMiddleware(): Promise<void> {
@@ -102,6 +107,7 @@ export class Bootstrap {
 
   async init() {
     await this.getConfig();
+    await this.setTempDir();
     await this.setMiddleware();
     await this.setCors();
     await this.setDatabase();
