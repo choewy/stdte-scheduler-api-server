@@ -4,14 +4,19 @@ import { ConfigService } from '@nestjs/config';
 import { json, urlencoded } from 'express';
 import { Settings as Luxon } from 'luxon';
 import { CoreService } from '@/core/core.service';
+import { hashPassword } from '@/core/bcrypt';
+import { SwaggerDocument } from '@/core/swagger';
+import { utilities, WinstonModule } from 'nest-winston';
+import {
+  transports as WinstonTransfort,
+  format as winstonFormat,
+} from 'winston';
 import {
   ConfigToken,
   CorsConfig,
   MasterConfig,
   ServerConfig,
 } from '@/core/config';
-import { hashPassword } from './core/bcrypt';
-import { SwaggerDocument } from './core/swagger';
 
 export class Bootstrap {
   private app: INestApplication;
@@ -23,8 +28,28 @@ export class Bootstrap {
 
   constructor(private readonly module: any) {}
 
+  private get options() {
+    const appName = 'STDTE-TASK-SCHEDULER-API-SERVER';
+    return {
+      logger: WinstonModule.createLogger({
+        transports: [
+          new WinstonTransfort.Console({
+            level: 'info',
+            format: winstonFormat.combine(
+              winstonFormat.timestamp(),
+              utilities.format.nestLike(appName, {
+                prettyPrint: true,
+                colors: true,
+              }),
+            ),
+          }),
+        ],
+      }),
+    };
+  }
+
   private async getConfig(): Promise<void> {
-    this.app = await NestFactory.create(this.module);
+    this.app = await NestFactory.create(this.module, this.options);
     const configService = this.app.get(ConfigService);
 
     this.configs = {
