@@ -3,6 +3,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigToken, EnvKey } from './enums';
 import { getEnvWithPrefix } from './helper';
 import { TypeormEnv } from './interfaces';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 export default registerAs(ConfigToken.Typeorm, (): TypeOrmModuleOptions => {
   const env = getEnvWithPrefix<TypeormEnv>(EnvKey.TYPEORM);
@@ -15,8 +16,9 @@ export default registerAs(ConfigToken.Typeorm, (): TypeOrmModuleOptions => {
     password: env.password,
     synchronize: env.synchronize === 'true',
     logging: env.logging === 'true',
-    entities: env.entities.split(','),
-    migrations: env.migrations.split(','),
+    entities: env.entities.split(', '),
+    migrations: env.migrations.split(', '),
     timezone: env.timezone,
+    namingStrategy: new SnakeNamingStrategy(),
   };
 });
