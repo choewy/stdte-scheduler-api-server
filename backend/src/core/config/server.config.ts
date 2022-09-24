@@ -1,7 +1,7 @@
 import { registerAs } from '@nestjs/config';
 import { ConfigToken, EnvKey } from './enums';
 import { ServerConfig, ServerEnv } from './interfaces';
-import { getEnvWithPrefix } from './helper';
+import { getEnvWithPrefix } from './helpers';
 
 export default registerAs(ConfigToken.Server, (): ServerConfig => {
   const env = getEnvWithPrefix<ServerEnv>(EnvKey.SERVER);

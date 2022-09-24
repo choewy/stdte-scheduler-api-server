@@ -1,6 +1,6 @@
 import { registerAs } from '@nestjs/config';
 import { ConfigToken, EnvKey } from './enums';
-import { getEnvWithPrefix } from './helper';
+import { getEnvWithPrefix } from './helpers';
 import { SwaggerConfig, SwaggerEnv } from './interfaces';
 
 export default registerAs(ConfigToken.Swagger, (): SwaggerConfig => {

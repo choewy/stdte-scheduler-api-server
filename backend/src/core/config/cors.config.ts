@@ -1,6 +1,6 @@
 import { registerAs } from '@nestjs/config';
 import { ConfigToken, EnvKey } from './enums';
-import { getEnvWithPrefix } from './helper';
+import { getEnvWithPrefix } from './helpers';
 import { CorsConfig, CorsEnv } from './interfaces';
 
 export default registerAs(ConfigToken.Cors, (): CorsConfig => {

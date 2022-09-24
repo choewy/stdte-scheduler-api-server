@@ -1,7 +1,7 @@
 import { registerAs } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigToken, EnvKey } from './enums';
-import { getEnvWithPrefix } from './helper';
+import { getEnvWithPrefix } from './helpers';
 import { TypeormEnv } from './interfaces';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
