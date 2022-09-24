@@ -1,4 +1,4 @@
-import { Role } from '@/core/typeorm';
+import { Role } from '@/core/typeorm/entities';
 import { ApiResponseProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { UserRolePolicyDto } from './user-role-policy.dto';

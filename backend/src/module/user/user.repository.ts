@@ -1,5 +1,5 @@
-import { Role, Team, User } from '@/core/typeorm';
-import { BaseRepository } from '@/core/typeorm/repositories/base.repository';
+import { Role, Team, User } from '@/core/typeorm/entities';
+import { BaseRepository } from '@/core/typeorm/repositories';
 import { Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
 

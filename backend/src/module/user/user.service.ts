@@ -1,5 +1,5 @@
 import { hashPassword } from '@/core/bcrypt';
-import { User } from '@/core/typeorm';
+import { User } from '@/core/typeorm/entities';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto, UserDto } from './dto';
 import { UserParam } from './param';

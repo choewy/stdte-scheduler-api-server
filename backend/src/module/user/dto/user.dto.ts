@@ -1,6 +1,6 @@
 import { DateTimetoformat } from '@/appllication/transformer';
 import { ApiResponseProperty } from '@nestjs/swagger';
-import { User } from '@/core/typeorm';
+import { User } from '@/core/typeorm/entities';
 import { Expose } from 'class-transformer';
 import { DateTime } from 'luxon';
 import { UserRoleDto } from './user-role.dto';
