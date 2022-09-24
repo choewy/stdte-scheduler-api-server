@@ -1,4 +1,9 @@
-import { Controller } from '@nestjs/common';
+import { SwaggerController, SwaggerRouter } from '@/core/swagger';
 
-@Controller()
-export class AppController {}
+@SwaggerController({ exclude: true })
+export class AppController {
+  @SwaggerRouter('GET', ['/', '/docs', '/swagger'], '/docs')
+  redirectSwaggerDocs(): void {
+    return;
+  }
+}
