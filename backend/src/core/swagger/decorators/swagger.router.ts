@@ -13,10 +13,19 @@ const httpMethodKey = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'] as const;
 
 export type HttpMethod = typeof httpMethodKey[number];
 
-export const SwaggerRouter = (
-  method: HttpMethod,
-  path?: string | string[],
-  redirect?: string,
+export interface SwaggerRouterOptions {
+  method: HttpMethod;
+  path?: string | string[];
+  redirect?: string;
+}
+
+export interface SwaggerRouterFunction {
+  (options: SwaggerRouterOptions, ...args: MethodDecorator[]): any;
+}
+
+export const SwaggerRouter: SwaggerRouterFunction = (
+  { method, path, redirect },
+  ...args
 ) => {
   const decorators = [
     httpMethod[method.slice(0, 1) + method.slice(1).toLowerCase()](path),
@@ -24,5 +33,5 @@ export const SwaggerRouter = (
 
   redirect && decorators.push(Redirect(redirect));
 
-  return applyDecorators(...decorators);
+  return applyDecorators(...decorators, ...args);
 };
