@@ -93,6 +93,7 @@ export class Bootstrap {
     const coreService = this.app.get(CoreService);
     await coreService.initDefaultRole();
     await coreService.initMasterRole();
+    await coreService.initDefaultTeam();
     await coreService.initMasterUser(master.username, master.password);
   }
 

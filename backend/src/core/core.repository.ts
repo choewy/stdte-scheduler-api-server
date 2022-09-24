@@ -1,9 +1,9 @@
-import { Role } from '../entities';
 import { Injectable } from '@nestjs/common';
-import { BaseRepository } from './base.repository';
+import { Role, Team, User } from './typeorm';
+import { BaseRepository } from './typeorm/repositories/base.repository';
 
 @Injectable()
-export class RoleRepository extends BaseRepository {
+export class CoreRepository extends BaseRepository {
   async findDefaultRole(): Promise<Role> {
     return await this.role.target.findOne({
       relations: { rolePolicy: true },
@@ -26,6 +26,33 @@ export class RoleRepository extends BaseRepository {
     });
   }
 
+  async findDefaultTeam(): Promise<Team> {
+    return await this.team.target.findOne({
+      where: { id: 1 },
+    });
+  }
+
+  async findUserByUsername(username: string): Promise<User> {
+    return await this.user.target.findOne({
+      where: { username },
+    });
+  }
+
+  async insertMaster(
+    username: string,
+    password: string,
+    role: Role,
+  ): Promise<void> {
+    await this.user.target.save(
+      this.user.instance({
+        nickname: 'master',
+        username,
+        password,
+        roles: [role],
+      }),
+    );
+  }
+
   async insertDefaultRole(): Promise<void> {
     await this.role.target.save(
       this.role.instance({
@@ -46,6 +73,15 @@ export class RoleRepository extends BaseRepository {
           roleId: 2,
           master: true,
         }),
+      }),
+    );
+  }
+
+  async insertDefaultTeam(): Promise<void> {
+    await this.team.target.save(
+      this.team.instance({
+        name: '소속없음',
+        default: true,
       }),
     );
   }
