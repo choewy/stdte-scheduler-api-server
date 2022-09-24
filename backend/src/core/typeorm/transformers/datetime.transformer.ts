@@ -1,9 +1,10 @@
-import { FindOperator, ValueTransformer } from 'typeorm';
 import { DateTime } from 'luxon';
+import { FindOperator, ValueTransformer } from 'typeorm';
+import { DateTimeFromJSDate, DateTimeToISO } from '../../datetime';
 
 export class DateTimeTransformer implements ValueTransformer {
   to(
-    value: Date | FindOperator<DateTime> | null,
+    value: DateTime | FindOperator<DateTime> | null,
   ): string | FindOperator<DateTime> | null {
     if (value instanceof FindOperator) {
       return value;
@@ -13,10 +14,10 @@ export class DateTimeTransformer implements ValueTransformer {
       return null;
     }
 
-    return DateTime.fromJSDate(value).toISO({ includeOffset: true });
+    return DateTimeToISO(value);
   }
 
   from(value: Date | null): DateTime | null {
-    return DateTime.fromJSDate(value);
+    return DateTimeFromJSDate(value);
   }
 }
