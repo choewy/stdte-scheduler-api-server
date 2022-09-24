@@ -30,31 +30,27 @@ export class UserService {
   }
 
   async createUser({
-    username,
-    password,
-    nickname,
-    email,
     roleIds,
     teamIds,
-  }: CreateUserDto): Promise<void> {
-    const check = await this.repository.findOne({ username });
+    ...body
+  }: Partial<User> & CreateUserDto): Promise<void> {
+    const check = await this.repository.findOne({ username: body.username });
 
     if (check) {
       throw this.exception.AlreadyExistUser();
     }
 
-    await this.repository.saveOne({
-      username,
-      nickname,
-      email,
-      password: hashPassword(password),
-      roles: roleIds
-        ? await this.repository.findRoleByIds(roleIds)
-        : await this.repository.findDefaultRole(),
-      teams: teamIds
-        ? await this.repository.findTeamByIds(teamIds)
-        : await this.repository.findDefaultTeam(),
-    });
+    body.password = hashPassword(body.password);
+
+    body.roles = roleIds
+      ? await this.repository.findRoleByIds(roleIds)
+      : await this.repository.findDefaultRole();
+
+    body.teams = teamIds
+      ? await this.repository.findTeamByIds(teamIds)
+      : await this.repository.findDefaultTeam();
+
+    return await this.repository.saveOne(body);
   }
 
   async updateUser(
@@ -73,18 +69,24 @@ export class UserService {
 
     if (typeof status === 'boolean') {
       user.status = status;
-      if (status === true) {
-        user.disabledAt = LocalDateTime();
-      } else {
-        user.disabledAt = null;
-      }
+      user.disabledAt = status ? null : LocalDateTime();
     }
 
-    await this.repository.saveOne(
+    return await this.repository.saveOne(
       Object.assign<User, Partial<User>>(user, {
         nickname,
         email,
       }),
     );
+  }
+
+  async deleteUser({ id }: UserParam): Promise<void> {
+    const user = await this.repository.findOne({ id });
+
+    if (!user) {
+      throw this.exception.NotFoundUser();
+    }
+
+    return await this.repository.deleteOne(id);
   }
 }

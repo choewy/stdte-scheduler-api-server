@@ -84,4 +84,8 @@ export class UserRepository extends BaseRepository {
   async saveOne(user: Partial<User>): Promise<void> {
     await this.user.target.save(user);
   }
+
+  async deleteOne(id: number): Promise<void> {
+    await this.user.target.softDelete({ id });
+  }
 }

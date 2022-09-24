@@ -11,17 +11,17 @@ export class UserController {
 
   @UserRouter.GetUsers({ method: 'GET' })
   async getUsers(): Promise<UserDto[]> {
-    return this.service.getUsers();
+    return await this.service.getUsers();
   }
 
   @UserRouter.GetUser({ method: 'GET', path: ':id' })
   async getUser(@Param() param: UserParam): Promise<UserDto> {
-    return this.service.getUser(param);
+    return await this.service.getUser(param);
   }
 
   @UserRouter.CreateUser({ method: 'POST' })
   async createUser(@Body() body: CreateUserDto): Promise<void> {
-    return this.service.createUser(body);
+    return await this.service.createUser(body);
   }
 
   @UserRouter.UpdateUser({ method: 'PATCH', path: ':id' })
@@ -29,6 +29,11 @@ export class UserController {
     @Param() param: UserParam,
     @Body() body: UpdateUserDto,
   ): Promise<void> {
-    return this.service.updateUser(param, body);
+    return await this.service.updateUser(param, body);
+  }
+
+  @UserRouter.DeleteUser({ method: 'DELETE', path: ':id' })
+  async deleteUser(@Param() param: UserParam): Promise<void> {
+    return await this.service.deleteUser(param);
   }
 }

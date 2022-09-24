@@ -43,4 +43,13 @@ export class UserRouter {
       SwaggerResponse({ status: 404, description: '존재하지 않는 사용자' }),
     );
   };
+
+  public static DeleteUser: SwaggerRouterFunction = (options) => {
+    return SwaggerRouter(
+      options,
+      SwaggerSummary('사용자 삭제 API'),
+      SwaggerResponse({ status: 200, type: null }),
+      SwaggerResponse({ status: 404, description: '존재하지 않는 사용자' }),
+    );
+  };
 }
