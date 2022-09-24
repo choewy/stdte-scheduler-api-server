@@ -1,4 +1,5 @@
 import { hashPassword } from '@/core/bcrypt';
+import { LocalDateTime } from '@/core/datetime';
 import { User } from '@/core/typeorm/entities';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto, UserDto } from './dto';
@@ -58,7 +59,7 @@ export class UserService {
 
   async updateUser(
     { id }: UserParam,
-    { nickname, email, password }: UpdateUserDto,
+    { nickname, email, password, status }: UpdateUserDto,
   ): Promise<void> {
     const user = await this.repository.findOne({ id });
 
@@ -68,6 +69,15 @@ export class UserService {
 
     if (password) {
       user.password = hashPassword(password);
+    }
+
+    if (typeof status === 'boolean') {
+      user.status = status;
+      if (status === true) {
+        user.disabledAt = LocalDateTime();
+      } else {
+        user.disabledAt = null;
+      }
     }
 
     await this.repository.saveOne(

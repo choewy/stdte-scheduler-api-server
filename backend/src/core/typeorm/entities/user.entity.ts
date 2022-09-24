@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import {
   Column,
   Entity,
@@ -6,6 +7,7 @@ import {
   PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { DateTimeColumn } from '../columns';
 import { DateTimeEntity } from './datetime.entity';
 import { Role } from './role.entity';
 import { Team } from './team.entity';
@@ -36,4 +38,10 @@ export class User extends Relation {
 
   @Column({ default: null })
   email: string;
+
+  @Column({ default: true })
+  status: boolean;
+
+  @DateTimeColumn({ default: null })
+  disabledAt: DateTime;
 }
