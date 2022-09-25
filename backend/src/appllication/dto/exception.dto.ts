@@ -7,6 +7,9 @@ export class ExceptionDto {
   status: number;
 
   @ApiResponseProperty()
+  error: string;
+
+  @ApiResponseProperty()
   @Expose()
   message: string;
 

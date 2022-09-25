@@ -20,6 +20,7 @@ export class SignUpDto {
   password: string;
 
   @ApiProperty({ format: 'password' })
+  @HashPassword()
   @IsNotEmpty()
   @IsString()
   confirmPassword: string;
