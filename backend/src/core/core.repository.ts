@@ -1,88 +1,57 @@
 import { Injectable } from '@nestjs/common';
-import { Role, Team, User } from './typeorm/entities';
+import { FindOptionsWhere } from 'typeorm';
+import { Role, RolePolicy, Team, User } from './typeorm/entities';
 import { BaseRepository } from './typeorm/repositories/base.repository';
 
 @Injectable()
 export class CoreRepository extends BaseRepository {
-  async findDefaultRole(): Promise<Role> {
-    return await this.role.target.findOne({
-      relations: { rolePolicy: true },
-      where: {
-        rolePolicy: {
-          default: true,
-        },
-      },
-    });
+  async findRole(where: FindOptionsWhere<Role>): Promise<Role> {
+    return await this.methods.role.findOne(where);
   }
 
-  async findMasterRole(): Promise<Role> {
-    return await this.role.target.findOne({
-      relations: { rolePolicy: true },
-      where: {
-        rolePolicy: {
-          master: true,
-        },
-      },
-    });
+  async findUser(where: FindOptionsWhere<User>): Promise<User> {
+    return await this.methods.user.findOne(where);
   }
 
-  async findDefaultTeam(): Promise<Team> {
-    return await this.team.target.findOne({
-      where: { id: 1 },
-    });
-  }
-
-  async findUserByUsername(username: string): Promise<User> {
-    return await this.user.target.findOne({
-      where: { username },
-    });
-  }
-
-  async insertMaster(
-    username: string,
-    password: string,
-    role: Role,
+  async createRole(
+    data: Partial<Role>,
+    policy: FindOptionsWhere<RolePolicy>,
   ): Promise<void> {
-    await this.user.target.save(
-      this.user.instance({
-        nickname: 'master',
-        username,
-        password,
-        roles: [role],
-      }),
-    );
-  }
+    return await this.transaction(async () => {
+      let role = await this.methods.role.findOne({ rolePolicy: policy });
 
-  async insertDefaultRole(): Promise<void> {
-    await this.role.target.save(
-      this.role.instance({
-        name: '역할없음',
-        rolePolicy: this.rolePolicy.instance({
-          roleId: 1,
-          default: true,
+      if (!role) {
+        role = await this.targets.role.save(data);
+      }
+
+      await this.targets.role.save(
+        Object.assign(role, {
+          rolePolicy: {
+            roleId: role.id,
+            ...policy,
+          },
         }),
-      }),
-    );
+      );
+    });
   }
 
-  async insertMasterRole(): Promise<void> {
-    await this.role.target.save(
-      this.role.instance({
-        name: '마스터',
-        rolePolicy: this.rolePolicy.instance({
-          roleId: 2,
-          master: true,
-        }),
-      }),
-    );
+  async createTeam(data: Partial<Team>): Promise<void> {
+    return await this.transaction(async () => {
+      const team = await this.methods.team.findOne({ default: true });
+
+      if (!team) {
+        await this.targets.team.save(data);
+      }
+    });
   }
 
-  async insertDefaultTeam(): Promise<void> {
-    await this.team.target.save(
-      this.team.instance({
-        name: '소속없음',
-        default: true,
-      }),
-    );
+  async createUser(
+    data: Partial<User>,
+    policy: FindOptionsWhere<RolePolicy>,
+  ): Promise<void> {
+    return await this.transaction(async () => {
+      const role = await this.methods.role.findOne({ rolePolicy: policy });
+      await this.targets.user.save(Object.assign(data, { roles: [role] }));
+    });
   }
 }
