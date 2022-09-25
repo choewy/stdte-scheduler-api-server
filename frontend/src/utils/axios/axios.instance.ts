@@ -1,8 +1,8 @@
 import { API_CONFIG, AUTH_CONFIG, ROUTER } from '@/configs';
 import { AuthorizationTokens } from './types';
+import { useNavigate } from 'react-router-dom';
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import Cookie from 'universal-cookie';
-import { useNavigate } from 'react-router-dom';
 
 export class AxiosInstance {
   protected readonly cookie = new Cookie();
