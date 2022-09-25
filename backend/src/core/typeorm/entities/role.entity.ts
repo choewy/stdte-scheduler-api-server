@@ -26,4 +26,10 @@ export class Role extends Relation {
 
   @Column()
   name: string;
+
+  @Column({ default: true })
+  editable: boolean;
+
+  @Column({ default: true })
+  visible: boolean;
 }

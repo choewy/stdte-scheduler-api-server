@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CoreRepository } from './core.repository';
 import { JwtAuthService } from './jwt-auth';
+import { User } from './typeorm/entities';
 
 @Injectable()
 export class CoreService {
@@ -9,37 +10,73 @@ export class CoreService {
     private readonly repository: CoreRepository,
   ) {}
 
-  async initDefaultRole(): Promise<void> {
-    const role = await this.repository.findDefaultRole();
-    if (!role) {
-      await this.repository.insertDefaultRole();
+  get globalToken(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      const user = await this.repository.findUser({
+        roles: { rolePolicy: { master: true } },
+      });
+
+      if (!user) reject();
+
+      const token = this.jwtAuthService.sign('access', {
+        id: user.id,
+      });
+
+      resolve(token);
+    });
+  }
+
+  async initRole(): Promise<void> {
+    const roles = [
+      {
+        name: '역할없음',
+        editable: false,
+        policy: {
+          default: true,
+        },
+      },
+      {
+        name: '마스터',
+        editable: false,
+        visible: false,
+        policy: {
+          master: true,
+        },
+      },
+      {
+        name: '관리자',
+        editable: false,
+        policy: {
+          admin: true,
+        },
+      },
+    ];
+
+    for (const role of roles) {
+      const { policy, ...data } = role;
+      await this.repository.createRole(data, policy);
     }
   }
 
-  async initMasterRole(): Promise<void> {
-    const role = await this.repository.findMasterRole();
-    if (!role) {
-      await this.repository.insertMasterRole();
+  async initTeam(): Promise<void> {
+    const teams = [
+      {
+        name: '소속없음',
+        default: true,
+        editable: false,
+      },
+    ];
+
+    for (const team of teams) {
+      await this.repository.createTeam(team);
     }
   }
 
-  async initDefaultTeam(): Promise<void> {
-    const team = await this.repository.findDefaultTeam();
-    if (!team) {
-      await this.repository.insertDefaultTeam();
-    }
+  async initMaster(data: Partial<User>): Promise<void> {
+    return await this.repository.createUser(data, { master: true });
   }
 
-  async initMasterUser(username: string, password: string): Promise<void> {
-    const user = await this.repository.findUserByUsername(username);
-    if (!user) {
-      const role = await this.repository.findMasterRole();
-      await this.repository.insertMaster(username, password, role);
-    }
-  }
-
-  async getGlobalToken(username: string): Promise<string> {
-    const user = await this.repository.findUserByUsername(username);
-    return this.jwtAuthService.sign('access', { id: user.id });
+  async initAdmin(data: Partial<User>): Promise<void> {
+    return await this.repository.createUser(data, { admin: true });
   }
 }

@@ -1,3 +1,5 @@
+import { localDateTime } from '@/core/datetime';
+import { DateTime } from 'luxon';
 import {
   Column,
   Entity,
@@ -6,6 +8,7 @@ import {
   PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { DateTimeColumn } from '../columns';
 import { DateTimeEntity } from './datetime.entity';
 import { Role } from './role.entity';
 import { Team } from './team.entity';
@@ -28,12 +31,23 @@ export class User extends Relation {
   @PrimaryColumn()
   username: string;
 
-  @Column()
+  @Column({ default: null })
+  email: string;
+
+  @Column({})
   password: string;
 
   @Column()
   nickname: string;
 
-  @Column({ default: null })
-  email: string;
+  @Column({ default: true })
+  status: boolean;
+
+  @DateTimeColumn({ default: null })
+  disabledAt: DateTime;
+
+  protected beforeInsert(): void {
+    super.beforeInsert();
+    this.disabledAt = localDateTime();
+  }
 }

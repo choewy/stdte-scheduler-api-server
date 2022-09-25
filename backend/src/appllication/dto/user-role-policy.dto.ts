@@ -1,4 +1,4 @@
-import { RolePolicy } from '@/core/typeorm';
+import { RolePolicy } from '@/core/typeorm/entities';
 import { ApiResponseProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 

@@ -1,4 +1,4 @@
-import { Team } from '@/core/typeorm';
+import { Team } from '@/core/typeorm/entities';
 import { ApiResponseProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 

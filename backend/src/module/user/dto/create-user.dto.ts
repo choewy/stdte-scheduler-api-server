@@ -1,5 +1,12 @@
+import { HashPassword } from '@/appllication/transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty()
@@ -13,13 +20,14 @@ export class CreateUserDto {
   nickname: string;
 
   @ApiProperty({ format: 'password' })
+  @HashPassword()
   @IsNotEmpty()
   @IsString()
   password: string;
 
   @ApiPropertyOptional()
   @IsOptional()
-  @IsString()
+  @IsEmail()
   email: string;
 
   @ApiPropertyOptional({

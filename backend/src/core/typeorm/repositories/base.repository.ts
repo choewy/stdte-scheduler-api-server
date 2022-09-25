@@ -1,34 +1,55 @@
-import { Injectable } from '@nestjs/common';
-import { DataSource, EntityTarget } from 'typeorm';
-import { Role, RolePolicy, User, Team } from '../entities';
-import { EntityAttribute } from './interfaces';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { DataSource } from 'typeorm';
+import { Role, User, Team } from '../entities';
+import { IRoleRepository } from './i-role.repository';
+import { ITeamRepository } from './i-team.repository';
+import { IUserRepository } from './i-user.repository';
 
 @Injectable()
 export class BaseRepository {
   constructor(protected dataSource: DataSource) {}
 
-  attributes<T>(entity: EntityTarget<T>): EntityAttribute<T> {
+  protected get targets() {
     return {
-      target: this.dataSource.getRepository(entity),
-      instance: (arg: Partial<T> = {}) => {
-        return Object.assign(typeof entity as T, arg) as T;
-      },
+      user: this.dataSource.getRepository(User),
+      role: this.dataSource.getRepository(Role),
+      team: this.dataSource.getRepository(Team),
     };
   }
 
-  protected get role() {
-    return this.attributes(Role);
+  protected get methods() {
+    return {
+      user: new IUserRepository(this.dataSource),
+      role: new IRoleRepository(this.dataSource),
+      team: new ITeamRepository(this.dataSource),
+    };
   }
 
-  protected get rolePolicy() {
-    return this.attributes(RolePolicy);
-  }
+  protected async transaction(
+    func: (...args: any[]) => Promise<any>,
+  ): Promise<void> {
+    let error: unknown;
 
-  protected get user() {
-    return this.attributes(User);
-  }
+    const qr = this.dataSource.createQueryRunner();
+    await qr.connect();
+    await qr.startTransaction();
 
-  protected get team() {
-    return this.attributes(Team);
+    try {
+      await func();
+      await qr.commitTransaction();
+    } catch (e) {
+      error = e;
+      await qr.rollbackTransaction();
+    } finally {
+      await qr.release();
+    }
+
+    if (error) {
+      throw new InternalServerErrorException({
+        status: 500,
+        message: 'MySQL Transaction Error',
+        data: error,
+      });
+    }
   }
 }

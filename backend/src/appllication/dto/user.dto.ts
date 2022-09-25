@@ -1,6 +1,6 @@
 import { DateTimetoformat } from '@/appllication/transformer';
 import { ApiResponseProperty } from '@nestjs/swagger';
-import { User } from '@/core/typeorm';
+import { User } from '@/core/typeorm/entities';
 import { Expose } from 'class-transformer';
 import { DateTime } from 'luxon';
 import { UserRoleDto } from './user-role.dto';
@@ -17,11 +17,15 @@ export class UserDto {
 
   @ApiResponseProperty()
   @Expose()
+  email: string;
+
+  @ApiResponseProperty()
+  @Expose()
   nickname: string;
 
   @ApiResponseProperty()
   @Expose()
-  email: string;
+  status: boolean;
 
   @ApiResponseProperty({ type: [UserRoleDto] })
   @Expose()
@@ -41,14 +45,21 @@ export class UserDto {
   @Expose()
   updatedAt: DateTime;
 
+  @ApiResponseProperty()
+  @DateTimetoformat()
+  @Expose()
+  disabledAt: DateTime;
+
   constructor(user?: User) {
     if (user) {
       this.id = user.id;
       this.username = user.username;
-      this.nickname = user.nickname;
       this.email = user.email;
+      this.nickname = user.nickname;
+      this.status = user.status;
       this.createdAt = user.createdAt;
       this.updatedAt = user.updatedAt;
+      this.disabledAt = user.disabledAt;
 
       if (user.roles) {
         this.roles = user.roles.map((role) => new UserRoleDto(role));
