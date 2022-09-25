@@ -1,4 +1,4 @@
-import { DataSource, FindOptionsWhere, In, Repository } from 'typeorm';
+import { DataSource, FindOptionsWhere, Repository } from 'typeorm';
 import { User } from '../entities';
 
 export class IUserRepository {
@@ -15,33 +15,10 @@ export class IUserRepository {
     });
   }
 
-  async findOneWithoutMaster(where: FindOptionsWhere<User>): Promise<User> {
-    return await this.target.findOne({
-      relations: { teams: true, roles: { rolePolicy: true } },
-      where: {
-        ...where,
-        roles: [{ rolePolicy: { master: false } }],
-      },
-    });
-  }
-
-  async findMany(): Promise<User[]> {
+  async findMany(where: FindOptionsWhere<User> = {}): Promise<User[]> {
     return await this.target.find({
       relations: { teams: true, roles: { rolePolicy: true } },
-    });
-  }
-
-  async findManyByIds(ids: string[]): Promise<User[]> {
-    return await this.target.find({
-      relations: { teams: true, roles: { rolePolicy: true } },
-      where: { id: In(ids) },
-    });
-  }
-
-  async findManyWithoutMaster(): Promise<User[]> {
-    return await this.target.find({
-      relations: { teams: true, roles: { rolePolicy: true } },
-      where: { roles: { rolePolicy: { master: false } } },
+      where,
     });
   }
 }

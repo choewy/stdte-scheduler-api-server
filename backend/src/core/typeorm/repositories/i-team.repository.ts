@@ -1,4 +1,4 @@
-import { DataSource, FindOptionsWhere, In, Repository } from 'typeorm';
+import { DataSource, FindOptionsWhere, Repository } from 'typeorm';
 import { Team } from '../entities';
 
 export class ITeamRepository {
@@ -14,23 +14,5 @@ export class ITeamRepository {
 
   async findMany(where: FindOptionsWhere<Team>): Promise<Team[]> {
     return await this.target.find({ where });
-  }
-
-  async findDefault(): Promise<Team> {
-    return await this.target.findOne({
-      where: { default: true },
-    });
-  }
-
-  async findDefaultAsArray(): Promise<Team[]> {
-    return await this.target.find({
-      where: { default: true },
-    });
-  }
-
-  async findManyByIds(ids: number[]): Promise<Team[]> {
-    return await this.target.find({
-      where: { id: In(ids) },
-    });
   }
 }

@@ -1,4 +1,4 @@
-import { DataSource, FindOptionsWhere, In, Repository } from 'typeorm';
+import { DataSource, FindOptionsWhere, Repository } from 'typeorm';
 import { Role } from '../entities';
 
 export class IRoleRepository {
@@ -19,34 +19,6 @@ export class IRoleRepository {
     return await this.target.find({
       relations: { rolePolicy: true },
       where,
-    });
-  }
-
-  async findDefault() {
-    return await this.target.findOne({
-      relations: { rolePolicy: true },
-      where: { rolePolicy: { default: true } },
-    });
-  }
-
-  async findMaster() {
-    return await this.target.findOne({
-      relations: { rolePolicy: true },
-      where: { rolePolicy: { master: true } },
-    });
-  }
-
-  async findDefaultAsArray() {
-    return await this.target.find({
-      relations: { rolePolicy: true },
-      where: { rolePolicy: { default: true } },
-    });
-  }
-
-  async findManyByIds(ids: number[]): Promise<Role[]> {
-    return await this.target.find({
-      relations: { rolePolicy: true },
-      where: { id: In(ids) },
     });
   }
 }
