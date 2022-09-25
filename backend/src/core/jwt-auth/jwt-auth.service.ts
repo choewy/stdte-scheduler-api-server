@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthConfig, ConfigToken } from '../config';
 import { sign, verify } from 'jsonwebtoken';
@@ -22,11 +22,18 @@ export class JwtAuthService {
   }
 
   verify(type: keyof AuthConfig, token: string) {
-    const config = this.config[type];
-    return verify(token, config.secret, {
-      audience: config.audience,
-      subject: config.subject,
-      issuer: config.issuer,
-    });
+    try {
+      const config = this.config[type];
+      return verify(token, config.secret, {
+        audience: config.audience,
+        subject: config.subject,
+        issuer: config.issuer,
+      });
+    } catch (e) {
+      throw new UnauthorizedException({
+        status: 401,
+        message: '인증에 실패하였습니다.',
+      });
+    }
   }
 }

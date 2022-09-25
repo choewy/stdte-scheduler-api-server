@@ -1,6 +1,7 @@
+import { UserDto } from '@/appllication/dto';
 import { SwaggerController } from '@/core/swagger';
 import { Body, Param } from '@nestjs/common';
-import { CreateUserDto, UpdateUserDto, UserDto } from './dto';
+import { CreateUserDto, UpdateUserDto } from './dto';
 import { UserParam } from './param';
 import { UserRouter } from './user.router';
 import { UserService } from './user.service';

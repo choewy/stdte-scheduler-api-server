@@ -17,11 +17,11 @@ export class UserDto {
 
   @ApiResponseProperty()
   @Expose()
-  nickname: string;
+  email: string;
 
   @ApiResponseProperty()
   @Expose()
-  email: string;
+  nickname: string;
 
   @ApiResponseProperty()
   @Expose()
@@ -54,8 +54,8 @@ export class UserDto {
     if (user) {
       this.id = user.id;
       this.username = user.username;
-      this.nickname = user.nickname;
       this.email = user.email;
+      this.nickname = user.nickname;
       this.status = user.status;
       this.createdAt = user.createdAt;
       this.updatedAt = user.updatedAt;

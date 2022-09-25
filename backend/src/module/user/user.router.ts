@@ -1,16 +1,24 @@
+import { UserDto } from '@/appllication/dto';
 import {
+  SwaggerAuth,
   SwaggerBody,
   SwaggerResponse,
   SwaggerRouter,
   SwaggerRouterFunction,
   SwaggerSummary,
 } from '@/core/swagger';
-import { CreateUserDto, UpdateUserDto, UserDto } from './dto';
+import { applyDecorators } from '@nestjs/common';
+import { CreateUserDto, UpdateUserDto } from './dto';
 
 export class UserRouter {
+  private static readonly CommonRouter = () => {
+    return applyDecorators(SwaggerAuth());
+  };
+
   public static GetUsers: SwaggerRouterFunction = (options) => {
     return SwaggerRouter(
       options,
+      this.CommonRouter(),
       SwaggerSummary('사용자 목록 조회 API'),
       SwaggerResponse({ status: 200, type: [UserDto] }),
     );
@@ -19,6 +27,7 @@ export class UserRouter {
   public static GetUser: SwaggerRouterFunction = (options) => {
     return SwaggerRouter(
       options,
+      this.CommonRouter(),
       SwaggerSummary('사용자 조회 API'),
       SwaggerResponse({ status: 200, type: UserDto }),
       SwaggerResponse({ status: 404, description: '존재하지 않는 사용자' }),
@@ -28,6 +37,7 @@ export class UserRouter {
   public static CreateUser: SwaggerRouterFunction = (options) => {
     return SwaggerRouter(
       options,
+      this.CommonRouter(),
       SwaggerSummary('사용자 생성 API'),
       SwaggerBody({ formats: ['xwwwForm'], type: CreateUserDto }),
       SwaggerResponse({ status: 201, type: null }),
@@ -41,6 +51,7 @@ export class UserRouter {
   public static UpdateUser: SwaggerRouterFunction = (options) => {
     return SwaggerRouter(
       options,
+      this.CommonRouter(),
       SwaggerSummary('사용자 수정 API'),
       SwaggerBody({ formats: ['xwwwForm'], type: UpdateUserDto }),
       SwaggerResponse({ status: 200, type: null }),
@@ -58,6 +69,7 @@ export class UserRouter {
   public static DeleteUser: SwaggerRouterFunction = (options) => {
     return SwaggerRouter(
       options,
+      this.CommonRouter(),
       SwaggerSummary('사용자 삭제 API'),
       SwaggerResponse({ status: 200, type: null }),
       SwaggerResponse({ status: 404, description: '존재하지 않는 사용자' }),

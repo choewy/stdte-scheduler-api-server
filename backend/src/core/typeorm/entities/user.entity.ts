@@ -31,14 +31,14 @@ export class User extends Relation {
   @PrimaryColumn()
   username: string;
 
+  @Column({ default: null })
+  email: string;
+
   @Column({})
   password: string;
 
   @Column()
   nickname: string;
-
-  @Column({ default: null })
-  email: string;
 
   @Column({ default: true })
   status: boolean;

@@ -50,8 +50,14 @@ export class CoreRepository extends BaseRepository {
     policy: FindOptionsWhere<RolePolicy>,
   ): Promise<void> {
     return await this.transaction(async () => {
-      const role = await this.methods.role.findOne({ rolePolicy: policy });
-      await this.targets.user.save(Object.assign(data, { roles: [role] }));
+      const user = await this.methods.user.findOne({
+        roles: { rolePolicy: policy },
+      });
+
+      if (!user) {
+        const role = await this.methods.role.findOne({ rolePolicy: policy });
+        await this.targets.user.save(Object.assign(data, { roles: [role] }));
+      }
     });
   }
 }
