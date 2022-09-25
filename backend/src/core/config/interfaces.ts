@@ -80,9 +80,10 @@ export interface AuthConfig {
   };
 }
 
-export interface MasterConfig {
+export interface UserConfig {
   username: string;
   password: string;
+  nickname: string;
 }
 
 export interface SwaggerConfig {
