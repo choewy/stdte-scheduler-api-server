@@ -4,7 +4,6 @@ import { ConfigService } from '@nestjs/config';
 import { json, urlencoded } from 'express';
 import { Settings as Luxon } from 'luxon';
 import { CoreService } from '@/core';
-import { hashPassword } from '@/core/bcrypt';
 import { SwaggerDocument } from '@/core/swagger';
 import { utilities, WinstonModule } from 'nest-winston';
 import {
@@ -14,7 +13,7 @@ import {
 import {
   ConfigToken,
   CorsConfig,
-  MasterConfig,
+  UserConfig,
   ServerConfig,
 } from '@/core/config';
 import { existsSync, mkdirSync } from 'fs';
@@ -24,7 +23,8 @@ export class Bootstrap {
   private configs: {
     server: ServerConfig;
     cors: CorsConfig;
-    master: MasterConfig;
+    master: UserConfig;
+    admin: UserConfig;
   };
 
   constructor(private readonly module: any) {}
@@ -56,7 +56,8 @@ export class Bootstrap {
     this.configs = {
       server: configService.get<ServerConfig>(ConfigToken.Server),
       cors: configService.get<CorsConfig>(ConfigToken.Cors),
-      master: configService.get<MasterConfig>(ConfigToken.Master),
+      master: configService.get<UserConfig>(ConfigToken.Master),
+      admin: configService.get<UserConfig>(ConfigToken.Admin),
     };
   }
 
@@ -87,23 +88,18 @@ export class Bootstrap {
   }
 
   private async setDatabase(): Promise<void> {
-    const { master } = this.configs;
-    master.password = hashPassword(master.password);
-
+    const { master, admin } = this.configs;
     const coreService = this.app.get(CoreService);
-    await coreService.initDefaultRole();
-    await coreService.initMasterRole();
-    await coreService.initDefaultTeam();
-    await coreService.initMasterUser(master.username, master.password);
+    await coreService.initRole();
+    await coreService.initTeam();
+    await coreService.initMaster(master);
+    await coreService.initAdmin(admin);
   }
 
   private async useSwagger(): Promise<void> {
-    const { master } = this.configs;
     const coreService = this.app.get(CoreService);
-    const globalToken = await coreService.getGlobalToken(master.username);
-
     const swagger = new SwaggerDocument(this.app);
-    swagger.setup(globalToken);
+    swagger.setup(await coreService.globalToken);
   }
 
   async init() {
