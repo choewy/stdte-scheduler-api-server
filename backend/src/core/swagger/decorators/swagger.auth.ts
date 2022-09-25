@@ -24,6 +24,7 @@ class AuthGuard extends BaseRepository implements CanActivate {
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const request = ctx.switchToHttp().getRequest<Request>();
+    request['context'] = 'AuthGuard';
     return this.validateRequest(request);
   }
 

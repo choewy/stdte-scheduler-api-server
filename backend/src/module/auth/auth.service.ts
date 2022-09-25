@@ -20,7 +20,7 @@ export class AuthService {
   }: Partial<User> & SignUpDto): Promise<TokenDto> {
     const { username, email, password } = body;
 
-    if (verifyPassword(confirmPassword, password)) {
+    if (verifyPassword(password, confirmPassword)) {
       throw this.exception.IncorrectPassword();
     }
 

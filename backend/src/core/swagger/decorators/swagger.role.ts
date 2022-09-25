@@ -26,6 +26,7 @@ class RoleGuard extends BaseRepository implements CanActivate {
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const request = ctx.switchToHttp().getRequest<Request>();
+    request['context'] = 'RoleGuard';
     return await this.validateRequest(ctx, request);
   }
 

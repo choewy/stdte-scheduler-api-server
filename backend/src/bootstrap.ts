@@ -1,4 +1,4 @@
-import { INestApplication, Logger } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { json, urlencoded } from 'express';
@@ -21,10 +21,11 @@ import { ErrorFilter } from './appllication/filter/error.filter';
 import { HttpExceptionFilter } from './appllication/filter';
 import { PipeValidator } from './appllication/validator';
 import { ClassInterceptor, LogInterceptor } from './appllication/interceptor';
+import { LoggerService } from './core/logger';
 
 export class Bootstrap {
   private app: INestApplication;
-  private logger = new Logger();
+  private loggerService: LoggerService;
   private configs: {
     server: ServerConfig;
     cors: CorsConfig;
@@ -35,9 +36,9 @@ export class Bootstrap {
   constructor(private readonly module: any) {}
 
   private get options() {
-    const appName = 'STDTE-TASK-SCHEDULER-API-SERVER';
+    const appName = 'API-SERVER';
     const winstonConsole = new WinstonTransfort.Console({
-      level: 'info',
+      level: 'silly',
       format: winstonFormat.combine(
         winstonFormat.timestamp(),
         utilities.format.nestLike(appName, {
@@ -64,6 +65,8 @@ export class Bootstrap {
       master: configService.get<UserConfig>(ConfigToken.Master),
       admin: configService.get<UserConfig>(ConfigToken.Admin),
     };
+
+    this.loggerService = this.app.get(LoggerService);
   }
 
   private async setTempDir(): Promise<void> {
@@ -112,14 +115,17 @@ export class Bootstrap {
   }
 
   private async useGlobalFilter(): Promise<void> {
-    this.app.useGlobalFilters(new ErrorFilter(), new HttpExceptionFilter());
+    this.app.useGlobalFilters(
+      new ErrorFilter(this.loggerService),
+      new HttpExceptionFilter(this.loggerService),
+    );
   }
 
   private async useGlobalInterceptor(): Promise<void> {
     const reflector = this.app.get(Reflector);
     this.app.useGlobalInterceptors(
       new ClassInterceptor(reflector),
-      new LogInterceptor(this.logger),
+      new LogInterceptor(this.loggerService),
     );
   }
 

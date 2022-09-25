@@ -1,25 +1,22 @@
-import {
-  CallHandler,
-  ExecutionContext,
-  Logger,
-  NestInterceptor,
-} from '@nestjs/common';
-import { Request } from 'express';
+import { LoggerService } from '@/core/logger';
+import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { Observable, tap } from 'rxjs';
 
 export class LogInterceptor implements NestInterceptor {
-  constructor(private readonly logger: Logger) {}
+  constructor(private readonly loggerService: LoggerService) {}
 
-  intercept(ctx: ExecutionContext, next: CallHandler): Observable<any> {
+  async intercept(
+    ctx: ExecutionContext,
+    next: CallHandler,
+  ): Promise<Observable<any>> {
     const request = ctx.switchToHttp().getRequest<Request>();
-    request['className'] = ctx.getClass().name || 'Application';
-
+    request['context'] = ctx.getClass().name;
     return next.handle().pipe(
-      tap(() => {
+      tap(async () => {
         const request = ctx.switchToHttp().getRequest<Request>();
-        const { ip, method, url, params, query } = request;
-        const message = `(${ip}) ${method} ${url}`;
-        this.logger.log(message, request['className'], params, query);
+        const response = ctx.switchToHttp().getResponse<Response>();
+        await this.loggerService.verbose(request, response);
       }),
     );
   }

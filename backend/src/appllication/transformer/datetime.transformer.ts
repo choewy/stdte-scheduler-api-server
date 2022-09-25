@@ -7,7 +7,7 @@ export const DateTimetoformat = (format?: string) =>
       if (format) {
         return value.toFormat(format);
       } else {
-        return value.toFormat('yyyy-MM-dd hh:mm:ss');
+        return value.toFormat('yyyy-MM-dd HH:mm:ss');
       }
     }
 
