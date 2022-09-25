@@ -14,7 +14,7 @@ import { JwtAuthService } from '@/core/jwt-auth';
 import { DataSource } from 'typeorm';
 
 @Injectable()
-export class AuthGuard extends BaseRepository implements CanActivate {
+class AuthGuard extends BaseRepository implements CanActivate {
   constructor(
     dataSource: DataSource,
     private readonly jwtAuthService: JwtAuthService,
@@ -56,7 +56,7 @@ export class AuthGuard extends BaseRepository implements CanActivate {
   }
 }
 
-export const SwaggerAuth = () => {
+export const SwaggerAuthGuard = () => {
   return applyDecorators(
     ApiBearerAuth('master'),
     ApiBearerAuth(),
