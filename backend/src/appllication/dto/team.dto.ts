@@ -2,7 +2,7 @@ import { Team } from '@/core/typeorm/entities';
 import { ApiResponseProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
-export class UserTeamDto {
+export class TeamDto {
   @ApiResponseProperty()
   @Expose()
   id: number;

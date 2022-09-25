@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { RouterModule } from '@nestjs/core';
 import { AuthModule } from './auth';
+import { RoleModule } from './role';
+import { TeamModule } from './team';
 import { UserModule } from './user';
 
-const modules = [AuthModule, UserModule];
+const modules = [AuthModule, UserModule, RoleModule, TeamModule];
 const routers = modules.map((module) => ({ path: 'api/v1', module }));
 
 @Module({

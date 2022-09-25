@@ -29,18 +29,18 @@ export class CoreService {
   async initRole(): Promise<void> {
     const roles = [
       {
-        name: '역할없음',
-        editable: false,
-        policy: {
-          default: true,
-        },
-      },
-      {
         name: '마스터',
         editable: false,
         visible: false,
         policy: {
           master: true,
+        },
+      },
+      {
+        name: '역할없음',
+        editable: false,
+        policy: {
+          default: true,
         },
       },
       {
@@ -73,10 +73,19 @@ export class CoreService {
   }
 
   async initMaster(data: Partial<User>): Promise<void> {
-    return await this.repository.createUser(data, { master: true });
+    return await this.repository.createUser(data, {
+      master: true,
+      admin: true,
+      manager: true,
+      member: true,
+    });
   }
 
   async initAdmin(data: Partial<User>): Promise<void> {
-    return await this.repository.createUser(data, { admin: true });
+    return await this.repository.createUser(data, {
+      admin: true,
+      manager: true,
+      member: true,
+    });
   }
 }

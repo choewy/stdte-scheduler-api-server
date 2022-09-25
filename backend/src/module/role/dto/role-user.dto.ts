@@ -1,12 +1,10 @@
+import { User } from '@/core/typeorm/entities';
 import { DateTimetoformat } from '@/appllication/transformer';
 import { ApiResponseProperty } from '@nestjs/swagger';
-import { User } from '@/core/typeorm/entities';
 import { Expose } from 'class-transformer';
 import { DateTime } from 'luxon';
-import { RoleDto } from './role.dto';
-import { TeamDto } from './team.dto';
 
-export class UserDto {
+export class RoleUserDto {
   @ApiResponseProperty()
   @Expose()
   id: number;
@@ -27,25 +25,17 @@ export class UserDto {
   @Expose()
   status: boolean;
 
-  @ApiResponseProperty({ type: [RoleDto] })
-  @Expose()
-  roles?: RoleDto[];
-
-  @ApiResponseProperty({ type: [TeamDto] })
-  @Expose()
-  teams?: TeamDto[];
-
-  @ApiResponseProperty()
+  @ApiResponseProperty({ type: 'string' })
   @DateTimetoformat()
   @Expose()
   createdAt: DateTime;
 
-  @ApiResponseProperty()
+  @ApiResponseProperty({ type: 'string' })
   @DateTimetoformat()
   @Expose()
   updatedAt: DateTime;
 
-  @ApiResponseProperty()
+  @ApiResponseProperty({ type: 'string' })
   @DateTimetoformat()
   @Expose()
   disabledAt: DateTime;
@@ -60,14 +50,6 @@ export class UserDto {
       this.createdAt = user.createdAt;
       this.updatedAt = user.updatedAt;
       this.disabledAt = user.disabledAt;
-
-      if (user.roles) {
-        this.roles = user.roles.map((role) => new RoleDto(role));
-      }
-
-      if (user.teams) {
-        this.teams = user.teams.map((team) => new TeamDto(team));
-      }
     }
   }
 }

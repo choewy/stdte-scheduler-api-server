@@ -6,8 +6,16 @@ class Relation {
   role: Role;
 }
 
+export interface RolePolicyInterface {
+  default: boolean;
+  master: boolean;
+  admin: boolean;
+  manager: boolean;
+  member: boolean;
+}
+
 @Entity('role_policy')
-export class RolePolicy extends Relation {
+export class RolePolicy extends Relation implements RolePolicyInterface {
   @PrimaryColumn()
   roleId: number;
 

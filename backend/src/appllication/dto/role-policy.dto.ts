@@ -1,8 +1,8 @@
-import { RolePolicy } from '@/core/typeorm/entities';
+import { RolePolicy, RolePolicyInterface } from '@/core/typeorm/entities';
 import { ApiResponseProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
-export class UserRolePolicyDto {
+export class RolePolicyDto implements RolePolicyInterface {
   @ApiResponseProperty()
   @Expose()
   default: boolean;
