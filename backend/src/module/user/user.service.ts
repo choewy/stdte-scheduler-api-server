@@ -1,10 +1,8 @@
-import { UserDto } from '@/appllication/dto';
 import { localDateTime } from '@/core/datetime';
 import { User } from '@/core/typeorm/entities';
 import { Injectable } from '@nestjs/common';
 import { Not } from 'typeorm';
-import { CreateUserDto, UpdateUserDto } from './dto';
-import { UserParam } from './param';
+import { CreateUserDto, UpdateUserDto, UserParamDto, UserRowDto } from './dto';
 import { UserException } from './user.exception';
 import { UserRepository } from './user.repository';
 
@@ -15,15 +13,15 @@ export class UserService {
     private readonly exception: UserException,
   ) {}
 
-  async getUsers(): Promise<UserDto[]> {
+  async getUsers(): Promise<UserRowDto[]> {
     const users = await this.repository.findMany(false);
-    return users.map((user) => new UserDto(user));
+    return users.map((user) => new UserRowDto(user));
   }
 
-  async getUser(param: UserParam): Promise<UserDto> {
+  async getUser(param: UserParamDto): Promise<UserRowDto> {
     const user = await this.repository.findOne(param, false);
     if (!user) this.exception.NotFoundUser();
-    return new UserDto(user);
+    return new UserRowDto(user);
   }
 
   async createUser({
@@ -39,7 +37,7 @@ export class UserService {
     return await this.repository.createOne(body, roleIds, teamIds);
   }
 
-  async updateUser({ id }: UserParam, body: UpdateUserDto): Promise<void> {
+  async updateUser({ id }: UserParamDto, body: UpdateUserDto): Promise<void> {
     const user = await this.repository.findOne({ id }, false);
 
     if (!user) this.exception.NotFoundUser();
@@ -66,7 +64,7 @@ export class UserService {
     );
   }
 
-  async deleteUser({ id }: UserParam): Promise<void> {
+  async deleteUser({ id }: UserParamDto): Promise<void> {
     const user = await this.repository.findOne({ id }, false);
     if (!user) this.exception.NotFoundUser();
     return await this.repository.deleteOne(id);

@@ -1,8 +1,6 @@
-import { UserDto } from '@/appllication/dto';
 import { SwaggerController } from '@/core/swagger';
 import { Body, Param } from '@nestjs/common';
-import { CreateUserDto, UpdateUserDto } from './dto';
-import { UserParam } from './param';
+import { CreateUserDto, UpdateUserDto, UserParamDto, UserRowDto } from './dto';
 import { UserRouter } from './user.router';
 import { UserService } from './user.service';
 
@@ -11,12 +9,12 @@ export class UserController {
   constructor(private readonly service: UserService) {}
 
   @UserRouter.GetUsers({ method: 'GET' })
-  async getUsers(): Promise<UserDto[]> {
+  async getUsers(): Promise<UserRowDto[]> {
     return await this.service.getUsers();
   }
 
   @UserRouter.GetUser({ method: 'GET', path: ':id' })
-  async getUser(@Param() param: UserParam): Promise<UserDto> {
+  async getUser(@Param() param: UserParamDto): Promise<UserRowDto> {
     return await this.service.getUser(param);
   }
 
@@ -27,14 +25,14 @@ export class UserController {
 
   @UserRouter.UpdateUser({ method: 'PATCH', path: ':id' })
   async updateUser(
-    @Param() param: UserParam,
+    @Param() param: UserParamDto,
     @Body() body: UpdateUserDto,
   ): Promise<void> {
     return await this.service.updateUser(param, body);
   }
 
   @UserRouter.DeleteUser({ method: 'DELETE', path: ':id' })
-  async deleteUser(@Param() param: UserParam): Promise<void> {
+  async deleteUser(@Param() param: UserParamDto): Promise<void> {
     return await this.service.deleteUser(param);
   }
 }

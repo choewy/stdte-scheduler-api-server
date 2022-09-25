@@ -1,14 +1,16 @@
 import { User } from '@/core/typeorm/entities';
 import { BaseRepository } from '@/core/typeorm/repositories';
 import { Injectable } from '@nestjs/common';
-import { FindOptionsWhere } from 'typeorm';
+import { FindOptionsWhere, In } from 'typeorm';
 
 @Injectable()
 export class UserRepository extends BaseRepository {
   async findMany(includeMaster?: boolean): Promise<User[]> {
     return includeMaster
       ? await this.methods.user.findMany()
-      : await this.methods.user.findManyWithoutMaster();
+      : await this.methods.user.findMany({
+          roles: { rolePolicy: { master: false } },
+        });
   }
 
   async findOne(
@@ -17,7 +19,11 @@ export class UserRepository extends BaseRepository {
   ): Promise<User> {
     return includeMaster
       ? await this.methods.user.findOne({ id, email })
-      : await this.methods.user.findOneWithoutMaster({ id, email });
+      : await this.methods.user.findOne({
+          id,
+          email,
+          roles: { rolePolicy: { master: false } },
+        });
   }
 
   async createOne(
@@ -26,12 +32,12 @@ export class UserRepository extends BaseRepository {
     teamIds: number[],
   ): Promise<void> {
     user.roles = roleIds
-      ? await this.methods.role.findManyByIds(roleIds)
-      : await this.methods.role.findDefaultAsArray();
+      ? await this.methods.role.findMany({ id: In(roleIds) })
+      : await this.methods.role.findMany({ rolePolicy: { default: true } });
 
     user.teams = teamIds
-      ? await this.methods.team.findManyByIds(teamIds)
-      : await this.methods.team.findDefaultAsArray();
+      ? await this.methods.team.findMany({ id: In(teamIds) })
+      : await this.methods.team.findMany({ default: true });
 
     await this.targets.user.save(
       Object.assign<Partial<User>, Partial<User>>(user, {
