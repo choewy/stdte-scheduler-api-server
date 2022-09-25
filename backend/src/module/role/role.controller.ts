@@ -39,7 +39,7 @@ export class RoleController {
     return await this.service.updateRole(param, body);
   }
 
-  @RoleRouter.UpdateRoleMember({ method: 'PATCH', path: ':id/member' })
+  @RoleRouter.UpdateRoleMembers({ method: 'PATCH', path: ':id/members' })
   async updateRoleMember(
     @Param() param: RoleParamDto,
     @Query() query: UpdateRoleMemberQueryDto,

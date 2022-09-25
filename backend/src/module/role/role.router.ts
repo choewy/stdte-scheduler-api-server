@@ -99,7 +99,7 @@ export class RoleRouter {
     );
   };
 
-  public static UpdateRoleMember: SwaggerRouterFunction = (options) => {
+  public static UpdateRoleMembers: SwaggerRouterFunction = (options) => {
     return SwaggerRouter(
       options,
       this.CommonGuards(),
