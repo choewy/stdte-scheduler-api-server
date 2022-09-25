@@ -17,4 +17,7 @@ export class Team extends Relation {
 
   @Column({ default: false })
   default: boolean;
+
+  @Column({ default: true })
+  editable: boolean;
 }

@@ -1,3 +1,4 @@
+import { localDateTime } from '@/core/datetime';
 import { DateTime } from 'luxon';
 import {
   Column,
@@ -30,7 +31,7 @@ export class User extends Relation {
   @PrimaryColumn()
   username: string;
 
-  @Column()
+  @Column({})
   password: string;
 
   @Column()
@@ -44,4 +45,9 @@ export class User extends Relation {
 
   @DateTimeColumn({ default: null })
   disabledAt: DateTime;
+
+  protected beforeInsert(): void {
+    super.beforeInsert();
+    this.disabledAt = localDateTime();
+  }
 }
