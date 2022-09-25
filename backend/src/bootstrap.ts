@@ -1,5 +1,5 @@
-import { INestApplication } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import { INestApplication, Logger } from '@nestjs/common';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { json, urlencoded } from 'express';
 import { Settings as Luxon } from 'luxon';
@@ -17,9 +17,14 @@ import {
   ServerConfig,
 } from '@/core/config';
 import { existsSync, mkdirSync } from 'fs';
+import { ErrorFilter } from './appllication/filter/error.filter';
+import { HttpExceptionFilter } from './appllication/filter';
+import { PipeValidator } from './appllication/validator';
+import { ClassInterceptor, LogInterceptor } from './appllication/interceptor';
 
 export class Bootstrap {
   private app: INestApplication;
+  private logger = new Logger();
   private configs: {
     server: ServerConfig;
     cors: CorsConfig;
@@ -102,6 +107,22 @@ export class Bootstrap {
     swagger.setup(await coreService.globalToken);
   }
 
+  private async useGlobalPipe(): Promise<void> {
+    this.app.useGlobalPipes(new PipeValidator());
+  }
+
+  private async useGlobalFilter(): Promise<void> {
+    this.app.useGlobalFilters(new ErrorFilter(), new HttpExceptionFilter());
+  }
+
+  private async useGlobalInterceptor(): Promise<void> {
+    const reflector = this.app.get(Reflector);
+    this.app.useGlobalInterceptors(
+      new ClassInterceptor(reflector),
+      new LogInterceptor(this.logger),
+    );
+  }
+
   async init() {
     await this.getConfig();
     await this.setTempDir();
@@ -109,6 +130,9 @@ export class Bootstrap {
     await this.setCors();
     await this.setDatabase();
     await this.useSwagger();
+    await this.useGlobalPipe();
+    await this.useGlobalFilter();
+    await this.useGlobalInterceptor();
   }
 
   async listen(): Promise<void> {
