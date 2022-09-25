@@ -45,7 +45,9 @@ export class RoleService {
       rolePolicy: { master: false },
     });
 
-    if (!role) this.exception.NotFoundRole();
+    if (!role) {
+      this.exception.NotFoundRole();
+    }
 
     const users = await this.repository.findUsers({
       roles: { id: In([role.id]) },
@@ -59,7 +61,9 @@ export class RoleService {
 
     const check = await this.repository.findOne({ name });
 
-    if (check) this.exception.AlreadyExistRole();
+    if (check) {
+      this.exception.AlreadyExistRole();
+    }
 
     return await this.repository.createOne(body);
   }
@@ -74,7 +78,9 @@ export class RoleService {
       },
     });
 
-    if (!role) this.exception.NotFoundRole();
+    if (!role) {
+      this.exception.NotFoundRole();
+    }
 
     const { name } = body;
 
@@ -163,7 +169,9 @@ export class RoleService {
       },
     });
 
-    if (!role) this.exception.NotFoundRole();
+    if (!role) {
+      this.exception.NotFoundRole();
+    }
 
     await this.repository.deleteOne(role);
   }
