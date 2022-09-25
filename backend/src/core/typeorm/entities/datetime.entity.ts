@@ -5,7 +5,7 @@ import {
 } from '../columns';
 import { DateTime } from 'luxon';
 import { BeforeInsert, BeforeSoftRemove, BeforeUpdate } from 'typeorm';
-import { LocalDateTime } from '@/core/datetime';
+import { localDateTime } from '@/core/datetime';
 
 export class DateTimeEntity {
   @CreateDateTimeColumn()
@@ -19,17 +19,17 @@ export class DateTimeEntity {
 
   @BeforeInsert()
   protected beforeInsert() {
-    this.createdAt = LocalDateTime();
-    this.updatedAt = LocalDateTime();
+    this.createdAt = localDateTime();
+    this.updatedAt = localDateTime();
   }
 
   @BeforeUpdate()
   protected beforeUpdate() {
-    this.updatedAt = LocalDateTime();
+    this.updatedAt = localDateTime();
   }
 
   @BeforeSoftRemove()
   protected beforeSoftRemove() {
-    this.updatedAt = LocalDateTime();
+    this.updatedAt = localDateTime();
   }
 }

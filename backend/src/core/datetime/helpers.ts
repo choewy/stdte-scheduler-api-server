@@ -1,10 +1,10 @@
 import { DateTime } from 'luxon';
 
-export const LocalDateTime = (): DateTime => {
+export const localDateTime = (): DateTime => {
   return DateTime.local();
 };
 
-export const DateTimeToISO = (datetime: DateTime): string => {
+export const dateTimeToISO = (datetime: DateTime): string => {
   if (DateTime.isDateTime(datetime)) {
     return datetime.toISO({ includeOffset: true });
   }
