@@ -3,12 +3,12 @@ import { apiState } from '@/utils/apis';
 import { AxiosError } from 'axios';
 import { ChangeEvent, FormEvent, useCallback } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { loginState } from './login.state';
+import { signInState } from './login.state';
 
-export const LoginPage = () => {
+export const SignInPage = () => {
   const setError = useSetRecoilState(errorState);
   const { authApi } = useRecoilValue(apiState);
-  const [{ username, password }, setState] = useRecoilState(loginState);
+  const [state, setState] = useRecoilState(signInState);
 
   const onChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -22,22 +22,42 @@ export const LoginPage = () => {
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       try {
-        await authApi.signin({ username, password });
+        await authApi.signin(state);
       } catch (e) {
         const error = e as AxiosError;
         const { data } = error.response as any;
         setError({ message: data.message });
       }
     },
-    [authApi, username, password, setError],
+    [authApi, state, setError],
   );
 
   return (
     <div>
-      <h1>Login</h1>
-      <form onSubmit={onSubmit}>
-        <input name="username" value={username} onChange={onChange} />
-        <input name="password" value={password} onChange={onChange} />
+      <h1>SignIn</h1>
+      <form
+        onSubmit={onSubmit}
+        style={{
+          width: '300px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
+      >
+        <input
+          type="text"
+          name="username"
+          placeholder="아이디"
+          value={state.username}
+          onChange={onChange}
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="비밀번호"
+          value={state.password}
+          onChange={onChange}
+        />
         <button type="submit">로그인</button>
       </form>
     </div>
