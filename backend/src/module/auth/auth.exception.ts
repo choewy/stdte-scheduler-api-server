@@ -2,13 +2,6 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 
 @Injectable()
 export class AuthException {
-  InvalidAccount() {
-    throw new BadRequestException({
-      status: 400,
-      message: '아이디 또는 이메일을 입력하세요.',
-    });
-  }
-
   IncorrectAccount() {
     throw new BadRequestException({
       status: 400,
