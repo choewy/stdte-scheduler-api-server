@@ -1,30 +1,37 @@
 import { API_CONFIG, AUTH_CONFIG, ROUTER } from '@/configs';
 import { AuthorizationTokens } from './types';
-import { useNavigate } from 'react-router-dom';
+import { ReactLocation } from 'react-location';
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
-import Cookie from 'universal-cookie';
+import Cookies from 'universal-cookie';
 
 export class AxiosInstance {
-  protected readonly cookie = new Cookie();
-  protected readonly axios = axios.create({
+  protected axios = axios.create({
     baseURL: API_CONFIG.baseURL,
     headers: API_CONFIG.headers,
     withCredentials: API_CONFIG.credentials,
   });
 
+  protected get location() {
+    return new ReactLocation();
+  }
+
+  protected get cookies() {
+    return new Cookies();
+  }
+
   protected saveTokens({ accessToken, refreshToken }: AuthorizationTokens) {
-    this.cookie.set(AUTH_CONFIG.access, accessToken);
-    this.cookie.set(AUTH_CONFIG.refresh, refreshToken);
+    this.cookies.set(AUTH_CONFIG.access, accessToken);
+    this.cookies.set(AUTH_CONFIG.refresh, refreshToken);
   }
 
   protected removeTokens() {
-    this.cookie.remove(AUTH_CONFIG.access);
-    this.cookie.remove(AUTH_CONFIG.refresh);
-    return useNavigate()(ROUTER.signin);
+    this.cookies.remove(AUTH_CONFIG.access);
+    this.cookies.remove(AUTH_CONFIG.refresh);
+    this.location.history.replace(ROUTER.signin);
   }
 
   private get bearerAuth() {
-    const accessToken = this.cookie.get(AUTH_CONFIG.access);
+    const accessToken = this.cookies.get(AUTH_CONFIG.access);
     return accessToken ? `Bearer ${accessToken}` : '';
   }
 
@@ -34,8 +41,8 @@ export class AxiosInstance {
         method: 'GET',
         url: '/auth/token',
         data: {
-          accessToken: this.cookie.get(AUTH_CONFIG.access),
-          refreshToken: this.cookie.get(AUTH_CONFIG.refresh),
+          accessToken: this.cookies.get(AUTH_CONFIG.access),
+          refreshToken: this.cookies.get(AUTH_CONFIG.refresh),
         },
       });
       const tokens = response.data as AuthorizationTokens;
@@ -49,9 +56,7 @@ export class AxiosInstance {
     this.axios.interceptors.request.use(
       (config): AxiosRequestConfig => {
         const Authorization = this.bearerAuth;
-        return Object.assign(config, {
-          headers: { Authorization },
-        });
+        return Object.assign(config, { headers: { Authorization } });
       },
       async (e): Promise<void> => {
         return Promise.reject(e);
