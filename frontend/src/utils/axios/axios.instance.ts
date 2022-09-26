@@ -5,11 +5,13 @@ import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import Cookies from 'universal-cookie';
 
 export class AxiosInstance {
-  protected axios = axios.create({
-    baseURL: API_CONFIG.baseURL,
-    headers: API_CONFIG.headers,
-    withCredentials: API_CONFIG.credentials,
-  });
+  protected get axios() {
+    return axios.create({
+      baseURL: API_CONFIG.baseURL,
+      headers: API_CONFIG.headers,
+      withCredentials: API_CONFIG.credentials,
+    });
+  }
 
   protected get location() {
     return new ReactLocation();
