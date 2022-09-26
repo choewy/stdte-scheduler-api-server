@@ -6,8 +6,8 @@ import { FindOptionsWhere } from 'typeorm';
 
 @Injectable()
 export class AuthRepository extends BaseRepository {
-  async findUser({ username, email }: FindOptionsWhere<User>): Promise<User> {
-    return await this.methods.user.findOne({ username, email });
+  async findUser({ username }: FindOptionsWhere<User>): Promise<User> {
+    return await this.methods.user.findOne({ username });
   }
 
   async createOne(user: Partial<User>): Promise<User> {

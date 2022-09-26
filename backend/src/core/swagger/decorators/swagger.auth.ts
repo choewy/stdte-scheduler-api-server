@@ -1,6 +1,5 @@
 import {
   applyDecorators,
-  ForbiddenException,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
@@ -23,7 +22,8 @@ class AuthGuard extends BaseRepository implements CanActivate {
   }
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
-    const request = ctx.switchToHttp().getRequest<Request>();
+    const http = ctx.switchToHttp();
+    const request = http.getRequest<Request>();
     request['context'] = 'AuthGuard';
     return this.validateRequest(request);
   }
@@ -40,13 +40,6 @@ class AuthGuard extends BaseRepository implements CanActivate {
       throw new UnauthorizedException({
         status: 401,
         message: '인증에 실패하였습니다.',
-      });
-    }
-
-    if (!user.status) {
-      throw new ForbiddenException({
-        status: 403,
-        message: '비활성 계정입니다.',
       });
     }
 

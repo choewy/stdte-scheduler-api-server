@@ -37,7 +37,7 @@ export class AuthRouter {
       this.CommonSummary('회원가입 API'),
       SwaggerBody({ formats: ['xwwwForm'], type: SignUpDto }),
       SwaggerResponse({ status: 200, type: TokenDto }),
-      SwaggerResponse({ status: 409, description: '이미 등록된 계정' }),
+      SwaggerResponse({ status: 400, description: '이미 등록된 계정' }),
     );
   };
 
@@ -47,7 +47,7 @@ export class AuthRouter {
       this.CommonSummary('로그인 API'),
       SwaggerBody({ formats: ['xwwwForm'], type: SignInDto }),
       SwaggerResponse({ status: 200, type: TokenDto }),
-      SwaggerResponse({ status: 401, description: '인증 실패' }),
+      SwaggerResponse({ status: 400, description: '인증 실패' }),
     );
   };
 }

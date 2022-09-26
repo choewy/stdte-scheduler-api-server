@@ -46,10 +46,8 @@ export class AuthService {
     });
   }
 
-  async signIn({ username, email, password }: SignInDto): Promise<TokenDto> {
-    if (!username && !email) this.exception.InvalidAccount();
-
-    const user = await this.repository.findUser({ username, email });
+  async signIn({ username, password }: SignInDto): Promise<TokenDto> {
+    const user = await this.repository.findUser({ username });
 
     if (!user) this.exception.IncorrectAccount();
     if (!verifyPassword(password, user.password)) {
@@ -57,7 +55,6 @@ export class AuthService {
     }
 
     const payload = { id: user.id };
-
     return new TokenDto({
       access: this.jwtAuthService.sign('access', payload),
       refresh: this.jwtAuthService.sign('refresh', payload),
