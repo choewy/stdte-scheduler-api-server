@@ -1,9 +1,9 @@
+import { AppUserState } from '@/app';
 import { AxiosInstance, ApiResult } from '@/utils/axios';
 import { SignInRequestDto, SignUpRequestDto } from './request.dto';
-import { AuthReponseDto } from './response.dto';
 
 export class AuthApi extends AxiosInstance {
-  auth(): ApiResult<AuthReponseDto> {
+  auth(): ApiResult<AppUserState> {
     return this.axios({
       method: 'GET',
       url: '/auth',
