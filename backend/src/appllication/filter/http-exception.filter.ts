@@ -23,6 +23,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     if (exception instanceof ValidationException) {
       dto.data = exception.errors;
+      dto.message = '입력한 내용을 다시 확인하세요.';
     }
 
     const ctx = host.switchToHttp();

@@ -47,7 +47,9 @@ export class AuthService {
   }
 
   async signIn({ username, email, password }: SignInDto): Promise<TokenDto> {
-    if (!username && !email) this.exception.InvalidAccount();
+    if (!username && !email) {
+      this.exception.InvalidAccount();
+    }
 
     const user = await this.repository.findUser({ username, email });
 
