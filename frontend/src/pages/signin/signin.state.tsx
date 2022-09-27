@@ -7,6 +7,7 @@ export class SignInState {
     type: 'text',
     name: 'username',
     placeholder: '아이디',
+    autoComplete: 'off',
     value: '',
     onChange: undefined,
   };
@@ -16,6 +17,7 @@ export class SignInState {
     type: 'password',
     name: 'password',
     placeholder: '비밀번호',
+    autoComplete: 'off',
     value: '',
     onChange: undefined,
   };

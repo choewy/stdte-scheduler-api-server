@@ -9,9 +9,14 @@ import {
   CustomInput,
   useInputChangeEvent,
 } from '@/components/elements';
+import { saveTokens } from '@/utils/cookie';
+import { ROUTER } from '@/configs';
+import { useNavigate } from 'react-router-dom';
 
 export const SignUpPage: FC = () => {
+  const navigate = useNavigate();
   const setError = useSetRecoilState(errorState);
+
   const { authApi } = useRecoilValue(apiState);
   const [state, setState] = useRecoilState(signUpState);
 
@@ -20,13 +25,16 @@ export const SignUpPage: FC = () => {
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       try {
-        await authApi.signup({
+        const data = await authApi.signup({
           username: state.username.value as string,
           password: state.password.value as string,
           confirmPassword: state.confirmPassword.value as string,
           nickname: state.nickname.value as string,
           email: state.email.value as string,
         });
+        saveTokens(data);
+        setState(new SignUpState());
+        navigate(ROUTER.home, { replace: true });
       } catch (e) {
         const error = e as AxiosError;
         const { data } = error.response as any;

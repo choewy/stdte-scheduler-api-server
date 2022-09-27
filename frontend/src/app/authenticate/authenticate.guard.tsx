@@ -1,13 +1,13 @@
 import { ROUTER } from '@/configs';
 import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { appState } from './app.state';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { authenticateState } from './authenticate.state';
 
-export const useAppAuthGuard = () => {
+export const useAuthenticateGuard = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { user } = useRecoilValue(appState);
+  const { pathname } = useLocation();
+  const { user } = useRecoilValue(authenticateState);
 
   useEffect(() => {
     if (user.status === false) {
@@ -15,7 +15,7 @@ export const useAppAuthGuard = () => {
     }
 
     if (user.status === true) {
-      switch (location.pathname) {
+      switch (pathname) {
         case ROUTER.signin:
         case ROUTER.signup:
         case ROUTER.block:
@@ -23,13 +23,6 @@ export const useAppAuthGuard = () => {
           break;
       }
     }
-
-    if (user.status === null) {
-      switch (location.pathname) {
-        case ROUTER.block:
-          navigate(ROUTER.home, { replace: true });
-          break;
-      }
-    }
-  }, [user]);
+    return () => {};
+  }, [pathname]);
 };

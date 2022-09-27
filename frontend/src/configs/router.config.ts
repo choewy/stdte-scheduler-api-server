@@ -2,6 +2,7 @@ export const ROUTER = {
   home: '/',
   signin: '/signin',
   signup: '/signup',
+  signout: '/signout',
   block: '/block',
 };
 

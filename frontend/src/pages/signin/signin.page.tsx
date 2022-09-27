@@ -1,17 +1,18 @@
-import { FC, FormEvent, useCallback } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { AxiosError } from 'axios';
+import { FC, FormEvent, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { CustomForm, CustomInput, useInputChangeEvent } from '@/components';
+import { SignInState, signInState } from './signin.state';
 import { errorState } from '@/components';
 import { apiState } from '@/utils/apis';
-import {
-  CustomForm,
-  CustomInput,
-  useInputChangeEvent,
-} from '@/components/elements';
-import { SignInState, signInState } from './signin.state';
+import { saveTokens } from '@/utils/cookie';
+import { ROUTER } from '@/configs';
 
 export const SignInPage: FC = () => {
+  const navigate = useNavigate();
   const setError = useSetRecoilState(errorState);
+
   const { authApi } = useRecoilValue(apiState);
   const [state, setState] = useRecoilState(signInState);
 
@@ -20,10 +21,13 @@ export const SignInPage: FC = () => {
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       try {
-        await authApi.signin({
+        const data = await authApi.signin({
           username: state.username.value as string,
           password: state.password.value as string,
         });
+        saveTokens(data);
+        setState(new SignInState());
+        navigate(ROUTER.home, { replace: true });
       } catch (e) {
         const error = e as AxiosError;
         const { data } = error.response as any;

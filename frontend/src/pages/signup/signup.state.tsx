@@ -1,4 +1,4 @@
-import { InputAttributeProps } from '@/components/elements';
+import { InputAttributeProps } from '@/components';
 import { atom } from 'recoil';
 
 export class SignUpState {

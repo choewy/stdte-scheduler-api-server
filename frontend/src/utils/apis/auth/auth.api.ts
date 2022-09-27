@@ -1,36 +1,45 @@
-import { AppUserState } from '@/app';
-import { AxiosInstance, ApiResult } from '@/utils/axios';
+import { axiosInstance } from '@/utils/axios';
+import { AuthenticateUserState } from '@/app/authenticate';
 import { SignInRequestDto, SignUpRequestDto } from './request.dto';
 
-export class AuthApi extends AxiosInstance {
-  auth(): ApiResult<AppUserState> {
-    return this.axios({
-      method: 'GET',
-      url: '/auth',
-    });
-  }
-
-  async signin(body: SignInRequestDto): Promise<void> {
+export class AuthApi {
+  async auth(): Promise<AuthenticateUserState> {
     try {
-      const { data } = await this.axios({
-        method: 'POST',
-        url: '/auth/signin',
-        data: body,
+      const { data } = await axiosInstance({
+        method: 'GET',
+        url: '/auth',
       });
-      this.saveTokens(data);
+      return data;
     } catch (e) {
       throw e;
     }
   }
 
-  async signup(body: SignUpRequestDto): Promise<void> {
+  async signin(
+    body: SignInRequestDto,
+  ): Promise<{ refreshToken: string; accessToken: string }> {
     try {
-      const { data } = await this.axios({
+      const { data } = await axiosInstance({
+        method: 'POST',
+        url: '/auth/signin',
+        data: body,
+      });
+      return data;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async signup(
+    body: SignUpRequestDto,
+  ): Promise<{ refreshToken: string; accessToken: string }> {
+    try {
+      const { data } = await axiosInstance({
         method: 'POST',
         url: '/auth/signup',
         data: body,
       });
-      this.saveTokens(data);
+      return data;
     } catch (e) {
       throw e;
     }
