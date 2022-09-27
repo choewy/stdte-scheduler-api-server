@@ -1,8 +1,8 @@
-import { InputProps } from '@/components/elements';
+import { InputAttributeProps } from '@/components/elements';
 import { atom } from 'recoil';
 
 export class SignUpState {
-  username: InputProps = {
+  username: InputAttributeProps = {
     key: 'input-signup-username',
     type: 'text',
     name: 'username',
@@ -11,7 +11,7 @@ export class SignUpState {
     onChange: undefined,
   };
 
-  password: InputProps = {
+  password: InputAttributeProps = {
     key: 'input-signup-password',
     type: 'password',
     name: 'password',
@@ -20,7 +20,7 @@ export class SignUpState {
     onChange: undefined,
   };
 
-  confirmPassword: InputProps = {
+  confirmPassword: InputAttributeProps = {
     key: 'input-signup-confirm-password',
     type: 'password',
     name: 'confirmPassword',
@@ -29,7 +29,7 @@ export class SignUpState {
     onChange: undefined,
   };
 
-  nickname: InputProps & InputProps = {
+  nickname: InputAttributeProps = {
     key: 'input-signup-nickname',
     type: 'text',
     name: 'nickname',
@@ -38,7 +38,7 @@ export class SignUpState {
     onChange: undefined,
   };
 
-  email: InputProps & InputProps = {
+  email: InputAttributeProps = {
     key: 'input-signup-email',
     type: 'text',
     name: 'email',

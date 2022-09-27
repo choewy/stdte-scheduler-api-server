@@ -1,8 +1,8 @@
-import { InputProps } from '@/components/elements';
+import { InputAttributeProps } from '@/components/elements';
 import { atom } from 'recoil';
 
 export class SignInState {
-  username: InputProps = {
+  username: InputAttributeProps = {
     key: 'signin-input-username',
     type: 'text',
     name: 'username',
@@ -11,7 +11,7 @@ export class SignInState {
     onChange: undefined,
   };
 
-  password: InputProps = {
+  password: InputAttributeProps = {
     key: 'signin-input-password',
     type: 'password',
     name: 'password',

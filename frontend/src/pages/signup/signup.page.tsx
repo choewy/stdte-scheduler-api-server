@@ -4,7 +4,11 @@ import { AxiosError } from 'axios';
 import { errorState } from '@/components';
 import { apiState } from '@/utils/apis';
 import { SignUpState, signUpState } from './signup.state';
-import { CustomInput, useInputChangeEvent } from '@/components/elements';
+import {
+  CustomForm,
+  CustomInput,
+  useInputChangeEvent,
+} from '@/components/elements';
 
 export const SignUpPage: FC = () => {
   const setError = useSetRecoilState(errorState);
@@ -35,15 +39,7 @@ export const SignUpPage: FC = () => {
   return (
     <div>
       <h1>SignUp</h1>
-      <form
-        onSubmit={onSubmit}
-        style={{
-          width: '300px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-        }}
-      >
+      <CustomForm onSubmit={onSubmit}>
         {Object.keys(state).map((key) => {
           const props = state[key as keyof SignUpState];
           return (
@@ -51,7 +47,7 @@ export const SignUpPage: FC = () => {
           );
         })}
         <button type="submit">회원가입</button>
-      </form>
+      </CustomForm>
     </div>
   );
 };

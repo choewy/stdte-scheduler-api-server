@@ -3,7 +3,11 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { AxiosError } from 'axios';
 import { errorState } from '@/components';
 import { apiState } from '@/utils/apis';
-import { CustomInput, useInputChangeEvent } from '@/components/elements';
+import {
+  CustomForm,
+  CustomInput,
+  useInputChangeEvent,
+} from '@/components/elements';
 import { SignInState, signInState } from './signin.state';
 
 export const SignInPage: FC = () => {
@@ -32,15 +36,7 @@ export const SignInPage: FC = () => {
   return (
     <div>
       <h1>SignIn</h1>
-      <form
-        onSubmit={onSubmit}
-        style={{
-          width: '300px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-        }}
-      >
+      <CustomForm onSubmit={onSubmit}>
         {Object.keys(state).map((key) => {
           const props = state[key as keyof SignInState];
           return (
@@ -48,7 +44,7 @@ export const SignInPage: FC = () => {
           );
         })}
         <button type="submit">로그인</button>
-      </form>
+      </CustomForm>
     </div>
   );
 };

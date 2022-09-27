@@ -1,13 +1,13 @@
-import { ChangeEvent, useCallback } from 'react';
+import { ChangeEventHandler, useCallback } from 'react';
 import { SetterOrUpdater } from 'recoil';
 
 interface InputChangeEvent {
-  <T>(setState: SetterOrUpdater<T>): (e: ChangeEvent<HTMLInputElement>) => void;
+  <T>(setState: SetterOrUpdater<T>): ChangeEventHandler<HTMLInputElement>;
 }
 
 export const useInputChangeEvent: InputChangeEvent = (setState) => {
   return useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
+    (e) => {
       const { name, value } = e.target;
       setState((prev: any) => ({
         ...prev,
