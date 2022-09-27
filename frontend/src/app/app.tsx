@@ -1,7 +1,8 @@
 import { FC } from 'react';
 import { ROUTER } from '@/configs';
 import { Route, Routes } from 'react-router-dom';
-import { useAppAuthCheck, useAppAuthGuard } from './app.hook';
+import { useAppAuthCheck } from './app.hook';
+import { useAppAuthGuard } from './app.guard';
 import { SignInPage } from '@/pages';
 import { SignUpPage } from '@/pages/signup';
 

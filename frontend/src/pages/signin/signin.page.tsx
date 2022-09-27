@@ -3,7 +3,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { AxiosError } from 'axios';
 import { errorState } from '@/components';
 import { apiState } from '@/utils/apis';
-import { useInputChangeEvent } from '@/components/elements';
+import { CustomInput, useInputChangeEvent } from '@/components/elements';
 import { SignInState, signInState } from './signin.state';
 
 export const SignInPage: FC = () => {
@@ -43,7 +43,9 @@ export const SignInPage: FC = () => {
       >
         {Object.keys(state).map((key) => {
           const props = state[key as keyof SignInState];
-          return <input {...props} value={props.value} onChange={onChange} />;
+          return (
+            <CustomInput {...props} value={props.value} onChange={onChange} />
+          );
         })}
         <button type="submit">로그인</button>
       </form>

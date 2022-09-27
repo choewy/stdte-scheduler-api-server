@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { InputProps } from './interfaces';
 
-export const Input: FC<InputProps> = (props) => {
+export const CustomInput: FC<InputProps> = (props) => {
   return <input {...props} />;
 };
