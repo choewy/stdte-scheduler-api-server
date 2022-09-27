@@ -1,28 +1,28 @@
+import { FC, FormEvent, useCallback } from 'react';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { AxiosError } from 'axios';
 import { errorState } from '@/components';
 import { apiState } from '@/utils/apis';
-import { AxiosError } from 'axios';
-import { ChangeEvent, FC, FormEvent, useCallback } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { signUpState } from './signup.state';
+import { SignUpState, signUpState } from './signup.state';
+import { useInputChangeEvent } from '@/components/elements';
 
 export const SignUpPage: FC = () => {
   const setError = useSetRecoilState(errorState);
   const { authApi } = useRecoilValue(apiState);
   const [state, setState] = useRecoilState(signUpState);
 
-  const onChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const { name, value } = e.target;
-      setState((prev) => ({ ...prev, [name]: value }));
-    },
-    [setState],
-  );
-
+  const onChange = useInputChangeEvent(setState);
   const onSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       try {
-        await authApi.signup(state);
+        await authApi.signup({
+          username: state.username.value as string,
+          password: state.password.value as string,
+          confirmPassword: state.confirmPassword.value as string,
+          nickname: state.nickname.value as string,
+          email: state.email.value as string,
+        });
       } catch (e) {
         const error = e as AxiosError;
         const { data } = error.response as any;
@@ -44,41 +44,10 @@ export const SignUpPage: FC = () => {
           justifyContent: 'center',
         }}
       >
-        <input
-          type="text"
-          name="username"
-          placeholder="아이디"
-          value={state.username}
-          onChange={onChange}
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="비밀번호"
-          value={state.password}
-          onChange={onChange}
-        />
-        <input
-          type="password"
-          name="confirmPassword"
-          placeholder="비밀번호 확인"
-          value={state.confirmPassword}
-          onChange={onChange}
-        />
-        <input
-          type="text"
-          name="nickname"
-          placeholder="닉네임"
-          value={state.nickname}
-          onChange={onChange}
-        />
-        <input
-          type="text"
-          name="email"
-          placeholder="이메일"
-          value={state.email}
-          onChange={onChange}
-        />
+        {Object.keys(state).map((key) => {
+          const props = state[key as keyof SignUpState];
+          return <input {...props} value={props.value} onChange={onChange} />;
+        })}
         <button type="submit">회원가입</button>
       </form>
     </div>

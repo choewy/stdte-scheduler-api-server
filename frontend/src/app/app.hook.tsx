@@ -10,12 +10,14 @@ export const useAppAuthCheck = () => {
   const setState = useSetRecoilState(appState);
 
   const checkAuth = useCallback(async () => {
-    const { data } = await authApi.auth();
+    const response = await authApi.auth();
 
-    setState((prev) => ({
-      ...prev,
-      user: Object.assign(new AppUserState(), data),
-    }));
+    if (response?.data) {
+      setState((prev) => ({
+        ...prev,
+        user: Object.assign(new AppUserState(), response.data),
+      }));
+    }
   }, [authApi]);
 
   useEffect(() => {
@@ -38,6 +40,14 @@ export const useAppAuthGuard = () => {
       switch (location.pathname) {
         case ROUTER.signin:
         case ROUTER.signup:
+        case ROUTER.block:
+          navigate(ROUTER.home, { replace: true });
+          break;
+      }
+    }
+
+    if (user.status === null) {
+      switch (location.pathname) {
         case ROUTER.block:
           navigate(ROUTER.home, { replace: true });
           break;

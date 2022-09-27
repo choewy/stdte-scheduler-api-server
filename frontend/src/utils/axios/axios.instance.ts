@@ -1,4 +1,4 @@
-import { API_CONFIG, AUTH_CONFIG, ROUTER } from '@/configs';
+import { API_CONFIG, AUTH_CONFIG, PASS_ROUTERS, ROUTER } from '@/configs';
 import { AuthorizationTokens } from './types';
 import { ReactLocation } from 'react-location';
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
@@ -22,6 +22,7 @@ export class AxiosInstance {
   protected saveTokens({ accessToken, refreshToken }: AuthorizationTokens) {
     this.cookies.set(AUTH_CONFIG.access, accessToken);
     this.cookies.set(AUTH_CONFIG.refresh, refreshToken);
+    this.location.history.replace(ROUTER.home);
   }
 
   protected removeTokens() {
@@ -68,13 +69,16 @@ export class AxiosInstance {
     this.axios.interceptors.response.use(
       (config): AxiosRequestConfig => config,
       async (e: AxiosError): Promise<void> => {
-        switch (e.response?.status) {
-          case 401:
-            return this.removeTokens();
-          case 403:
-            return this.refreshAuth();
-          default:
-            return Promise.reject(e);
+        const { pathname } = this.location.current;
+        if (!PASS_ROUTERS.includes(pathname)) {
+          switch (e.response?.status) {
+            case 401:
+              return this.removeTokens();
+            case 403:
+              return this.refreshAuth();
+            default:
+              return Promise.reject(e);
+          }
         }
       },
     );
