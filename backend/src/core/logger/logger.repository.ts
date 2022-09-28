@@ -2,14 +2,14 @@ import { ExceptionDto } from '@/appllication/dto';
 import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { DataSource, Repository } from 'typeorm';
-import { Logs, LogType } from '../typeorm/entities';
+import { Log, LogType } from '../typeorm/entities';
 
 @Injectable()
 export class LoggerRepository {
-  private readonly target: Repository<Logs>;
+  private readonly target: Repository<Log>;
 
   constructor(private readonly dataSource: DataSource) {
-    this.target = this.dataSource.getRepository(Logs);
+    this.target = this.dataSource.getRepository(Log);
   }
 
   async insertOne(
@@ -18,7 +18,7 @@ export class LoggerRepository {
     dto?: ExceptionDto,
     stack?: string,
   ): Promise<void> {
-    const log = new Logs();
+    const log = new Log();
 
     log.application = 'TASK-SCHEDULER-API-SERVER';
     log.type = type;
