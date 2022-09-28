@@ -12,7 +12,7 @@ export class DateTimeTransformer implements ValueTransformer {
     }
 
     if (DateTime.isDateTime(value)) {
-      return value.toSQL({ includeOffset: true });
+      return value.toFormat('yyyy-MM-dd HH:mm:ss', { locale: 'ko-kr' });
     }
   }
 
