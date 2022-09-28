@@ -16,7 +16,10 @@ export class TeamRouter {
   };
 
   private static readonly CommonGuards = () => {
-    return applyDecorators(SwaggerAuthGuard(), SwaggerRoleGuard('admin'));
+    return applyDecorators(
+      SwaggerAuthGuard(),
+      SwaggerRoleGuard('Master', 'Admin'),
+    );
   };
 
   public static GetTeams: SwaggerRouterFunction = (options) => {

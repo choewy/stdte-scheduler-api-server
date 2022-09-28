@@ -4,7 +4,7 @@ import { Expose } from 'class-transformer';
 import { UserTeamDto } from './user-team.dto';
 import { UserRoleDto } from './user-role.dto';
 import { DateTime } from 'luxon';
-import { User } from '@/core/typeorm/entities';
+import { User, UserStatus } from '@/core/typeorm/entities';
 
 export class UserRowDto {
   @ApiResponseProperty()
@@ -23,9 +23,9 @@ export class UserRowDto {
   @Expose()
   nickname: string;
 
-  @ApiResponseProperty()
+  @ApiResponseProperty({ enum: UserStatus })
   @Expose()
-  status: boolean;
+  status: UserStatus;
 
   @ApiResponseProperty({ type: [UserRoleDto] })
   @Expose()

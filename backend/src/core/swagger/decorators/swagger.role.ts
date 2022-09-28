@@ -14,9 +14,7 @@ import { BaseRepository } from '@/core/typeorm/repositories';
 import { SwaggerResponse } from './swagger.response';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
-import { RolePolicyInterface } from '@/core/typeorm/entities';
-
-export type RolePolicyKey = keyof RolePolicyInterface;
+import { RoleType, RoleTypeKey } from '@/core/typeorm/entities';
 
 @Injectable()
 class RoleGuard extends BaseRepository implements CanActivate {
@@ -34,8 +32,8 @@ class RoleGuard extends BaseRepository implements CanActivate {
     ctx: ExecutionContext,
     request: Request,
   ): Promise<boolean> {
+    const types = this.reflector.get<RoleTypeKey[]>('roles', ctx.getHandler());
     const user: UserDto = await request['user'];
-
     if (!user) {
       throw new UnauthorizedException({
         status: 401,
@@ -43,21 +41,10 @@ class RoleGuard extends BaseRepository implements CanActivate {
       });
     }
 
-    const role = this.reflector.get<RolePolicyKey>('role', ctx.getHandler());
-    const only = this.reflector.get<boolean>('only', ctx.getHandler());
-    const rolePolicy = user.roles.map(({ policy }) => policy);
-
     let pass = false;
-
-    if (only) {
-      pass = rolePolicy.find((policy) => !policy[role]) === undefined;
-    } else {
-      for (const policy of rolePolicy) {
-        if (pass) {
-          break;
-        }
-
-        pass = policy[role];
+    for (const type of types) {
+      if (user.roles.find((role) => role.type === RoleType[type])) {
+        pass = true;
       }
     }
 
@@ -72,10 +59,9 @@ class RoleGuard extends BaseRepository implements CanActivate {
   }
 }
 
-export const SwaggerRoleGuard = (role: RolePolicyKey, only?: boolean) => {
+export const SwaggerRoleGuard = (...roles: RoleTypeKey[]) => {
   return applyDecorators(
-    SetMetadata('role', role),
-    SetMetadata('only', only),
+    SetMetadata('roles', roles),
     UseGuards(RoleGuard),
     SwaggerResponse({
       status: 403,

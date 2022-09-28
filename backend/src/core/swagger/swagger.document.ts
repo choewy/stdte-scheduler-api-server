@@ -22,7 +22,7 @@ export class SwaggerDocument {
         this.config.contact.url,
         this.config.contact.email,
       )
-      .addBearerAuth(undefined, 'master')
+      .addBearerAuth(undefined, 'masterAuth')
       .addBearerAuth({
         type: 'http',
         in: 'Header',
@@ -32,20 +32,22 @@ export class SwaggerDocument {
       .build();
   }
 
-  setup(globalToken?: string) {
-    const document = SwaggerModule.createDocument(this.app, this.build());
+  async setup(globalToken?: Promise<string>) {
+    const token = await globalToken;
+    const builder = this.build();
+    const document = SwaggerModule.createDocument(this.app, builder);
     SwaggerModule.setup(this.config.path, this.app, document, {
       swaggerOptions: {
         defaultModelsExpandDepth: -1,
         authAction: {
-          master: {
+          masterAuth: {
             schema: {
               type: 'http',
               in: 'header',
               scheme: 'bearer',
               bearerFormat: 'JWT',
             },
-            value: globalToken,
+            value: token,
           },
         },
       },

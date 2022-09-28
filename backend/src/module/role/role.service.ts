@@ -9,6 +9,7 @@ import {
   UpdateRoleDto,
   UpdateRoleMemberDto,
 } from './dto';
+import { RoleType } from '@/core/typeorm/entities';
 
 @Injectable()
 export class RoleService {
@@ -19,10 +20,7 @@ export class RoleService {
 
   async getRoles(): Promise<RoleRowDto[]> {
     const roles = await this.repository.findMany({
-      rolePolicy: {
-        master: false,
-        admin: false,
-      },
+      type: Not(In([RoleType.Master, RoleType.Default])),
     });
 
     const users = await this.repository.findUsers({
@@ -42,7 +40,7 @@ export class RoleService {
   async getRole({ id }: RoleParamDto) {
     const role = await this.repository.findOne({
       id,
-      rolePolicy: { master: false },
+      type: Not(RoleType.Master),
     });
 
     if (!role) {
@@ -71,11 +69,7 @@ export class RoleService {
   async updateRole({ id }: RoleParamDto, body: UpdateRoleDto): Promise<void> {
     const role = await this.repository.findOne({
       id,
-      rolePolicy: {
-        master: false,
-        default: false,
-        admin: false,
-      },
+      type: Not(In([RoleType.Master, RoleType.Admin, RoleType.Default])),
     });
 
     if (!role) {
@@ -98,26 +92,19 @@ export class RoleService {
   ): Promise<void> {
     const role = await this.repository.findOne({
       id,
-      rolePolicy: {
-        master: false,
-        default: false,
-        admin: false,
-      },
+      type: Not(In([RoleType.Master, RoleType.Admin, RoleType.Default])),
     });
 
     const users = await this.repository.findUsers({
       id: In(userIds),
       roles: {
-        rolePolicy: {
-          master: false,
-          admin: false,
-        },
+        type: Not(In([RoleType.Master, RoleType.Admin, RoleType.Default])),
       },
     });
 
     users.forEach((user) => {
       user.roles = user.roles
-        .filter((role) => !role.rolePolicy.default)
+        .filter((role) => role.type !== RoleType.Default)
         .concat(role);
     });
 
@@ -130,25 +117,16 @@ export class RoleService {
   ): Promise<void> {
     const role = await this.repository.findOne({
       id,
-      rolePolicy: {
-        master: false,
-        default: false,
-        admin: false,
-      },
+      type: Not(In([RoleType.Master, RoleType.Admin, RoleType.Default])),
     });
 
     const defaultRole = await this.repository.findOne({
-      rolePolicy: { default: true },
+      type: RoleType.Default,
     });
 
     const users = await this.repository.findUsers({
       id: In(userIds),
-      roles: {
-        rolePolicy: {
-          master: false,
-          admin: false,
-        },
-      },
+      roles: { type: Not(In([RoleType.Master, RoleType.Default])) },
     });
 
     users.forEach((user) => {
@@ -162,11 +140,7 @@ export class RoleService {
   async deleteRole({ id }: RoleParamDto): Promise<void> {
     const role = await this.repository.findOne({
       id,
-      rolePolicy: {
-        master: false,
-        default: false,
-        admin: false,
-      },
+      type: Not(In([RoleType.Master, RoleType.Admin, RoleType.Default])),
     });
 
     if (!role) {

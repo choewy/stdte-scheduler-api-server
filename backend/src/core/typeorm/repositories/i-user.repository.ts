@@ -10,14 +10,14 @@ export class IUserRepository {
 
   async findOne(where: FindOptionsWhere<User>): Promise<User> {
     return await this.target.findOne({
-      relations: { teams: true, roles: { rolePolicy: true } },
+      relations: { teams: true, roles: { policy: true } },
       where,
     });
   }
 
   async findMany(where: FindOptionsWhere<User> = {}): Promise<User[]> {
     return await this.target.find({
-      relations: { teams: true, roles: { rolePolicy: true } },
+      relations: { teams: true, roles: { policy: true } },
       where,
     });
   }

@@ -13,6 +13,12 @@ import { DateTimeEntity } from './datetime.entity';
 import { Role } from './role.entity';
 import { Team } from './team.entity';
 
+export enum UserStatus {
+  Wait = 'wait',
+  Enable = 'enable',
+  Disable = 'disable',
+}
+
 class Relation extends DateTimeEntity {
   @ManyToMany(() => Role, (e) => e.users)
   @JoinTable({ name: 'user_roles' })
@@ -40,8 +46,12 @@ export class User extends Relation {
   @Column()
   nickname: string;
 
-  @Column({ default: true })
-  status: boolean;
+  @Column({
+    type: 'enum',
+    enum: UserStatus,
+    default: UserStatus.Wait,
+  })
+  status: UserStatus;
 
   @DateTimeColumn({ default: null })
   disabledAt: DateTime;

@@ -32,9 +32,14 @@ class AuthGuard extends BaseRepository implements CanActivate {
     const bearer = request.headers.authorization;
     const token = (bearer || 'Bearer ').replace('Bearer ', '');
     const payload = this.jwtAuthService.verify('access', token);
-    const user = await this.methods.user.findOne({
-      id: payload['id'],
-    });
+
+    const user = await this.targets.user
+      .createQueryBuilder('user')
+      .select()
+      .leftJoinAndSelect('user.roles', 'roles')
+      .innerJoinAndSelect('roles.policy', 'policy')
+      .where('user.id = :userId', { userId: payload['id'] })
+      .getOne();
 
     if (!user) {
       throw new UnauthorizedException({
@@ -44,15 +49,15 @@ class AuthGuard extends BaseRepository implements CanActivate {
     }
 
     delete user.password;
-
     request['user'] = new UserDto(user);
+
     return true;
   }
 }
 
 export const SwaggerAuthGuard = () => {
   return applyDecorators(
-    ApiBearerAuth('master'),
+    ApiBearerAuth('masterAuth'),
     ApiBearerAuth(),
     UseGuards(AuthGuard),
     SwaggerResponse({

@@ -1,17 +1,24 @@
 import { Column, Entity, OneToOne, PrimaryColumn } from 'typeorm';
 import { Role } from './role.entity';
 
-class Relation {
-  @OneToOne(() => Role, (e) => e.rolePolicy, { cascade: ['soft-remove'] })
-  role: Role;
+export enum PolicyStatus {
+  All = 'all',
+  System = 'system',
+  Team = 'team',
+  Only = 'only',
+  None = 'none',
 }
 
 export interface RolePolicyInterface {
-  default: boolean;
-  master: boolean;
-  admin: boolean;
-  manager: boolean;
-  member: boolean;
+  read: PolicyStatus;
+  write: PolicyStatus;
+  delete: PolicyStatus;
+  update: PolicyStatus;
+}
+
+class Relation {
+  @OneToOne(() => Role, (e) => e.policy, { cascade: ['soft-remove'] })
+  role: Role;
 }
 
 @Entity('role_policy')
@@ -19,18 +26,31 @@ export class RolePolicy extends Relation implements RolePolicyInterface {
   @PrimaryColumn()
   roleId: number;
 
-  @Column({ default: false })
-  default: boolean;
+  @Column({
+    type: 'enum',
+    enum: PolicyStatus,
+    default: PolicyStatus.Team,
+  })
+  read: PolicyStatus;
 
-  @Column({ default: false })
-  master: boolean;
+  @Column({
+    type: 'enum',
+    enum: PolicyStatus,
+    default: PolicyStatus.Only,
+  })
+  write: PolicyStatus;
 
-  @Column({ default: false })
-  admin: boolean;
+  @Column({
+    type: 'enum',
+    enum: PolicyStatus,
+    default: PolicyStatus.Only,
+  })
+  update: PolicyStatus;
 
-  @Column({ default: false })
-  manager: boolean;
-
-  @Column({ default: false })
-  member: boolean;
+  @Column({
+    type: 'enum',
+    enum: PolicyStatus,
+    default: PolicyStatus.None,
+  })
+  delete: PolicyStatus;
 }

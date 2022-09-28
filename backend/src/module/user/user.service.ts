@@ -54,7 +54,7 @@ export class UserService {
       if (other) this.exception.AlreadyExistEmail();
     }
 
-    if (typeof body.status === 'boolean') {
+    if (body.status) {
       user.status = body.status;
       user.disabledAt = body.status ? null : localDateTime();
     }

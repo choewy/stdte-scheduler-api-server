@@ -1,6 +1,6 @@
 import { DateTimetoformat } from '@/appllication/transformer';
 import { ApiResponseProperty } from '@nestjs/swagger';
-import { User } from '@/core/typeorm/entities';
+import { User, UserStatus } from '@/core/typeorm/entities';
 import { Expose } from 'class-transformer';
 import { DateTime } from 'luxon';
 import { RoleDto } from './role.dto';
@@ -23,9 +23,9 @@ export class UserDto {
   @Expose()
   nickname: string;
 
-  @ApiResponseProperty()
+  @ApiResponseProperty({ type: 'string' })
   @Expose()
-  status: boolean;
+  status: UserStatus;
 
   @ApiResponseProperty({ type: [RoleDto] })
   @Expose()

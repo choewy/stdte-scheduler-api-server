@@ -1,4 +1,4 @@
-import { User } from '@/core/typeorm/entities';
+import { User, UserStatus } from '@/core/typeorm/entities';
 import { DateTimetoformat } from '@/appllication/transformer';
 import { ApiResponseProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
@@ -21,9 +21,9 @@ export class RoleUserDto {
   @Expose()
   nickname: string;
 
-  @ApiResponseProperty()
+  @ApiResponseProperty({ enum: UserStatus })
   @Expose()
-  status: boolean;
+  status: UserStatus;
 
   @ApiResponseProperty({ type: 'string' })
   @DateTimetoformat()

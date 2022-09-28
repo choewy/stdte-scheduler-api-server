@@ -1,5 +1,5 @@
 import { RolePolicyDto } from '@/appllication/dto';
-import { Role } from '@/core/typeorm/entities';
+import { Role, RoleType } from '@/core/typeorm/entities';
 import { ApiResponseProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
@@ -12,6 +12,10 @@ export class TeamUserRoleDto {
   @Expose()
   name: string;
 
+  @ApiResponseProperty({ enum: RoleType })
+  @Expose()
+  type: RoleType;
+
   @ApiResponseProperty({ type: RolePolicyDto })
   @Expose()
   policy: RolePolicyDto;
@@ -20,9 +24,10 @@ export class TeamUserRoleDto {
     if (role) {
       this.id = role.id;
       this.name = role.name;
+      this.type = role.type;
 
-      if (role.rolePolicy) {
-        this.policy = new RolePolicyDto(role.rolePolicy);
+      if (role.policy) {
+        this.policy = new RolePolicyDto(role.policy);
       }
     }
   }

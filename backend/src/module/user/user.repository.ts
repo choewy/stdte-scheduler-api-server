@@ -1,7 +1,7 @@
-import { User } from '@/core/typeorm/entities';
+import { RoleType, User, UserStatus } from '@/core/typeorm/entities';
 import { BaseRepository } from '@/core/typeorm/repositories';
 import { Injectable } from '@nestjs/common';
-import { FindOptionsWhere, In } from 'typeorm';
+import { FindOptionsWhere, In, Not } from 'typeorm';
 
 @Injectable()
 export class UserRepository extends BaseRepository {
@@ -9,7 +9,7 @@ export class UserRepository extends BaseRepository {
     return includeMaster
       ? await this.methods.user.findMany()
       : await this.methods.user.findMany({
-          roles: { rolePolicy: { master: false } },
+          roles: { type: Not(RoleType.Master) },
         });
   }
 
@@ -22,7 +22,7 @@ export class UserRepository extends BaseRepository {
       : await this.methods.user.findOne({
           id,
           email,
-          roles: { rolePolicy: { master: false } },
+          roles: { type: Not(RoleType.Master) },
         });
   }
 
@@ -33,7 +33,7 @@ export class UserRepository extends BaseRepository {
   ): Promise<void> {
     user.roles = roleIds
       ? await this.methods.role.findMany({ id: In(roleIds) })
-      : await this.methods.role.findMany({ rolePolicy: { default: true } });
+      : await this.methods.role.findMany({ type: RoleType.Default });
 
     user.teams = teamIds
       ? await this.methods.team.findMany({ id: In(teamIds) })
@@ -41,7 +41,7 @@ export class UserRepository extends BaseRepository {
 
     await this.targets.user.save(
       Object.assign<Partial<User>, Partial<User>>(user, {
-        status: true,
+        status: UserStatus.Wait,
         disabledAt: null,
       }),
     );

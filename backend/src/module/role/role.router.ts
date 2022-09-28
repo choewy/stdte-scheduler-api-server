@@ -24,7 +24,10 @@ export class RoleRouter {
   };
 
   private static readonly CommonGuards = () => {
-    return applyDecorators(SwaggerAuthGuard(), SwaggerRoleGuard('admin'));
+    return applyDecorators(
+      SwaggerAuthGuard(),
+      SwaggerRoleGuard('Master', 'Admin'),
+    );
   };
 
   public static GetRoles: SwaggerRouterFunction = (options) => {

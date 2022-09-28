@@ -6,7 +6,6 @@ export interface ServerEnv {
   limit: string;
   tempDir: string;
   referer: string;
-  timezone: string;
 }
 
 export interface CorsEnv {
@@ -58,7 +57,6 @@ export interface ServerConfig {
   limit: string;
   tempDir: string;
   referer: string;
-  timezone: string;
 }
 
 export type CorsConfig = CorsOptions;

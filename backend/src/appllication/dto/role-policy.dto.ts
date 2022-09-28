@@ -1,35 +1,34 @@
-import { RolePolicy, RolePolicyInterface } from '@/core/typeorm/entities';
+import {
+  PolicyStatus,
+  RolePolicy,
+  RolePolicyInterface,
+} from '@/core/typeorm/entities';
 import { ApiResponseProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
 export class RolePolicyDto implements RolePolicyInterface {
-  @ApiResponseProperty()
+  @ApiResponseProperty({ type: 'string' })
   @Expose()
-  default: boolean;
+  read: PolicyStatus;
 
-  @ApiResponseProperty()
+  @ApiResponseProperty({ type: 'string' })
   @Expose()
-  master: boolean;
+  write: PolicyStatus;
 
-  @ApiResponseProperty()
+  @ApiResponseProperty({ type: 'string' })
   @Expose()
-  admin: boolean;
+  update: PolicyStatus;
 
-  @ApiResponseProperty()
+  @ApiResponseProperty({ type: 'string' })
   @Expose()
-  manager: boolean;
-
-  @ApiResponseProperty()
-  @Expose()
-  member: boolean;
+  delete: PolicyStatus;
 
   constructor(rolePolicy?: RolePolicy) {
     if (rolePolicy) {
-      this.default = rolePolicy.default;
-      this.master = rolePolicy.master;
-      this.admin = rolePolicy.admin;
-      this.manager = rolePolicy.manager;
-      this.member = rolePolicy.member;
+      this.read = rolePolicy.read;
+      this.write = rolePolicy.write;
+      this.update = rolePolicy.update;
+      this.delete = rolePolicy.delete;
     }
   }
 }

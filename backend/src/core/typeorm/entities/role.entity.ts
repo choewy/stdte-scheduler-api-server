@@ -10,13 +10,24 @@ import { User } from './user.entity';
 import { RolePolicy } from './role-policy.entity';
 import { DateTimeEntity } from './datetime.entity';
 
+export enum RoleType {
+  Master = 'master',
+  Admin = 'admin',
+  Manager = 'manager',
+  Member = 'member',
+  Viewer = 'viewer',
+  Default = 'default',
+}
+
+export type RoleTypeKey = keyof typeof RoleType;
+
 class Relation extends DateTimeEntity {
   @ManyToMany(() => User, (e) => e.roles)
   users: User[];
 
   @OneToOne(() => RolePolicy, (e) => e.role, { cascade: true })
   @JoinColumn({ name: 'policy' })
-  rolePolicy: RolePolicy;
+  policy: RolePolicy;
 }
 
 @Entity('role')
@@ -26,6 +37,13 @@ export class Role extends Relation {
 
   @Column()
   name: string;
+
+  @Column({
+    type: 'enum',
+    enum: RoleType,
+    default: RoleType.Viewer,
+  })
+  type: RoleType;
 
   @Column({ default: true })
   editable: boolean;

@@ -10,14 +10,14 @@ export class IRoleRepository {
 
   async findOne(where: FindOptionsWhere<Role>): Promise<Role> {
     return await this.target.findOne({
-      relations: { rolePolicy: true },
+      relations: { policy: true },
       where,
     });
   }
 
   async findMany(where: FindOptionsWhere<Role>): Promise<Role[]> {
     return await this.target.find({
-      relations: { rolePolicy: true },
+      relations: { policy: true },
       where,
     });
   }

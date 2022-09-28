@@ -18,23 +18,21 @@ export class LoggerRepository {
     dto?: ExceptionDto,
     stack?: string,
   ): Promise<void> {
-    const params = Object.keys(request.params).length ? request.params : null;
-    const query = Object.keys(request.query).length ? request.query : null;
-    await this.target.insert(
-      Object.assign<Logs, Partial<Logs>>(new Logs(), {
-        type,
-        application: 'STDTE-TASK-SCHEDULER-API-SERVER',
-        httpStatus: dto.error,
-        httpStatusCode: dto.status,
-        httpMethod: request.method,
-        httpPath: request.path,
-        httpParams: params,
-        httpQuery: query,
-        httpClientIp: request.ip,
-        context: request['context'] || 'Application',
-        errorData: dto.data,
-        errorStack: stack || '',
-      }),
-    );
+    const log = new Logs();
+
+    log.application = 'TASK-SCHEDULER-API-SERVER';
+    log.type = type;
+    log.httpStatus = dto.error || '';
+    log.httpStatusCode = dto.status || 0;
+    log.httpMethod = request.method || '';
+    log.httpPath = request.path || '';
+    log.httpParams = Object.keys(request.params).length ? request.params : null;
+    log.httpQuery = Object.keys(request.query).length ? request.query : null;
+    log.httpClientIp = request.ip || '';
+    log.context = request['context'] || 'Application';
+    log.errorData = dto.data || null;
+    log.errorStack = stack || '';
+
+    await this.target.insert(log);
   }
 }

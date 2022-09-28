@@ -1,6 +1,6 @@
 import { RolePolicyDto } from '@/appllication/dto/role-policy.dto';
 import { DateTimetoformat } from '@/appllication/transformer';
-import { Role, User } from '@/core/typeorm/entities';
+import { Role, RoleType, User } from '@/core/typeorm/entities';
 import { ApiResponseProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { DateTime } from 'luxon';
@@ -14,6 +14,10 @@ export class RoleRowDto {
   @ApiResponseProperty()
   @Expose()
   name: string;
+
+  @ApiResponseProperty({ enum: RoleType })
+  @Expose()
+  type: RoleType;
 
   @ApiResponseProperty({ type: RolePolicyDto })
   @Expose()
@@ -37,11 +41,12 @@ export class RoleRowDto {
     if (role) {
       this.id = role.id;
       this.name = role.name;
+      this.type = role.type;
       this.createdAt = role.createdAt;
       this.updatedAt = role.updatedAt;
 
-      if (role.rolePolicy) {
-        this.policy = new RolePolicyDto(role.rolePolicy);
+      if (role.policy) {
+        this.policy = new RolePolicyDto(role.policy);
       }
 
       if (users) {

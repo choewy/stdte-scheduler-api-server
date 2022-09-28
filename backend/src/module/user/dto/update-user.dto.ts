@@ -1,6 +1,7 @@
 import { HashPassword } from '@/appllication/transformer';
+import { UserStatus } from '@/core/typeorm/entities';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsBoolean, IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsOptional, IsString } from 'class-validator';
 
 export class UpdateUserDto {
   @ApiPropertyOptional()
@@ -19,8 +20,8 @@ export class UpdateUserDto {
   @IsEmail()
   email: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ enum: UserStatus })
   @IsOptional()
-  @IsBoolean()
-  status: boolean;
+  @IsEnum(UserStatus)
+  status: UserStatus;
 }

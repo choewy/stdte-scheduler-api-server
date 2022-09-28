@@ -1,6 +1,5 @@
-import { localDateTime } from '@/core/datetime';
 import { DateTime } from 'luxon';
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { CreateDateTimeColumn } from '../columns';
 
 export type LogType = 'success' | 'warning' | 'error';
@@ -48,9 +47,4 @@ export class Logs {
 
   @CreateDateTimeColumn()
   createdAt: DateTime;
-
-  @BeforeInsert()
-  protected beforeInsert() {
-    this.createdAt = localDateTime();
-  }
 }

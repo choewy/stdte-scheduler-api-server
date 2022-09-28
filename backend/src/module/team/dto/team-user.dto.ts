@@ -1,4 +1,4 @@
-import { User } from '@/core/typeorm/entities';
+import { User, UserStatus } from '@/core/typeorm/entities';
 import { ApiResponseProperty } from '@nestjs/swagger';
 import { DateTimetoformat } from '@/appllication/transformer';
 import { TeamUserRoleDto } from './team-user-role.dto';
@@ -22,9 +22,9 @@ export class TeamUserDto {
   @Expose()
   nickname: string;
 
-  @ApiResponseProperty()
+  @ApiResponseProperty({ enum: UserStatus })
   @Expose()
-  status: boolean;
+  status: UserStatus;
 
   @ApiResponseProperty({ type: 'string' })
   @DateTimetoformat()

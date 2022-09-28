@@ -1,5 +1,5 @@
 import { localDateTime } from '@/core/datetime';
-import { User } from '@/core/typeorm/entities';
+import { RoleType, User, UserStatus } from '@/core/typeorm/entities';
 import { BaseRepository } from '@/core/typeorm/repositories';
 import { Injectable } from '@nestjs/common';
 import { FindOptionsWhere } from 'typeorm';
@@ -12,7 +12,7 @@ export class AuthRepository extends BaseRepository {
 
   async createOne(user: Partial<User>): Promise<User> {
     const roles = await this.methods.role.findMany({
-      rolePolicy: { default: true },
+      type: RoleType.Default,
     });
 
     const teams = await this.methods.team.findMany({
@@ -21,7 +21,7 @@ export class AuthRepository extends BaseRepository {
 
     return await this.targets.user.save(
       Object.assign<Partial<User>, Partial<User>>(user, {
-        status: false,
+        status: UserStatus.Wait,
         disabledAt: localDateTime(),
         roles,
         teams,

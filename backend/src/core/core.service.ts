@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { CoreRepository } from './core.repository';
 import { JwtAuthService } from './jwt-auth';
-import { User } from './typeorm/entities';
+import {
+  PolicyStatus,
+  Role,
+  RolePolicy,
+  RoleType,
+  User,
+} from './typeorm/entities';
 
 @Injectable()
 export class CoreService {
@@ -12,11 +18,11 @@ export class CoreService {
 
   get globalToken(): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      const user = await this.repository.findUser({
-        roles: { rolePolicy: { master: true } },
-      });
+      const user = await this.repository.findUser(RoleType.Master);
 
-      if (!user) reject();
+      if (!user) {
+        return reject('Master User Not Found');
+      }
 
       const token = this.jwtAuthService.sign('access', {
         id: user.id,
@@ -27,34 +33,54 @@ export class CoreService {
   }
 
   async initRole(): Promise<void> {
-    const roles = [
+    const rows: Array<{ role: Partial<Role>; policy: Partial<RolePolicy> }> = [
       {
-        name: '마스터',
-        editable: false,
-        visible: false,
+        role: {
+          name: '마스터',
+          type: RoleType.Master,
+          visible: false,
+          editable: false,
+        },
         policy: {
-          master: true,
+          read: PolicyStatus.All,
+          write: PolicyStatus.All,
+          update: PolicyStatus.All,
+          delete: PolicyStatus.All,
         },
       },
       {
-        name: '역할없음',
-        editable: false,
+        role: {
+          name: '관리자',
+          type: RoleType.Admin,
+          visible: true,
+          editable: false,
+        },
         policy: {
-          default: true,
+          read: PolicyStatus.System,
+          write: PolicyStatus.System,
+          update: PolicyStatus.System,
+          delete: PolicyStatus.System,
         },
       },
       {
-        name: '관리자',
-        editable: false,
+        role: {
+          name: '역할없음',
+          type: RoleType.Default,
+          visible: true,
+          editable: false,
+        },
         policy: {
-          admin: true,
+          read: PolicyStatus.None,
+          write: PolicyStatus.None,
+          update: PolicyStatus.None,
+          delete: PolicyStatus.None,
         },
       },
     ];
 
-    for (const role of roles) {
-      const { policy, ...data } = role;
-      await this.repository.createRole(data, policy);
+    for (const row of rows) {
+      const { role, policy } = row;
+      await this.repository.createRole(role, policy);
     }
   }
 
@@ -73,19 +99,10 @@ export class CoreService {
   }
 
   async initMaster(data: Partial<User>): Promise<void> {
-    return await this.repository.createUser(data, {
-      master: true,
-      admin: true,
-      manager: true,
-      member: true,
-    });
+    return await this.repository.createUser(data, RoleType.Master);
   }
 
   async initAdmin(data: Partial<User>): Promise<void> {
-    return await this.repository.createUser(data, {
-      admin: true,
-      manager: true,
-      member: true,
-    });
+    return await this.repository.createUser(data, RoleType.Admin);
   }
 }
