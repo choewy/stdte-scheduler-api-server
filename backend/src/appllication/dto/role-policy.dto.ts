@@ -1,5 +1,5 @@
 import {
-  PolicyStatus,
+  PolicyRange,
   RolePolicy,
   RolePolicyInterface,
 } from '@/core/typeorm/entities';
@@ -9,19 +9,19 @@ import { Expose } from 'class-transformer';
 export class RolePolicyDto implements RolePolicyInterface {
   @ApiResponseProperty({ type: 'string' })
   @Expose()
-  read: PolicyStatus;
+  read: PolicyRange;
 
   @ApiResponseProperty({ type: 'string' })
   @Expose()
-  write: PolicyStatus;
+  write: PolicyRange;
 
   @ApiResponseProperty({ type: 'string' })
   @Expose()
-  update: PolicyStatus;
+  update: PolicyRange;
 
   @ApiResponseProperty({ type: 'string' })
   @Expose()
-  delete: PolicyStatus;
+  delete: PolicyRange;
 
   constructor(rolePolicy?: RolePolicy) {
     if (rolePolicy) {
