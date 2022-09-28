@@ -6,9 +6,9 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { DateTimeEntity } from './datetime.entity';
-import { TaskSetting } from './task-setting.entity';
-import { Team } from './team.entity';
+import { DateTimeEntity } from '../datetime.entity';
+import { TaskSetting } from '../task-setting/task-setting.entity';
+import { Team } from '../team/team.entity';
 
 class Relation extends DateTimeEntity {
   @OneToOne(() => TaskSetting, (e) => e.task)

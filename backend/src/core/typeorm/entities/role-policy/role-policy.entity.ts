@@ -1,7 +1,7 @@
 import { Column, Entity, OneToOne, PrimaryColumn } from 'typeorm';
-import { Role } from './role.entity';
+import { Role } from '../role/role.entity';
 
-export enum PolicyStatus {
+export enum PolicyRange {
   All = 'all',
   System = 'system',
   Team = 'team',
@@ -10,10 +10,10 @@ export enum PolicyStatus {
 }
 
 export interface RolePolicyInterface {
-  read: PolicyStatus;
-  write: PolicyStatus;
-  delete: PolicyStatus;
-  update: PolicyStatus;
+  read: PolicyRange;
+  write: PolicyRange;
+  delete: PolicyRange;
+  update: PolicyRange;
 }
 
 class Relation {
@@ -28,29 +28,29 @@ export class RolePolicy extends Relation implements RolePolicyInterface {
 
   @Column({
     type: 'enum',
-    enum: PolicyStatus,
-    default: PolicyStatus.Team,
+    enum: PolicyRange,
+    default: PolicyRange.Team,
   })
-  read: PolicyStatus;
+  read: PolicyRange;
 
   @Column({
     type: 'enum',
-    enum: PolicyStatus,
-    default: PolicyStatus.Only,
+    enum: PolicyRange,
+    default: PolicyRange.Only,
   })
-  write: PolicyStatus;
+  write: PolicyRange;
 
   @Column({
     type: 'enum',
-    enum: PolicyStatus,
-    default: PolicyStatus.Only,
+    enum: PolicyRange,
+    default: PolicyRange.Only,
   })
-  update: PolicyStatus;
+  update: PolicyRange;
 
   @Column({
     type: 'enum',
-    enum: PolicyStatus,
-    default: PolicyStatus.None,
+    enum: PolicyRange,
+    default: PolicyRange.None,
   })
-  delete: PolicyStatus;
+  delete: PolicyRange;
 }

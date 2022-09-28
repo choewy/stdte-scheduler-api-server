@@ -1,5 +1,5 @@
 import { Column, Entity, OneToOne, PrimaryColumn } from 'typeorm';
-import { Task } from './task.entity';
+import { Task } from '../task/task.entity';
 
 class Relation {
   @OneToOne(() => Task, (e) => e.taskSetting)

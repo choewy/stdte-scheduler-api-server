@@ -8,10 +8,10 @@ import {
   PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { DateTimeColumn } from '../columns';
-import { DateTimeEntity } from './datetime.entity';
-import { Role } from './role.entity';
-import { Team } from './team.entity';
+import { DateTimeColumn } from '../../columns';
+import { DateTimeEntity } from '../datetime.entity';
+import { Role } from '../role/role.entity';
+import { Team } from '../team/team.entity';
 
 export enum UserStatus {
   Wait = 'wait',

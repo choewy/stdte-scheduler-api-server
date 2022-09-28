@@ -6,9 +6,9 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from './user.entity';
-import { RolePolicy } from './role-policy.entity';
-import { DateTimeEntity } from './datetime.entity';
+import { RolePolicy } from '../role-policy/role-policy.entity';
+import { DateTimeEntity } from '../datetime.entity';
+import { User } from '../user';
 
 export enum RoleType {
   Master = 'master',

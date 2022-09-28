@@ -5,9 +5,9 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { DateTimeEntity } from './datetime.entity';
-import { Task } from './task.entity';
-import { User } from './user.entity';
+import { DateTimeEntity } from '../datetime.entity';
+import { Task } from '../task/task.entity';
+import { User } from '../user';
 
 class Relation extends DateTimeEntity {
   @ManyToMany(() => User, (e) => e.teams)
