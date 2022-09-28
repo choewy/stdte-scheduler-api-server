@@ -1,13 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { hashPassword } from './bcrypt';
+import { roleDataRows, teamDataRows } from './core.init-data';
 import { CoreRepository } from './core.repository';
 import { JwtAuthService } from './jwt-auth';
-import {
-  PolicyStatus,
-  Role,
-  RolePolicy,
-  RoleType,
-  User,
-} from './typeorm/entities';
+import { RolePolicy, RoleType, User, UserStatus } from './typeorm/entities';
 
 @Injectable()
 export class CoreService {
@@ -18,91 +14,86 @@ export class CoreService {
 
   get globalToken(): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      const user = await this.repository.findUser(RoleType.Master);
+      const type = RoleType.Master;
+      const user = await this.repository.findUser(type);
 
       if (!user) {
         return reject('Master User Not Found');
       }
 
-      const token = this.jwtAuthService.sign('access', {
-        id: user.id,
-      });
+      const payload = { id: user.id };
+      const token = this.jwtAuthService.sign('access', payload);
 
       resolve(token);
     });
   }
 
   async initRole(): Promise<void> {
-    const rows: Array<{ role: Partial<Role>; policy: Partial<RolePolicy> }> = [
-      {
-        role: {
-          name: '마스터',
-          type: RoleType.Master,
-          visible: false,
-          editable: false,
-        },
-        policy: {
-          read: PolicyStatus.All,
-          write: PolicyStatus.All,
-          update: PolicyStatus.All,
-          delete: PolicyStatus.All,
-        },
-      },
-      {
-        role: {
-          name: '관리자',
-          type: RoleType.Admin,
-          visible: true,
-          editable: false,
-        },
-        policy: {
-          read: PolicyStatus.System,
-          write: PolicyStatus.System,
-          update: PolicyStatus.System,
-          delete: PolicyStatus.System,
-        },
-      },
-      {
-        role: {
-          name: '역할없음',
-          type: RoleType.Default,
-          visible: true,
-          editable: false,
-        },
-        policy: {
-          read: PolicyStatus.None,
-          write: PolicyStatus.None,
-          update: PolicyStatus.None,
-          delete: PolicyStatus.None,
-        },
-      },
-    ];
+    for (const row of roleDataRows) {
+      const { range, data } = row;
+      const { type } = data;
 
-    for (const row of rows) {
-      const { role, policy } = row;
-      await this.repository.createRole(role, policy);
+      let role = await this.repository.findRole(type);
+
+      if (!role) {
+        this.repository.transaction(async () => {
+          role = await this.repository.saveRole(data);
+
+          role.policy = new RolePolicy();
+          role.policy.roleId = role.id;
+          role.policy.read = range;
+          role.policy.write = range;
+          role.policy.update = range;
+          role.policy.delete = range;
+
+          await this.repository.saveRole(role);
+        });
+      }
     }
   }
 
   async initTeam(): Promise<void> {
-    const teams = [
-      {
-        name: '소속없음',
-        default: true,
-        editable: false,
-      },
-    ];
+    for (const row of teamDataRows) {
+      const isDefault = row.default;
+      const team = await this.repository.findTeam(isDefault);
 
-    for (const team of teams) {
-      await this.repository.createTeam(team);
+      if (!team) {
+        await this.repository.saveTeam(row);
+      }
     }
   }
 
   async initMaster(data: Partial<User>): Promise<void> {
-    return await this.repository.createUser(data, RoleType.Master);
+    const type = RoleType.Master;
+    const user = await this.repository.findUser(type);
+
+    if (!user) {
+      const role = await this.repository.findRole(type);
+      const user = new User();
+      user.username = data.username;
+      user.nickname = data.nickname;
+      user.password = hashPassword(data.password);
+      user.email = data.email;
+      user.status = UserStatus.Enable;
+      user.roles = [role];
+      await this.repository.saveUser(user);
+    }
   }
 
   async initAdmin(data: Partial<User>): Promise<void> {
-    return await this.repository.createUser(data, RoleType.Admin);
+    const type = RoleType.Admin;
+    const user = await this.repository.findUser(type);
+
+    if (!user) {
+      const role = await this.repository.findRole(type);
+      const user = new User();
+      user.username = data.username;
+      user.nickname = data.nickname;
+      user.password = hashPassword(data.password);
+      user.email = data.email;
+      user.status = UserStatus.Enable;
+      user.roles = [role];
+      await this.repository.saveUser(user);
+    }
   }
 }

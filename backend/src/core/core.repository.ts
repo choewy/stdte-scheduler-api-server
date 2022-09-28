@@ -1,79 +1,46 @@
 import { Injectable } from '@nestjs/common';
-import { FindOptionsWhere } from 'typeorm';
 import {
-  Role,
-  RolePolicy,
+  IRepositoryManager,
   RoleType,
+  Role,
   Team,
   User,
-  UserStatus,
 } from './typeorm/entities';
-import { BaseRepository } from './typeorm/repositories/base.repository';
 
 @Injectable()
-export class CoreRepository extends BaseRepository {
-  async findRole(where: FindOptionsWhere<Role>): Promise<Role> {
-    return await this.methods.role.findOne(where);
-  }
-
+export class CoreRepository extends IRepositoryManager {
   async findUser(type: RoleType): Promise<User> {
-    return await this.targets.user
-      .createQueryBuilder('user')
+    return await this.user.queryBuilder
       .select()
-      .innerJoinAndSelect('user.roles', 'roles', 'roles.type = :type', { type })
+      .innerJoinAndSelect('user.roles', 'roles')
+      .where('roles.type = :type', { type })
       .getOne();
   }
 
-  async createRole(
-    data: Partial<Role>,
-    policy: Partial<RolePolicy>,
-  ): Promise<void> {
-    return await this.transaction(async () => {
-      let role = await this.targets.role
-        .createQueryBuilder('role')
-        .select()
-        .innerJoinAndSelect('role.policy', 'policy')
-        .where('role.type = :type', { type: data.type })
-        .getOne();
-
-      if (!role) {
-        role = await this.targets.role.save(data);
-        role.policy = new RolePolicy();
-        role.policy.roleId = role.id;
-        role.policy.read = policy.read;
-        role.policy.write = policy.write;
-        role.policy.update = policy.update;
-        role.policy.delete = policy.delete;
-        await this.targets.role.save(role);
-      }
-    });
+  async findRole(type: RoleType): Promise<Role> {
+    return await this.role.queryBuilder
+      .select()
+      .leftJoinAndSelect('role.policy', 'policy')
+      .where('role.type = :type', { type })
+      .getOne();
   }
 
-  async createTeam(data: Partial<Team>): Promise<void> {
-    return await this.transaction(async () => {
-      const team = await this.methods.team.findOne({ default: true });
-
-      if (!team) {
-        await this.targets.team.save(data);
-      }
-    });
+  async findTeam(isDefault: boolean): Promise<Team> {
+    return await this.team.queryBuilder
+      .select()
+      .where('team.default = :isDefault', { isDefault })
+      .getOne();
   }
 
-  async createUser(data: Partial<User>, type: RoleType): Promise<void> {
-    return await this.transaction(async () => {
-      const user = await this.methods.user.findOne({
-        roles: { type },
-      });
+  async saveRole(role: Role | Partial<Role>): Promise<Role> {
+    return await this.role.repository.save(role);
+  }
 
-      if (!user) {
-        const role = await this.methods.role.findOne({ type });
-        await this.targets.user.save(
-          Object.assign(data, {
-            status: UserStatus.Enable,
-            roles: [role],
-          }),
-        );
-      }
-    });
+  async saveTeam(team: Team | Partial<Team>): Promise<Team> {
+    return await this.team.repository.save(team);
+  }
+
+  async saveUser(user: User | Partial<User>): Promise<User> {
+    return await this.user.repository.save(user);
   }
 }
