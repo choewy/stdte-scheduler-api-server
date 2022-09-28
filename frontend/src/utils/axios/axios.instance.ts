@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { API_CONFIG } from '@/configs';
 import {
   requestInterceptorCallback,
@@ -7,18 +7,22 @@ import {
   responseInterceptorError,
 } from './axios.interceptor';
 
-export const axiosInstance = axios.create({
-  baseURL: API_CONFIG.baseURL,
-  headers: API_CONFIG.headers,
-  withCredentials: API_CONFIG.credentials,
-});
+export const axiosInstance = (config: AxiosRequestConfig) => {
+  const instance = axios.create({
+    baseURL: API_CONFIG.baseURL,
+    headers: API_CONFIG.headers,
+    withCredentials: API_CONFIG.credentials,
+  });
 
-axiosInstance.interceptors.request.use(
-  requestInterceptorCallback,
-  requestInterceptorError,
-);
+  instance.interceptors.request.use(
+    requestInterceptorCallback,
+    requestInterceptorError,
+  );
 
-axiosInstance.interceptors.response.use(
-  responseInterceptorCallback,
-  responseInterceptorError,
-);
+  instance.interceptors.response.use(
+    responseInterceptorCallback,
+    responseInterceptorError,
+  );
+
+  return instance(config);
+};

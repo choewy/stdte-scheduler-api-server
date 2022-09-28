@@ -6,16 +6,16 @@ import { authenticateState } from './authenticate.state';
 
 export const useAuthenticateGuard = () => {
   const navigate = useNavigate();
-  const { pathname } = useLocation();
-  const { user } = useRecoilValue(authenticateState);
+  const location = useLocation();
+  const state = useRecoilValue(authenticateState);
 
   useEffect(() => {
-    if (user.status === false) {
+    if (state.status === false) {
       navigate(ROUTER.block, { replace: true });
     }
 
-    if (user.status === true) {
-      switch (pathname) {
+    if (state.status === true) {
+      switch (location.pathname) {
         case ROUTER.signin:
         case ROUTER.signup:
         case ROUTER.block:
@@ -24,5 +24,5 @@ export const useAuthenticateGuard = () => {
       }
     }
     return () => {};
-  }, [pathname]);
+  }, [state, location]);
 };

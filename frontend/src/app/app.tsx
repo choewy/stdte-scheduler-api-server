@@ -9,7 +9,7 @@ import {
   SignOutPage,
 } from '@/pages';
 import { Authenticate } from '@/app/authenticate';
-import { BackNavigator, GlobalNavigator } from '@/components';
+import { BackNavigator, GlobalNavigator, RouteComponent } from '@/components';
 
 export const App: FC = () => {
   return (
@@ -17,12 +17,26 @@ export const App: FC = () => {
       <Authenticate />
       <GlobalNavigator />
       <Routes>
-        <Route path={ROUTER.home} element={<HomePage />} />
-        <Route path={ROUTER.block} element={<BlockPage />} />
-        <Route path={ROUTER.signin} element={<SignInPage />} />
-        <Route path={ROUTER.signup} element={<SignUpPage />} />
-        <Route path={ROUTER.signup} element={<SignUpPage />} />
-        <Route path={ROUTER.signout} element={<SignOutPage />} />
+        <Route
+          path={ROUTER.home}
+          element={<RouteComponent Component={HomePage} />}
+        />
+        <Route
+          path={ROUTER.block}
+          element={<RouteComponent Component={BlockPage} block={true} />}
+        />
+        <Route
+          path={ROUTER.signin}
+          element={<RouteComponent Component={SignInPage} login={false} />}
+        />
+        <Route
+          path={ROUTER.signup}
+          element={<RouteComponent Component={SignUpPage} login={false} />}
+        />
+        <Route
+          path={ROUTER.signout}
+          element={<RouteComponent Component={SignOutPage} login={true} />}
+        />
         <Route path="*" element={<BackNavigator />} />
       </Routes>
     </Fragment>

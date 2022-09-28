@@ -1,8 +1,7 @@
 import { FC, FormEvent, useCallback } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { AxiosError } from 'axios';
 import { errorState } from '@/components';
-import { apiState } from '@/utils/apis';
 import { SignUpState, signUpState } from './signup.state';
 import {
   CustomForm,
@@ -12,12 +11,12 @@ import {
 import { saveTokens } from '@/utils/cookie';
 import { ROUTER } from '@/configs';
 import { useNavigate } from 'react-router-dom';
+import { authApi } from '@/utils/apis';
 
 export const SignUpPage: FC = () => {
   const navigate = useNavigate();
   const setError = useSetRecoilState(errorState);
 
-  const { authApi } = useRecoilValue(apiState);
   const [state, setState] = useRecoilState(signUpState);
 
   const onChange = useInputChangeEvent(setState);

@@ -1,1 +1,2 @@
-export * from './auth.api';
+export * from './interfaces';
+export * as authApi from './auth.api';

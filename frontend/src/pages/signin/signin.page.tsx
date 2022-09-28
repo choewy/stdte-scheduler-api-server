@@ -1,19 +1,17 @@
 import { AxiosError } from 'axios';
 import { FC, FormEvent, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { CustomForm, CustomInput, useInputChangeEvent } from '@/components';
 import { SignInState, signInState } from './signin.state';
 import { errorState } from '@/components';
-import { apiState } from '@/utils/apis';
 import { saveTokens } from '@/utils/cookie';
 import { ROUTER } from '@/configs';
+import { authApi } from '@/utils/apis';
 
 export const SignInPage: FC = () => {
   const navigate = useNavigate();
   const setError = useSetRecoilState(errorState);
-
-  const { authApi } = useRecoilValue(apiState);
   const [state, setState] = useRecoilState(signInState);
 
   const onChange = useInputChangeEvent(setState);

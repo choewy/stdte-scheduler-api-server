@@ -1,28 +1,29 @@
 import { ROUTER } from '@/configs';
-import { apiState } from '@/utils/apis';
+import { authApi } from '@/utils/apis';
 import { useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useSetRecoilState, useRecoilValue } from 'recoil';
-import { authenticateState, AuthenticateUserState } from './authenticate.state';
+import { useLocation } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+import { AuthenticateState, authenticateState } from './authenticate.state';
 
 export const useAuthenticateWatch = () => {
-  const navigate = useNavigate();
-  const { authApi } = useRecoilValue(apiState);
+  const location = useLocation();
   const setState = useSetRecoilState(authenticateState);
-
   const checkAuth = useCallback(async () => {
     try {
       const data = await authApi.auth();
-      setState((prev) => ({
-        ...prev,
-        user: Object.assign(new AuthenticateUserState(), data),
-      }));
-      navigate(ROUTER.home, { replace: true });
-    } catch (e) {}
-  }, [authApi]);
+      setState(new AuthenticateState(data));
+    } catch (e) {
+      setState(new AuthenticateState());
+    }
+  }, []);
 
   useEffect(() => {
+    if (location.pathname === ROUTER.home) {
+      return;
+    }
+
     checkAuth();
+
     return () => {};
-  }, [checkAuth]);
+  }, [checkAuth, location]);
 };
