@@ -2,7 +2,6 @@ import { INestApplication } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { json, urlencoded } from 'express';
-import { Settings as Luxon } from 'luxon';
 import { CoreService } from '@/core';
 import { SwaggerDocument } from '@/core/swagger';
 import { utilities, WinstonModule } from 'nest-winston';
@@ -107,7 +106,7 @@ export class Bootstrap {
   private async useSwagger(): Promise<void> {
     const coreService = this.app.get(CoreService);
     const swagger = new SwaggerDocument(this.app);
-    swagger.setup(await coreService.globalToken);
+    await swagger.setup(coreService.globalToken);
   }
 
   private async useGlobalPipe(): Promise<void> {
@@ -143,7 +142,6 @@ export class Bootstrap {
 
   async listen(): Promise<void> {
     const { server } = this.configs;
-    Luxon.defaultZone = server.timezone;
     this.app.listen(server.port, server.host);
   }
 }
