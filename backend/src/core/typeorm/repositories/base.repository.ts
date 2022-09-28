@@ -6,6 +6,7 @@ import { ITeamRepository } from './i-team.repository';
 import { IUserRepository } from './i-user.repository';
 
 @Injectable()
+/** @todo = delete */
 export class BaseRepository {
   constructor(protected dataSource: DataSource) {}
 

@@ -1,6 +1,7 @@
 import { DataSource, FindOptionsWhere, Repository } from 'typeorm';
 import { Role } from '../entities';
 
+/** @todo = delete */
 export class IRoleRepository {
   private target: Repository<Role>;
 

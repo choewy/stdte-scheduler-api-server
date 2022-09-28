@@ -1,6 +1,7 @@
 import { DataSource, FindOptionsWhere, Repository } from 'typeorm';
 import { Team } from '../entities';
 
+/** @todo = delete */
 export class ITeamRepository {
   private target: Repository<Team>;
 

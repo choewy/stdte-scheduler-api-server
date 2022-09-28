@@ -1,6 +1,7 @@
 import { DataSource, FindOptionsWhere, Repository } from 'typeorm';
 import { User } from '../entities';
 
+/** @todo = delete */
 export class IUserRepository {
   private target: Repository<User>;
 
