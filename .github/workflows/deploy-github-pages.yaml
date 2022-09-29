@@ -1,0 +1,56 @@
+name: Deploy Frontend to Github Pages
+
+on:
+  push:
+    branches: ['master']
+    paths: [frontend/**]
+
+jobs:
+  deploy:
+    name: CD Pipeline
+    runs-on: ubuntu-20.04
+    env:
+      working-directory: './frontend'
+    strategy:
+      matrix:
+        node-version: ['16.x']
+    steps:
+      # Checkout
+      - uses: actions/checkout@v3
+
+      # Install Node.js
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      # Install Node.js dependencies
+      - name: Install dependencies
+        working-directory: ${{ env.working-directory }}
+        run: npm install
+
+      # Environment frontend/.env file
+      - name: Environment frontend/.env file
+        working-directory: ${{ env.working-directory }}
+        run: |
+          touch .env
+          echo TZ=Asia/Seoul >> .env
+          echo REACT_APP_API_BASE_URL=${{ secrets.REACT_APP_API_BASE_URL }} >> .env
+          echo REACT_APP_API_HEADERS=${{ secrets.REACT_APP_API_HEADERS }} >> .env
+          echo REACT_APP_API_CREDENTIALS=${{ secrets.REACT_APP_API_CREDENTIALS }} >> .env
+          echo REACT_APP_ACCESS_TOKEN_KEY=${{ secrets.REACT_APP_ACCESS_TOKEN_KEY }} >> .env
+          echo REACT_APP_REFRESH_TOKEN_KEY=${{ secrets.REACT_APP_REFRESH_TOKEN_KEY }} >> .env
+          cat .env
+
+      # Build React
+      - name: Build React
+        working-directory: ${{ env.working-directory }}
+        run: npm run build
+
+      # Deploy to Github Pages
+      - name: Deploy to Github Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: './frontend/build'
