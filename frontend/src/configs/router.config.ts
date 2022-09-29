@@ -1,9 +1,11 @@
 export const ROUTER = {
   home: '/',
+  wait: '/wait',
+  block: '/block',
   signin: '/signin',
   signup: '/signup',
   signout: '/signout',
-  block: '/block',
+  users: '/users',
 };
 
 export const PASS_ROUTERS = [
