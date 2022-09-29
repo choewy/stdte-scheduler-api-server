@@ -1,4 +1,5 @@
 import { authenticateState } from '@/app/authenticate';
+import { UserStatus } from '@/utils/apis';
 import { FC, Fragment } from 'react';
 import { useRecoilValue } from 'recoil';
 
@@ -6,21 +7,32 @@ interface Props {
   Component: FC;
   login?: boolean;
   block?: boolean;
+  wait?: boolean;
 }
 
-export const RouteComponent: FC<Props> = ({ Component, login, block }) => {
+export const RouteComponent: FC<Props> = ({
+  Component,
+  login,
+  block,
+  wait,
+}) => {
   const state = useRecoilValue(authenticateState);
 
-  if (block) {
-    return state.status === false ? <Component /> : <Fragment />;
+  if (block === true) {
+    return state.status === UserStatus.Disable ? <Component /> : <Fragment />;
   }
 
-  switch (login) {
-    case true:
-    case false:
-      return state.login === login ? <Component /> : <Fragment />;
-
-    default:
-      return <Component />;
+  if (wait === true) {
+    return state.status === UserStatus.Wait ? <Component /> : <Fragment />;
   }
+
+  if (login === false) {
+    return state.login === false ? <Component /> : <Fragment />;
+  }
+
+  if (login === true) {
+    return state.login === true ? <Component /> : <Fragment />;
+  }
+
+  return <Component />;
 };
