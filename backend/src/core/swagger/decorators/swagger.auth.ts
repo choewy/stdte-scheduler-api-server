@@ -9,7 +9,7 @@ import { Request } from 'express';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { SwaggerResponse } from './swagger.response';
 import { UserDto, ExceptionDto } from '@/appllication/dto';
-import { JwtAuthService } from '@/core/jwt-auth';
+import { JwtAuthService, JwtType } from '@/core/jwt-auth';
 import { DataSource } from 'typeorm';
 
 @Injectable()
@@ -31,7 +31,7 @@ class AuthGuard extends BaseRepository implements CanActivate {
   async validateRequest(request: Request): Promise<boolean> {
     const bearer = request.headers.authorization;
     const token = (bearer || 'Bearer ').replace('Bearer ', '');
-    const payload = this.jwtAuthService.verify('access', token);
+    const payload = this.jwtAuthService.verify(JwtType.AccesToken, token);
 
     const user = await this.targets.user
       .createQueryBuilder('user')

@@ -1,31 +1,28 @@
-import { localDateTime } from '@/core/datetime';
-import { RoleType, User, UserStatus } from '@/core/typeorm/entities';
-import { BaseRepository } from '@/core/typeorm/repositories';
+import {
+  IRepositoryManager,
+  Role,
+  RoleType,
+  Team,
+  TeamStatus,
+  User,
+} from '@/core/typeorm/entities';
 import { Injectable } from '@nestjs/common';
-import { FindOptionsWhere } from 'typeorm';
 
 @Injectable()
-export class AuthRepository extends BaseRepository {
-  async findUser({ username }: FindOptionsWhere<User>): Promise<User> {
-    return await this.methods.user.findOne({ username });
+export class AuthRepository extends IRepositoryManager {
+  async findUser(params: Partial<User>): Promise<User> {
+    return await this.user.selectAllRelationQuery(params).getOne();
   }
 
-  async createOne(user: Partial<User>): Promise<User> {
-    const roles = await this.methods.role.findMany({
-      type: RoleType.Default,
-    });
+  async findRoles(types: RoleType[]): Promise<Role[]> {
+    return await this.role.selectIncludeRoleTypeQuery(types).getMany();
+  }
 
-    const teams = await this.methods.team.findMany({
-      default: true,
-    });
+  async findTeams(status: TeamStatus[]): Promise<Team[]> {
+    return await this.team.selectIncludeStatusQuery(status).getMany();
+  }
 
-    return await this.targets.user.save(
-      Object.assign<Partial<User>, Partial<User>>(user, {
-        status: UserStatus.Wait,
-        disabledAt: localDateTime(),
-        roles,
-        teams,
-      }),
-    );
+  async saveUser(user: Partial<User>): Promise<User> {
+    return await this.user.repository.save(user);
   }
 }

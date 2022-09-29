@@ -30,3 +30,18 @@ export class AuthException {
     });
   }
 }
+
+export const IncorrectAccountOrPasswordException = new BadRequestException({
+  status: 400,
+  message: '아이디 또는 비밀번호를 다시 확인하세요.',
+});
+
+export const IncorrectConfirmPasswordException = new BadRequestException({
+  status: 400,
+  message: '비밀번호가 일치하지 않습니다.',
+});
+
+export const AlreadyUsedUsernameOrEmailException = new BadRequestException({
+  status: 400,
+  message: '아이디 또는 이메일이 이미 사용 중입니다.',
+});

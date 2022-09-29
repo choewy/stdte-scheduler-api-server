@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthConfig, ConfigToken } from '../config';
 import { sign, verify } from 'jsonwebtoken';
+import { JwtType } from './enums';
 
 @Injectable()
 export class JwtAuthService {
@@ -11,24 +12,47 @@ export class JwtAuthService {
     this.config = this.configService.get<AuthConfig>(ConfigToken.Auth);
   }
 
-  sign(type: keyof AuthConfig, payload: object): string {
-    const config = this.config[type];
-    return sign(payload, config.secret, {
-      audience: config.audience,
-      subject: config.subject,
-      issuer: config.issuer,
-      expiresIn: config.expiresIn,
-    });
+  sign(type: JwtType, payload: object): string {
+    switch (type) {
+      case JwtType.AccesToken:
+        const { access } = this.config;
+        return sign(payload, access.secret, {
+          audience: access.audience,
+          subject: access.subject,
+          issuer: access.issuer,
+          expiresIn: access.expiresIn,
+        });
+
+      case JwtType.RefreshToken:
+        const { refresh } = this.config;
+        return sign(payload, refresh.secret, {
+          audience: refresh.audience,
+          subject: refresh.subject,
+          issuer: refresh.issuer,
+          expiresIn: refresh.expiresIn,
+        });
+    }
   }
 
-  verify(type: keyof AuthConfig, token: string) {
+  verify(type: JwtType, token: string) {
     try {
-      const config = this.config[type];
-      return verify(token, config.secret, {
-        audience: config.audience,
-        subject: config.subject,
-        issuer: config.issuer,
-      });
+      switch (type) {
+        case JwtType.AccesToken:
+          const { access } = this.config;
+          return verify(token, access.secret, {
+            audience: access.audience,
+            subject: access.subject,
+            issuer: access.issuer,
+          });
+
+        case JwtType.RefreshToken:
+          const { refresh } = this.config;
+          return verify(token, refresh.secret, {
+            audience: refresh.audience,
+            subject: refresh.subject,
+            issuer: refresh.issuer,
+          });
+      }
     } catch (e) {
       throw new UnauthorizedException({
         status: 401,
