@@ -59,7 +59,6 @@ export class UserDto {
       this.status = user.status;
       this.createdAt = user.createdAt;
       this.updatedAt = user.updatedAt;
-      this.disabledAt = user.disabledAt;
 
       if (user.roles) {
         this.roles = user.roles.map((role) => new RoleDto(role));

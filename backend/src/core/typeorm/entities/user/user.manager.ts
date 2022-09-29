@@ -54,6 +54,8 @@ export class UserManager extends IManager<User> {
       .select()
       .innerJoinAndSelect('user.roles', 'role')
       .innerJoinAndSelect('role.policy', 'policy')
+      .leftJoinAndSelect('user.teams', 'team')
+      .leftJoinAndSelect('team.setting', 'setting')
       .where('role.type NOT IN (:types)', { types });
 
     return params ? this.whereQuery(query, params) : query;
@@ -74,7 +76,7 @@ export class UserManager extends IManager<User> {
       .innerJoinAndSelect('user.roles', 'role')
       .innerJoinAndSelect('role.policy', 'policy')
       .leftJoinAndSelect('user.teams', 'team')
-      .innerJoinAndSelect('team.setting', 'setting');
+      .leftJoinAndSelect('team.setting', 'setting');
 
     return params ? this.whereQuery(query, params, true) : query;
   }
@@ -85,7 +87,7 @@ export class UserManager extends IManager<User> {
       .innerJoinAndSelect('user.roles', 'role')
       .innerJoinAndSelect('role.policy', 'policy')
       .leftJoinAndSelect('user.teams', 'team')
-      .innerJoinAndSelect('team.setting', 'setting');
+      .leftJoinAndSelect('team.setting', 'setting');
 
     return ids.length ? query.where('user.id IN (:ids)', { ids }) : query;
   }
@@ -96,7 +98,7 @@ export class UserManager extends IManager<User> {
       .innerJoinAndSelect('user.roles', 'role')
       .innerJoinAndSelect('role.policy', 'policy')
       .leftJoinAndSelect('user.teams', 'team')
-      .innerJoinAndSelect('team.setting', 'setting');
+      .leftJoinAndSelect('team.setting', 'setting');
 
     return ids.length ? query.where('role.id IN (:ids)', { ids }) : query;
   }
@@ -107,7 +109,7 @@ export class UserManager extends IManager<User> {
       .innerJoinAndSelect('user.roles', 'role')
       .innerJoinAndSelect('role.policy', 'policy')
       .leftJoinAndSelect('user.teams', 'team')
-      .innerJoinAndSelect('team.setting', 'setting');
+      .leftJoinAndSelect('team.setting', 'setting');
 
     return ids.length ? query.where('team.id IN ( :ids )', { ids }) : query;
   }
