@@ -3,7 +3,6 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { BaseRepository } from '@/core/typeorm/repositories';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { ApiBearerAuth } from '@nestjs/swagger';
@@ -11,9 +10,10 @@ import { SwaggerResponse } from './swagger.response';
 import { UserDto, ExceptionDto } from '@/appllication/dto';
 import { JwtAuthService, JwtType } from '@/core/jwt-auth';
 import { DataSource } from 'typeorm';
+import { IRepositoryManager } from '@/core/typeorm/entities';
 
 @Injectable()
-class AuthGuard extends BaseRepository implements CanActivate {
+class AuthGuard extends IRepositoryManager implements CanActivate {
   constructor(
     dataSource: DataSource,
     private readonly jwtAuthService: JwtAuthService,
@@ -33,12 +33,8 @@ class AuthGuard extends BaseRepository implements CanActivate {
     const token = (bearer || 'Bearer ').replace('Bearer ', '');
     const payload = this.jwtAuthService.verify(JwtType.AccesToken, token);
 
-    const user = await this.targets.user
-      .createQueryBuilder('user')
-      .select()
-      .leftJoinAndSelect('user.roles', 'roles')
-      .innerJoinAndSelect('roles.policy', 'policy')
-      .where('user.id = :userId', { userId: payload['id'] })
+    const user = await this.user
+      .selectAllRelationQuery({ id: payload['id'] })
       .getOne();
 
     if (!user) {
@@ -48,7 +44,6 @@ class AuthGuard extends BaseRepository implements CanActivate {
       });
     }
 
-    delete user.password;
     request['user'] = new UserDto(user);
 
     return true;
