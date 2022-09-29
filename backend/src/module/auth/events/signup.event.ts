@@ -17,9 +17,9 @@ import { SignUpDto, JwtTokenDto } from '../dto';
 export const signUpEvent = async (
   repository: AuthRepository,
   jwtAuthService: JwtAuthService,
-  { password, confirmPassword, username, email }: SignUpDto,
+  { password, confirmPassword, username, nickname, email }: SignUpDto,
 ): Promise<JwtTokenDto> => {
-  const verify = verifyPassword(password, confirmPassword);
+  const verify = verifyPassword(confirmPassword, password);
 
   if (!verify) {
     throw IncorrectConfirmPasswordException;
@@ -42,6 +42,7 @@ export const signUpEvent = async (
 
   let user = new User();
   user.username = username;
+  user.nickname = nickname;
   user.password = password;
   user.email = email;
   user.roles = roles;
