@@ -1,5 +1,4 @@
 import { SwaggerController } from '@/core/swagger';
-import { RoleType } from '@/core/typeorm/entities';
 import { Body, Param } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto, UserParamDto, UserRowDto } from './dto';
 import { UserRepository } from './user.repository';
@@ -14,27 +13,21 @@ import {
 
 @SwaggerController({ path: 'users', tag: '사용자' })
 export class UserController {
-  private readonly EXCLUDE_ROLE_TYPES = [RoleType.Master, RoleType.Admin];
-
   constructor(private readonly repository: UserRepository) {}
 
   @UserRouter.GetUsers({ method: 'GET' })
   async getUsers(): Promise<UserRowDto[]> {
-    return await getUsersEvent(this.repository, this.EXCLUDE_ROLE_TYPES);
+    return await getUsersEvent(this.repository);
   }
 
   @UserRouter.GetUser({ method: 'GET', path: ':id' })
   async getUser(@Param() param: UserParamDto): Promise<UserRowDto> {
-    return await getUserEvent(this.repository, this.EXCLUDE_ROLE_TYPES, param);
+    return await getUserEvent(this.repository, param);
   }
 
   @UserRouter.CreateUser({ method: 'POST' })
   async createUser(@Body() body: CreateUserDto): Promise<void> {
-    return await createUserEvent(
-      this.repository,
-      this.EXCLUDE_ROLE_TYPES,
-      body,
-    );
+    return await createUserEvent(this.repository, body);
   }
 
   @UserRouter.UpdateUser({ method: 'PATCH', path: ':id' })
@@ -42,20 +35,11 @@ export class UserController {
     @Param() param: UserParamDto,
     @Body() body: UpdateUserDto,
   ): Promise<void> {
-    return await updateUserEvent(
-      this.repository,
-      this.EXCLUDE_ROLE_TYPES,
-      param,
-      body,
-    );
+    return await updateUserEvent(this.repository, param, body);
   }
 
   @UserRouter.DeleteUser({ method: 'DELETE', path: ':id' })
   async deleteUser(@Param() param: UserParamDto): Promise<void> {
-    return await deleteUserEvent(
-      this.repository,
-      this.EXCLUDE_ROLE_TYPES,
-      param,
-    );
+    return await deleteUserEvent(this.repository, param);
   }
 }

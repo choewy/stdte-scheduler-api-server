@@ -4,14 +4,15 @@ import { CreateUserDto } from '../dto';
 import { AlreadyUsedUsernameException } from '../user.exception';
 import { UserRepository } from '../user.repository';
 
+const EXCLUDE_ROLE_TYPES = [RoleType.Master, RoleType.Admin];
+
 export const createUserEvent = async (
   repository: UserRepository,
-  types: RoleType[],
   body: Partial<User> & CreateUserDto,
 ): Promise<void> => {
   const { roleIds, teamIds, ...data } = body;
   const param = { username: body.username };
-  const check = await repository.findUser(param, types);
+  const check = await repository.findUser(param, EXCLUDE_ROLE_TYPES);
 
   if (check) {
     throw AlreadyUsedUsernameException;

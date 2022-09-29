@@ -7,13 +7,14 @@ import {
   NotFoundUserException,
 } from '../user.exception';
 
+const EXCLUDE_ROLE_TYPES = [RoleType.Master, RoleType.Admin];
+
 export const updateUserEvent = async (
   repository: UserRepository,
-  types: RoleType[],
   param: UserParamDto,
   { status, ...body }: UpdateUserDto,
 ): Promise<void> => {
-  const user = await repository.findUser(param, types);
+  const user = await repository.findUser(param, EXCLUDE_ROLE_TYPES);
 
   if (!user) {
     throw NotFoundUserException;
