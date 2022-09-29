@@ -1,15 +1,28 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { DateTimeEntity } from '../datetime.entity';
-import { Task } from '../task/task.entity';
+import { TeamSetting } from '../team-setting';
+import { Task } from '../task';
 import { User } from '../user';
 
+export enum TeamStatus {
+  Global = 'global',
+  Private = 'private',
+  Default = 'default',
+}
+
 class Relation extends DateTimeEntity {
+  @OneToOne(() => TeamSetting, (e) => e.team, { cascade: true })
+  @JoinColumn({ name: 'setting' })
+  setting: TeamSetting;
+
   @ManyToMany(() => User, (e) => e.teams)
   users: User[];
 
@@ -26,9 +39,10 @@ export class Team extends Relation {
   @Column()
   name: string;
 
-  @Column({ default: false })
-  default: boolean;
-
-  @Column({ default: true })
-  editable: boolean;
+  @Column({
+    type: 'enum',
+    enum: TeamStatus,
+    default: TeamStatus.Private,
+  })
+  status: TeamStatus;
 }
