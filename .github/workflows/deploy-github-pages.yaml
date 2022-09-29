@@ -1,9 +1,8 @@
 name: Deploy Frontend to Github Pages
 
-on:
-  pull_request:
-    branches: ['master']
-    paths: [frontend/**]
+on: [push, pull_request]
+  branches: ['master']
+  paths: [frontend/**]
 
 jobs:
   deploy:
