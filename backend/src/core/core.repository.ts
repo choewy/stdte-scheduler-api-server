@@ -5,23 +5,21 @@ import {
   Role,
   Team,
   User,
+  TeamStatus,
 } from './typeorm/entities';
 
 @Injectable()
 export class CoreRepository extends IRepositoryManager {
   async findUser(type: RoleType): Promise<User> {
-    return await this.user.selectExcludeRoleTypeQuery([type]).getOne();
+    return await this.user.selectIncludeRoleTypeQuery([type]).getOne();
   }
 
   async findRole(type: RoleType): Promise<Role> {
     return await this.role.selectIncludeRoleTypeQuery([type]).getOne();
   }
 
-  async findTeam(isDefault: boolean): Promise<Team> {
-    return await this.team.queryBuilder
-      .select()
-      .where('team.default = :isDefault', { isDefault })
-      .getOne();
+  async findTeam(status: TeamStatus): Promise<Team> {
+    return await this.team.selectIncludeStatusQuery([status]).getOne();
   }
 
   async saveRole(role: Role | Partial<Role>): Promise<Role> {

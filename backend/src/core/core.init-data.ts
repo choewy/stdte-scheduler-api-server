@@ -1,4 +1,10 @@
-import { PolicyRange, Role, RoleType, Team } from './typeorm/entities';
+import {
+  PolicyRange,
+  Role,
+  RoleType,
+  Team,
+  TeamStatus,
+} from './typeorm/entities';
 
 export const roleDataRows: Array<{
   range: PolicyRange;
@@ -36,7 +42,6 @@ export const roleDataRows: Array<{
 export const teamDataRows: Partial<Team>[] = [
   {
     name: '소속없음',
-    default: true,
-    editable: false,
+    status: TeamStatus.Default,
   },
 ];

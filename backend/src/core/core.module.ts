@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { config, ConfigToken } from './config';
-import { CoreService } from './core.service';
 import { JwtAuthService } from './jwt-auth';
 import { CoreRepository } from './core.repository';
+import { CoreService } from './core.service';
 
 @Module({
   imports: [

@@ -39,6 +39,16 @@ export class UserManager extends IManager<User> {
       .andWhere('user.email = :email', { email });
   }
 
+  selectIncludeRoleTypeQuery(types: RoleType[], params?: Partial<User>) {
+    const query = this.queryBuilder
+      .select()
+      .innerJoinAndSelect('user.roles', 'role')
+      .innerJoinAndSelect('role.policy', 'policy')
+      .where('role.type IN (:types)', { types });
+
+    return params ? this.whereQuery(query, params) : query;
+  }
+
   selectExcludeRoleTypeQuery(types: RoleType[], params?: Partial<User>) {
     const query = this.queryBuilder
       .select()
@@ -63,24 +73,42 @@ export class UserManager extends IManager<User> {
       .select()
       .innerJoinAndSelect('user.roles', 'role')
       .innerJoinAndSelect('role.policy', 'policy')
-      .leftJoinAndSelect('user.teams', 'teams');
+      .leftJoinAndSelect('user.teams', 'team')
+      .innerJoinAndSelect('team.setting', 'setting');
 
     return params ? this.whereQuery(query, params, true) : query;
   }
 
-  selectByInRoleIdsQuery(roleIds: number[]) {
-    return this.queryBuilder
+  selectByInIdsQuery(ids: number[]) {
+    const query = this.queryBuilder
       .select()
       .innerJoinAndSelect('user.roles', 'role')
       .innerJoinAndSelect('role.policy', 'policy')
-      .where('role.id IN (:roleIds)', { roleIds });
+      .leftJoinAndSelect('user.teams', 'team')
+      .innerJoinAndSelect('team.setting', 'setting');
+
+    return ids.length ? query.where('user.id IN (:ids)', { ids }) : query;
   }
 
-  selectByInIdsQuery(ids: number[]) {
-    return this.queryBuilder
+  selectByInRoleIdsQuery(ids: number[]) {
+    const query = this.queryBuilder
       .select()
       .innerJoinAndSelect('user.roles', 'role')
       .innerJoinAndSelect('role.policy', 'policy')
-      .where('user.id IN (:ids)', { ids });
+      .leftJoinAndSelect('user.teams', 'team')
+      .innerJoinAndSelect('team.setting', 'setting');
+
+    return ids.length ? query.where('role.id IN (:ids)', { ids }) : query;
+  }
+
+  selectByInTeamIdsQuery(ids: number[]) {
+    const query = this.queryBuilder
+      .select()
+      .innerJoinAndSelect('user.roles', 'role')
+      .innerJoinAndSelect('role.policy', 'policy')
+      .leftJoinAndSelect('user.teams', 'team')
+      .innerJoinAndSelect('team.setting', 'setting');
+
+    return ids.length ? query.where('team.id IN ( :ids )', { ids }) : query;
   }
 }
