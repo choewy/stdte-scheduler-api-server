@@ -1,31 +1,35 @@
-import { Team, User } from '@/core/typeorm/entities';
-import { BaseRepository } from '@/core/typeorm/repositories';
+import { IRepositoryManager, Team, User } from '@/core/typeorm/entities';
 import { Injectable } from '@nestjs/common';
 import { FindOptionsWhere } from 'typeorm';
 
 @Injectable()
-export class TeamRepository extends BaseRepository {
-  async findOne(where: FindOptionsWhere<Team>): Promise<Team> {
-    return await this.methods.team.findOne(where);
+export class TeamRepository extends IRepositoryManager {
+  async findTeams(): Promise<Team[]> {
+    return await this.team.selectAllRelationQuery().getMany();
   }
 
-  async findMany(where?: FindOptionsWhere<Team>): Promise<Team[]> {
-    return await this.methods.team.findMany(where);
+  async findTeam(params: Partial<Team>): Promise<Team> {
+    const query = this.team.selectAllRelationQuery();
+    return await this.team.whereQuery(query, params).getOne();
   }
 
-  async findUsers(where: FindOptionsWhere<User>): Promise<User[]> {
-    return await this.methods.user.findMany(where);
+  async findUsersByTeamIds(teamIds: number[]): Promise<User[]> {
+    return await this.user.selectByInTeamIdsQuery(teamIds).getMany();
   }
 
-  async saveOne(team: Partial<Team>): Promise<void> {
-    await this.targets.team.save(team);
+  async fundUsersByUserIds(userIds: number[]): Promise<User[]> {
+    return await this.user.selectByInIdsQuery(userIds).getMany();
+  }
+
+  async saveTeam(team: Partial<Team>): Promise<Team> {
+    return await this.team.repository.save(team);
   }
 
   async saveUsers(users: User[]): Promise<void> {
-    await this.targets.user.save(users);
+    await this.user.repository.save(users);
   }
 
-  async deleteOne({ id }: Partial<Team>): Promise<void> {
-    await this.targets.team.softDelete({ id });
+  async deleteTeam(params: FindOptionsWhere<Team>): Promise<void> {
+    await this.team.repository.softDelete(params);
   }
 }
