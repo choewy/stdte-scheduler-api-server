@@ -1,3 +1,5 @@
+import { PolicyRange, RoleType, UserStatus } from './enums';
+
 export interface SignInRequestBody {
   username: string;
   password: string;
@@ -19,12 +21,12 @@ export interface SignResponseData {
 export interface AuthRoleData {
   id: number;
   name: string;
+  type: RoleType;
   policy: {
-    default: boolean | null;
-    master: boolean | null;
-    admin: boolean | null;
-    manager: boolean | null;
-    member: boolean | null;
+    read: PolicyRange;
+    write: PolicyRange;
+    update: PolicyRange;
+    delete: PolicyRange;
   };
 }
 
@@ -37,7 +39,9 @@ export interface AuthResponseData {
   username: string;
   email: string | null;
   nickname: string;
-  status: boolean | null;
-  roles: Array<AuthRoleData>;
-  teams: Array<AuthTeamData>;
+  status: UserStatus | null;
+  roles: AuthRoleData[];
+  teams: AuthTeamData[];
+  createdAt: string;
+  updatedAt: string;
 }

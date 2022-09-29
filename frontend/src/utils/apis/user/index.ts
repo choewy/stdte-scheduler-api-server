@@ -1,1 +1,2 @@
-export * from './user.api';
+export * from './interfaces';
+export * as userApi from './user.api';
