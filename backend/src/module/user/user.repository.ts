@@ -1,57 +1,54 @@
-import { RoleType, User, UserStatus } from '@/core/typeorm/entities';
-import { BaseRepository } from '@/core/typeorm/repositories';
+import {
+  IRepositoryManager,
+  Role,
+  RoleType,
+  Team,
+  User,
+} from '@/core/typeorm/entities';
 import { Injectable } from '@nestjs/common';
-import { FindOptionsWhere, In, Not } from 'typeorm';
+import { FindOptionsWhere } from 'typeorm';
 
 @Injectable()
-export class UserRepository extends BaseRepository {
-  async findMany(includeMaster?: boolean): Promise<User[]> {
-    return includeMaster
-      ? await this.methods.user.findMany()
-      : await this.methods.user.findMany({
-          roles: { type: Not(RoleType.Master) },
-        });
+export class UserRepository extends IRepositoryManager {
+  async findUser(params: Partial<User>, roleTypes?: RoleType[]): Promise<User> {
+    const query = roleTypes
+      ? this.user.selectExcludeRoleTypeQuery(roleTypes, params)
+      : this.user.selectWithRolesQuery(params);
+
+    return query.getOne();
   }
 
-  async findOne(
-    { id, email }: FindOptionsWhere<User>,
-    includeMaster?: boolean,
-  ): Promise<User> {
-    return includeMaster
-      ? await this.methods.user.findOne({ id, email })
-      : await this.methods.user.findOne({
-          id,
-          email,
-          roles: { type: Not(RoleType.Master) },
-        });
+  async findUsers(roleTypes?: RoleType[]): Promise<User[]> {
+    const query = roleTypes
+      ? this.user.selectExcludeRoleTypeQuery(roleTypes)
+      : this.user.selectWithRolesQuery();
+
+    return await query.getMany();
   }
 
-  async createOne(
-    user: Partial<User>,
-    roleIds: number[],
-    teamIds: number[],
-  ): Promise<void> {
-    user.roles = roleIds
-      ? await this.methods.role.findMany({ id: In(roleIds) })
-      : await this.methods.role.findMany({ type: RoleType.Default });
+  async findUserByNotIdAndEmail({
+    id,
+    email,
+  }: {
+    id: number;
+    email: string;
+  }): Promise<User> {
+    return await this.user.selectByNotIdAndEmailQuery(id, email).getOne();
+  }
 
-    user.teams = teamIds
-      ? await this.methods.team.findMany({ id: In(teamIds) })
-      : await this.methods.team.findMany({ default: true });
+  async findRolesByIds(ids: number[]): Promise<Role[]> {
+    return await this.role.selectByIdsQuery(ids).getMany();
+  }
 
-    await this.targets.user.save(
-      Object.assign<Partial<User>, Partial<User>>(user, {
-        status: UserStatus.Wait,
-        disabledAt: null,
-      }),
-    );
+  async findTeamsByIds(ids: number[]): Promise<Team[]> {
+    return await this.team.selectByIdsQuery(ids).getMany();
   }
 
   async saveOne(user: Partial<User>): Promise<void> {
-    await this.targets.user.save(user);
+    await this.user.repository.save(user);
   }
 
-  async deleteOne(id: number): Promise<void> {
-    await this.targets.user.softDelete({ id });
+  async deleteOne(params: FindOptionsWhere<User>): Promise<void> {
+    await this.user.repository.softDelete(params);
   }
 }

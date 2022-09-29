@@ -10,4 +10,11 @@ export class RoleManager extends IManager<Role> {
   get queryBuilder(): QueryBuilder<Role> {
     return this.dataSource.createQueryBuilder(Role, this.name);
   }
+
+  selectByIdsQuery(ids: number[]) {
+    return this.queryBuilder
+      .select()
+      .innerJoinAndSelect('role.policy', 'policy')
+      .where('role.id IN (:ids)', { ids });
+  }
 }
