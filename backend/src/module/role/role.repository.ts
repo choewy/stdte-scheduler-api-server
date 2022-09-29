@@ -19,8 +19,8 @@ export class RoleRepository extends IRepositoryManager {
 
   async findRoles(types?: RoleType[]): Promise<Role[]> {
     const query = types
-      ? this.role.selectWithRolePolicyQuery()
-      : this.role.selectExcludeRoleTypeQuery(types);
+      ? this.role.selectExcludeRoleTypeQuery(types)
+      : this.role.selectWithRolePolicyQuery();
 
     return await query.getMany();
   }

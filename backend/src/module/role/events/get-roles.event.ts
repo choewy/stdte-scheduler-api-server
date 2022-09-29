@@ -2,7 +2,7 @@ import { RoleType } from '@/core/typeorm/entities';
 import { RoleRowDto } from '../dto';
 import { RoleRepository } from '../role.repository';
 
-const EXCLUDE_ROLE_TYPES = [RoleType.Master];
+const EXCLUDE_ROLE_TYPES = [RoleType.Master, RoleType.Admin];
 
 export const getRolesEvent = async (
   repository: RoleRepository,
