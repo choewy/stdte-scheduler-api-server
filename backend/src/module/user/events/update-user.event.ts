@@ -34,5 +34,5 @@ export const updateUserEvent = async (
     user.disabledAt = status === disable ? localDateTime() : null;
   }
 
-  return await repository.saveOne(Object.assign(user, body));
+  return await repository.saveUser(Object.assign(user, body));
 };

@@ -1,46 +1,47 @@
-import { Role, User } from '@/core/typeorm/entities';
-import { BaseRepository } from '@/core/typeorm/repositories';
+import {
+  IRepositoryManager,
+  Role,
+  RoleType,
+  User,
+} from '@/core/typeorm/entities';
 import { Injectable } from '@nestjs/common';
 import { FindOptionsWhere } from 'typeorm';
 
 @Injectable()
-export class RoleRepository extends BaseRepository {
-  async findMany(where: FindOptionsWhere<Role> = {}): Promise<Role[]> {
-    return await this.methods.role.findMany(where);
+export class RoleRepository extends IRepositoryManager {
+  async findRole(params: Partial<Role>, types?: RoleType[]): Promise<Role> {
+    const query = types
+      ? this.role.selectExcludeRoleTypeQuery(types)
+      : this.role.selectWithRolePolicyQuery();
+
+    return await this.role.whereQuery(query, params, false).getOne();
   }
 
-  async findOne(where: FindOptionsWhere<Role>): Promise<Role> {
-    return await this.methods.role.findOne(where);
+  async findRoles(types?: RoleType[]): Promise<Role[]> {
+    const query = types
+      ? this.role.selectWithRolePolicyQuery()
+      : this.role.selectExcludeRoleTypeQuery(types);
+
+    return await query.getMany();
   }
 
-  async findUsers(where: FindOptionsWhere<User>): Promise<User[]> {
-    return await this.methods.user.findMany(where);
+  async findUsersByRoleIds(roleIds: number[]): Promise<User[]> {
+    return await this.user.selectByInRoleIdsQuery(roleIds).getMany();
   }
 
-  async createOne(data: Partial<Role>): Promise<void> {
-    return await this.transaction(async () => {
-      const role = await this.targets.role.save(data);
-      await this.targets.role.save(
-        Object.assign(role, {
-          rolePolicy: {
-            roleId: role.id,
-            manager: true,
-            member: true,
-          },
-        }),
-      );
-    });
+  async findUsersByUserIds(userIds: number[]): Promise<User[]> {
+    return await this.user.selectByInIdsQuery(userIds).getMany();
   }
 
-  async saveOne(role: Partial<Role>): Promise<void> {
-    await this.targets.role.save(role);
+  async saveRole(role: Partial<Role>): Promise<Role> {
+    return await this.role.repository.save(role);
   }
 
   async saveUsers(users: User[]): Promise<void> {
-    await this.targets.user.save(users);
+    await this.user.repository.save(users);
   }
 
-  async deleteOne({ id }: Role): Promise<void> {
-    this.targets.role.softDelete({ id });
+  async deleteRole(params: FindOptionsWhere<Role>): Promise<void> {
+    await this.role.repository.softDelete(params);
   }
 }

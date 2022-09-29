@@ -33,5 +33,5 @@ export const createUserEvent = async (
     user.teams = await repository.findTeamsByIds(teamIds);
   }
 
-  return await repository.saveOne(body);
+  return await repository.saveUser(body);
 };

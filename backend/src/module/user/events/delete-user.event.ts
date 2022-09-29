@@ -14,5 +14,5 @@ export const deleteUserEvent = async (
     throw NotFoundUserException;
   }
 
-  return await repository.deleteOne(param);
+  return await repository.deleteUser(param);
 };

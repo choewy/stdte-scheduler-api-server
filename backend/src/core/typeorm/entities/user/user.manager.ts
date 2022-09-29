@@ -12,7 +12,7 @@ export class UserManager extends IManager<User> {
     return this.dataSource.createQueryBuilder(User, this.name);
   }
 
-  private whereQuery(
+  whereQuery(
     query: SelectQueryBuilder<User>,
     params: Partial<User>,
     isFirst?: boolean,
@@ -66,5 +66,21 @@ export class UserManager extends IManager<User> {
       .leftJoinAndSelect('user.teams', 'teams');
 
     return params ? this.whereQuery(query, params, true) : query;
+  }
+
+  selectByInRoleIdsQuery(roleIds: number[]) {
+    return this.queryBuilder
+      .select()
+      .innerJoinAndSelect('user.roles', 'role')
+      .innerJoinAndSelect('role.policy', 'policy')
+      .where('role.id IN (:roleIds)', { roleIds });
+  }
+
+  selectByInIdsQuery(ids: number[]) {
+    return this.queryBuilder
+      .select()
+      .innerJoinAndSelect('user.roles', 'role')
+      .innerJoinAndSelect('role.policy', 'policy')
+      .where('user.id IN (:ids)', { ids });
   }
 }

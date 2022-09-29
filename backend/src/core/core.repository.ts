@@ -10,19 +10,11 @@ import {
 @Injectable()
 export class CoreRepository extends IRepositoryManager {
   async findUser(type: RoleType): Promise<User> {
-    return await this.user.queryBuilder
-      .select()
-      .innerJoinAndSelect('user.roles', 'roles')
-      .where('roles.type = :type', { type })
-      .getOne();
+    return await this.user.selectExcludeRoleTypeQuery([type]).getOne();
   }
 
   async findRole(type: RoleType): Promise<Role> {
-    return await this.role.queryBuilder
-      .select()
-      .leftJoinAndSelect('role.policy', 'policy')
-      .where('role.type = :type', { type })
-      .getOne();
+    return await this.role.selectIncludeRoleTypeQuery([type]).getOne();
   }
 
   async findTeam(isDefault: boolean): Promise<Team> {

@@ -44,11 +44,11 @@ export class UserRepository extends IRepositoryManager {
     return await this.team.selectByIdsQuery(ids).getMany();
   }
 
-  async saveOne(user: Partial<User>): Promise<void> {
+  async saveUser(user: Partial<User>): Promise<void> {
     await this.user.repository.save(user);
   }
 
-  async deleteOne(params: FindOptionsWhere<User>): Promise<void> {
+  async deleteUser(params: FindOptionsWhere<User>): Promise<void> {
     await this.user.repository.softDelete(params);
   }
 }
