@@ -29,7 +29,7 @@
   },
   "scripts": {
     "start": "PORT=3000 craco start",
-    "build": "craco build",
+    "build": "craco build && cp build/index.html build/404.html",
     "test": "craco test",
     "eject": "craco eject",
     "serve": "craco build && npx serve -l 3001 -s build"

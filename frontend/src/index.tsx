@@ -17,7 +17,7 @@ root.render(
   <RecoilRoot>
     <ErrorController>
       <Suspense fallback={<LoaderController />}>
-        <BrowserRouter>
+        <BrowserRouter basename={process.env.PUBLIC_URL}>
           <App />
         </BrowserRouter>
       </Suspense>
