@@ -8,6 +8,7 @@ import { RecoilRoot } from 'recoil';
 import { BrowserRouter } from 'react-router-dom';
 import { ErrorController, LoaderController } from '@/components';
 import { App } from '@/app';
+import { HelmetProvider } from 'react-helmet-async';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -18,7 +19,9 @@ root.render(
     <ErrorController>
       <Suspense fallback={<LoaderController />}>
         <BrowserRouter basename={process.env.PUBLIC_URL}>
-          <App />
+          <HelmetProvider>
+            <App />
+          </HelmetProvider>
         </BrowserRouter>
       </Suspense>
     </ErrorController>

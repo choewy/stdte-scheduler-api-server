@@ -12,10 +12,14 @@ import {
 import { UserDetailPage, UserListPage } from '@/pages/user';
 import { Authenticate } from '@/app/authenticate';
 import { BackNavigator, GlobalNavigator, RouteComponent } from '@/components';
+import { Helmet } from 'react-helmet-async';
 
 export const App: FC = () => {
   return (
     <Fragment>
+      <Helmet>
+        <title>TEST APP</title>
+      </Helmet>
       <Authenticate />
       <GlobalNavigator />
       <Routes>
