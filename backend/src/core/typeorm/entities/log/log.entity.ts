@@ -1,3 +1,5 @@
+import { ExceptionDto } from '@/appllication/dto';
+import { Request } from 'express';
 import { DateTime } from 'luxon';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { CreateDateTimeColumn } from '../../columns';
@@ -12,19 +14,19 @@ export class Log {
   @Column()
   type: LogType;
 
-  @Column()
+  @Column({ default: 'TASK-SCHEDULER-API-SERVER' })
   application: string;
 
-  @Column()
+  @Column({ default: null })
   httpStatus: string;
 
-  @Column()
+  @Column({ default: null })
   httpStatusCode: number;
 
-  @Column()
+  @Column({ default: null })
   httpMethod: string;
 
-  @Column()
+  @Column({ default: null })
   httpPath: string;
 
   @Column({ type: 'json', default: null })
@@ -33,10 +35,10 @@ export class Log {
   @Column({ type: 'json', default: null })
   httpQuery: any;
 
-  @Column()
+  @Column({ default: null })
   httpClientIp: string;
 
-  @Column({ default: null })
+  @Column({ default: 'Application' })
   context: string;
 
   @Column({ type: 'json', default: null })
@@ -47,4 +49,46 @@ export class Log {
 
   @CreateDateTimeColumn()
   createdAt: DateTime;
+
+  constructor(
+    type?: LogType,
+    request?: Request,
+    dto?: ExceptionDto,
+    stack?: string,
+  ) {
+    if (type) {
+      this.type = type;
+    }
+
+    if (request) {
+      this.type = type;
+
+      const { method, path, ip, params, query } = request;
+      this.httpMethod = method;
+      this.httpPath = path;
+      this.httpClientIp = ip;
+
+      const context = request['context'];
+      if (context) {
+        this.context = context;
+      }
+
+      if (Object.keys(params).length) {
+        this.httpParams = params;
+      }
+
+      if (Object.keys(query).length) {
+        this.httpParams = query;
+      }
+    }
+
+    if (dto) {
+      const { error, status, data } = dto;
+      this.httpStatus = error;
+      this.httpStatusCode = status;
+      this.errorData = data;
+    }
+
+    this.errorStack = stack || '';
+  }
 }

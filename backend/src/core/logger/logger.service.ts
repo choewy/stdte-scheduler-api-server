@@ -1,7 +1,8 @@
+import { Request, Response } from 'express';
 import { ExceptionDto } from '@/appllication/dto';
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { Request, Response } from 'express';
 import { LoggerRepository } from './logger.repository';
+import { Log } from '../typeorm/entities';
 
 @Injectable()
 export class LoggerService {
@@ -11,8 +12,9 @@ export class LoggerService {
     private readonly logger: Logger,
     private readonly repository: LoggerRepository,
   ) {
+    const entries = Object.entries(HttpStatus);
     this.httpStatus = Object.fromEntries(
-      Object.entries(HttpStatus).map(([key, value]) => [value, key]),
+      entries.map(([key, value]) => [value, key]),
     );
   }
 
@@ -33,21 +35,20 @@ export class LoggerService {
   }
 
   async verbose(request: Request, response: Response) {
-    await this.repository.insertOne('success', request, {
-      status: response.statusCode,
-      error: this.httpStatus[response.statusCode],
-      message: '',
-    });
+    const log = new Log('error', request);
+    await this.repository.insertOne(log);
     this.logger.verbose(this.successMessage(request, response));
   }
 
   async warn(request: Request, dto: ExceptionDto) {
-    await this.repository.insertOne('warning', request, dto);
+    const log = new Log('error', request, dto);
+    await this.repository.insertOne(log);
     this.logger.warn(this.failMessage(request, dto), request['context']);
   }
 
   async error(request: Request, dto: ExceptionDto, stack?: string) {
-    await this.repository.insertOne('error', request, dto, stack);
+    const log = new Log('error', request, dto, stack);
+    await this.repository.insertOne(log);
     this.logger.error(
       this.failMessage(request, dto),
       request['context'],
