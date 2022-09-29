@@ -2,17 +2,20 @@ import {
   AuthResponseData,
   AuthRoleData,
   AuthTeamData,
+  UserStatus,
 } from '@/utils/apis/auth';
 import { atom } from 'recoil';
 
 export class AuthenticateState implements AuthResponseData {
-  login: boolean = false;
+  login: boolean | null = null;
   username: string = '';
   nickname: string = '';
   email: string | null = null;
-  status: boolean | null = null;
+  status: UserStatus | null = null;
   roles: AuthRoleData[] = [];
   teams: AuthTeamData[] = [];
+  createdAt: string = '';
+  updatedAt: string = '';
 
   constructor(user?: AuthResponseData) {
     if (user) {
@@ -23,6 +26,8 @@ export class AuthenticateState implements AuthResponseData {
       this.status = user.status;
       this.roles = user.roles;
       this.teams = user.teams;
+      this.createdAt = user.createdAt;
+      this.updatedAt = user.updatedAt;
     } else {
       this.login = false;
     }

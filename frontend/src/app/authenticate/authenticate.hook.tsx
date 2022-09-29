@@ -1,8 +1,7 @@
-import { ROUTER } from '@/configs';
 import { authApi } from '@/utils/apis';
+import { useSetRecoilState } from 'recoil';
 import { useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
 import { AuthenticateState, authenticateState } from './authenticate.state';
 
 export const useAuthenticateWatch = () => {
@@ -18,12 +17,6 @@ export const useAuthenticateWatch = () => {
   }, []);
 
   useEffect(() => {
-    if (location.pathname === ROUTER.home) {
-      return;
-    }
-
     checkAuth();
-
-    return () => {};
   }, [checkAuth, location]);
 };

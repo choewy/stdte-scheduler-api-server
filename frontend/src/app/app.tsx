@@ -4,10 +4,12 @@ import { Route, Routes } from 'react-router-dom';
 import {
   HomePage,
   BlockPage,
+  WaitPage,
   SignInPage,
   SignUpPage,
   SignOutPage,
 } from '@/pages';
+import { UserDetailPage, UserListPage } from '@/pages/user';
 import { Authenticate } from '@/app/authenticate';
 import { BackNavigator, GlobalNavigator, RouteComponent } from '@/components';
 
@@ -26,6 +28,10 @@ export const App: FC = () => {
           element={<RouteComponent Component={BlockPage} block={true} />}
         />
         <Route
+          path={ROUTER.wait}
+          element={<RouteComponent Component={WaitPage} wait={true} />}
+        />
+        <Route
           path={ROUTER.signin}
           element={<RouteComponent Component={SignInPage} login={false} />}
         />
@@ -37,6 +43,16 @@ export const App: FC = () => {
           path={ROUTER.signout}
           element={<RouteComponent Component={SignOutPage} login={true} />}
         />
+        <Route path={ROUTER.users}>
+          <Route
+            path=""
+            element={<RouteComponent Component={UserListPage} login={true} />}
+          />
+          <Route
+            path=":id"
+            element={<RouteComponent Component={UserDetailPage} login={true} />}
+          />
+        </Route>
         <Route path="*" element={<BackNavigator />} />
       </Routes>
     </Fragment>
