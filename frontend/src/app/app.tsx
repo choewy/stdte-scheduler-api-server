@@ -1,14 +1,8 @@
 import { FC, Fragment } from 'react';
 import { ROUTER } from '@/configs';
 import { Route, Routes } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 import { Authenticate } from '@/app/authenticate';
-import {
-  BackNavigator,
-  GlobalNavigator,
-  RouteComponent,
-  AppBarComponent,
-} from '@/components';
+import { BackNavigator, GlobalNavigator, RouteComponent } from '@/components';
 import {
   HomePage,
   BlockPage,
@@ -19,16 +13,18 @@ import {
   UserDetailPage,
   UserListPage,
 } from '@/pages';
+import { AppHelmet } from './app.helmet';
+import { AppGlobalNavigationBar } from './global-navigation-bar';
+import { AppGlobalSideBar } from './global-side-bar';
+import { AppLayout } from './app.styled.component';
 
 export const App: FC = () => {
   return (
-    <Fragment>
-      <Helmet>
-        <title>TEST APP</title>
-      </Helmet>
-      <AppBarComponent />
+    <AppLayout>
+      <AppHelmet />
+      <AppGlobalNavigationBar />
+      <AppGlobalSideBar />
       <Authenticate />
-      {/* <GlobalNavigator /> */}
       <Routes>
         <Route
           path={ROUTER.home}
@@ -66,6 +62,6 @@ export const App: FC = () => {
         </Route>
         <Route path="*" element={<BackNavigator />} />
       </Routes>
-    </Fragment>
+    </AppLayout>
   );
 };

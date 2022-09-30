@@ -6,6 +6,7 @@ export const ROUTER = {
   signup: '/signup',
   signout: '/signout',
   users: '/users',
+  profile: '/me',
 };
 
 export const PASS_ROUTERS = [
