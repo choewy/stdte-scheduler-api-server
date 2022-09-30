@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import { FC, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GlobaNavigationItem } from './gsb.interface';
+import { GlobaNavigationItem } from './interface';
 
 interface Props {
   open: boolean;

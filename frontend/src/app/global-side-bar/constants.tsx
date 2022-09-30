@@ -2,7 +2,7 @@ import {
   MoveToInbox as MoveToInboxIcon,
   Mail as MailIcon,
 } from '@mui/icons-material';
-import { GlobalNavigatinItems } from './gsb.interface';
+import { GlobalNavigatinItems } from './interface';
 
 export const globalNavigationListItems: GlobalNavigatinItems[] = [
   {
