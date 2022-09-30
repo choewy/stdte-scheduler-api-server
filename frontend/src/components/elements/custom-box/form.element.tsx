@@ -30,7 +30,7 @@ export const CustomForm: FC<FormAttributeProps & PropsWithChildren> = ({
         autoComplete="off"
         onSubmit={onSubmit}
         style={{
-          width: '300px',
+          width: '100%',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',

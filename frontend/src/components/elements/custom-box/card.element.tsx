@@ -21,8 +21,15 @@ export const CustomCardBox: FC<CardProps & CardContentProps> = ({
         justifyContent: 'center',
       }}
     >
-      <Card sx={sx}>
-        <CardContent {...props} style={{ padding: 50 }}>
+      <Card
+        sx={sx}
+        style={{
+          width: '100%',
+          minWidth: '250px',
+          maxWidth: '400px',
+        }}
+      >
+        <CardContent {...props} style={{ padding: 30 }}>
           {children}
         </CardContent>
       </Card>
