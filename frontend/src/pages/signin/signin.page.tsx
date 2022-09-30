@@ -2,12 +2,19 @@ import { AxiosError } from 'axios';
 import { FC, FormEvent, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { CustomForm, CustomInput, useInputChangeEvent } from '@/components';
 import { SignInState, signInState } from './signin.state';
-import { errorState } from '@/components';
+import { CustomCardBox, errorState } from '@/components';
 import { saveTokens } from '@/utils/cookie';
 import { ROUTER } from '@/configs';
 import { authApi } from '@/utils/apis';
+import { SignInHelmet } from './signin.helmet';
+import {
+  useInputChangeEvent,
+  CustomForm,
+  CustomInput,
+  CustomButtom,
+} from '@/components';
+import { Typography } from '@mui/material';
 
 export const SignInPage: FC = () => {
   const navigate = useNavigate();
@@ -36,17 +43,27 @@ export const SignInPage: FC = () => {
   );
 
   return (
-    <div>
-      <h1>SignIn</h1>
+    <CustomCardBox>
+      <SignInHelmet />
       <CustomForm onSubmit={onSubmit}>
+        <Typography
+          variant="h5"
+          component="div"
+          style={{
+            textAlign: 'center',
+            margin: '0 0 10px',
+          }}
+        >
+          로그인
+        </Typography>
         {Object.keys(state).map((key) => {
           const props = state[key as keyof SignInState];
           return (
             <CustomInput {...props} value={props.value} onChange={onChange} />
           );
         })}
-        <button type="submit">로그인</button>
+        <CustomButtom type="submit">로그인</CustomButtom>
       </CustomForm>
-    </div>
+    </CustomCardBox>
   );
 };

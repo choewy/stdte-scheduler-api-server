@@ -9,13 +9,18 @@ export const useInputChangeEvent: InputChangeEvent = (setState) => {
   return useCallback(
     (e) => {
       const { name, value } = e.target;
-      setState((prev: any) => ({
-        ...prev,
-        [name]: {
-          ...prev[name as keyof any],
-          value,
-        },
-      }));
+      setState((prev: any) => {
+        const helperText = value === '' && `${prev[name].label}을 입력하세요.`;
+        return {
+          ...prev,
+          [name]: {
+            ...prev[name],
+            value,
+            helperText,
+            error: !!helperText,
+          },
+        };
+      });
     },
     [setState],
   );

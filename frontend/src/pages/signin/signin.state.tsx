@@ -1,24 +1,30 @@
-import { InputAttributeProps } from '@/components/elements';
+import { TextFieldProps } from '@mui/material';
 import { atom } from 'recoil';
 
 export class SignInState {
-  username: InputAttributeProps = {
+  username: TextFieldProps = {
     key: 'signin-input-username',
+    variant: 'standard',
     type: 'text',
     name: 'username',
-    placeholder: '아이디',
+    label: '아이디',
     autoComplete: 'off',
     value: '',
+    error: false,
+    helperText: '',
     onChange: undefined,
   };
 
-  password: InputAttributeProps = {
+  password: TextFieldProps = {
     key: 'signin-input-password',
+    variant: 'standard',
     type: 'password',
     name: 'password',
-    placeholder: '비밀번호',
+    label: '비밀번호',
     autoComplete: 'off',
     value: '',
+    error: false,
+    helperText: '',
     onChange: undefined,
   };
 }

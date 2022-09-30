@@ -1,49 +1,64 @@
-import { InputAttributeProps } from '@/components';
+import { TextFieldProps } from '@mui/material';
 import { atom } from 'recoil';
 
 export class SignUpState {
-  username: InputAttributeProps = {
+  username: TextFieldProps = {
     key: 'input-signup-username',
+    variant: 'standard',
     type: 'text',
     name: 'username',
-    placeholder: '아이디',
+    label: '아이디',
     value: '',
+    error: false,
+    helperText: '',
     onChange: undefined,
   };
 
-  password: InputAttributeProps = {
+  password: TextFieldProps = {
     key: 'input-signup-password',
+    variant: 'standard',
     type: 'password',
     name: 'password',
-    placeholder: '비밀번호',
+    label: '비밀번호',
     value: '',
+    error: false,
+    helperText: '',
     onChange: undefined,
   };
 
-  confirmPassword: InputAttributeProps = {
+  confirmPassword: TextFieldProps = {
     key: 'input-signup-confirm-password',
+    variant: 'standard',
     type: 'password',
     name: 'confirmPassword',
-    placeholder: '비밀번호 확인',
+    label: '비밀번호 확인',
     value: '',
+    error: false,
+    helperText: '',
     onChange: undefined,
   };
 
-  nickname: InputAttributeProps = {
+  nickname: TextFieldProps = {
     key: 'input-signup-nickname',
+    variant: 'standard',
     type: 'text',
     name: 'nickname',
-    placeholder: '닉네임',
+    label: '닉네임',
     value: '',
+    error: false,
+    helperText: '',
     onChange: undefined,
   };
 
-  email: InputAttributeProps = {
+  email: TextFieldProps = {
     key: 'input-signup-email',
+    variant: 'standard',
     type: 'text',
     name: 'email',
-    placeholder: '이메일',
+    label: '이메일',
     value: '',
+    error: false,
+    helperText: '',
     onChange: undefined,
   };
 }

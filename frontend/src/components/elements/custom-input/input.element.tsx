@@ -1,6 +1,6 @@
+import { TextField, TextFieldProps } from '@mui/material';
 import { FC } from 'react';
-import { InputAttributeProps } from './interfaces';
 
-export const CustomInput: FC<InputAttributeProps> = (props) => {
-  return <input {...props} />;
+export const CustomInput: FC<TextFieldProps> = (props) => {
+  return <TextField {...props} style={{ margin: '5px 0' }} />;
 };

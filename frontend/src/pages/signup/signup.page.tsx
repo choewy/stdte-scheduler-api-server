@@ -3,15 +3,19 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { AxiosError } from 'axios';
 import { errorState } from '@/components';
 import { SignUpState, signUpState } from './signup.state';
-import {
-  CustomForm,
-  CustomInput,
-  useInputChangeEvent,
-} from '@/components/elements';
 import { saveTokens } from '@/utils/cookie';
 import { ROUTER } from '@/configs';
 import { useNavigate } from 'react-router-dom';
 import { authApi } from '@/utils/apis';
+import { SignUpHelmet } from './signup.helmet';
+import { Typography } from '@mui/material';
+import {
+  CustomButtom,
+  CustomCardBox,
+  CustomForm,
+  CustomInput,
+  useInputChangeEvent,
+} from '@/components/elements';
 
 export const SignUpPage: FC = () => {
   const navigate = useNavigate();
@@ -44,8 +48,18 @@ export const SignUpPage: FC = () => {
   );
 
   return (
-    <div>
-      <h1>SignUp</h1>
+    <CustomCardBox>
+      <SignUpHelmet />
+      <Typography
+        variant="h5"
+        component="div"
+        style={{
+          textAlign: 'center',
+          margin: '0 0 10px',
+        }}
+      >
+        회원가입
+      </Typography>
       <CustomForm onSubmit={onSubmit}>
         {Object.keys(state).map((key) => {
           const props = state[key as keyof SignUpState];
@@ -53,8 +67,8 @@ export const SignUpPage: FC = () => {
             <CustomInput {...props} value={props.value} onChange={onChange} />
           );
         })}
-        <button type="submit">회원가입</button>
+        <CustomButtom type="submit">회원가입</CustomButtom>
       </CustomForm>
-    </div>
+    </CustomCardBox>
   );
 };

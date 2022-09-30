@@ -1,6 +1,14 @@
 import { FC, Fragment } from 'react';
 import { ROUTER } from '@/configs';
 import { Route, Routes } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import { Authenticate } from '@/app/authenticate';
+import {
+  BackNavigator,
+  GlobalNavigator,
+  RouteComponent,
+  AppBarComponent,
+} from '@/components';
 import {
   HomePage,
   BlockPage,
@@ -8,11 +16,9 @@ import {
   SignInPage,
   SignUpPage,
   SignOutPage,
+  UserDetailPage,
+  UserListPage,
 } from '@/pages';
-import { UserDetailPage, UserListPage } from '@/pages/user';
-import { Authenticate } from '@/app/authenticate';
-import { BackNavigator, GlobalNavigator, RouteComponent } from '@/components';
-import { Helmet } from 'react-helmet-async';
 
 export const App: FC = () => {
   return (
@@ -20,8 +26,9 @@ export const App: FC = () => {
       <Helmet>
         <title>TEST APP</title>
       </Helmet>
+      <AppBarComponent />
       <Authenticate />
-      <GlobalNavigator />
+      {/* <GlobalNavigator /> */}
       <Routes>
         <Route
           path={ROUTER.home}
