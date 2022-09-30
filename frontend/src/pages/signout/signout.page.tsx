@@ -3,7 +3,7 @@ import { ROUTER } from '@/configs';
 import { removeTokens } from '@/utils/cookie';
 import { useNavigate } from 'react-router-dom';
 import { useResetRecoilState } from 'recoil';
-import { authenticateState, AuthenticateState } from '@/app/authenticate';
+import { authenticateState } from '@/app/authenticate';
 
 export const SignOutPage: FC = () => {
   const navigate = useNavigate();
