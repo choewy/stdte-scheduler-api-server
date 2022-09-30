@@ -13,6 +13,7 @@ export class SignInState {
     error: false,
     helperText: '',
     onChange: undefined,
+    required: true,
   };
 
   password: TextFieldProps = {
@@ -26,6 +27,7 @@ export class SignInState {
     error: false,
     helperText: '',
     onChange: undefined,
+    required: true,
   };
 }
 

@@ -10,7 +10,9 @@ export const useInputChangeEvent: InputChangeEvent = (setState) => {
     (e) => {
       const { name, value } = e.target;
       setState((prev: any) => {
-        const helperText = value === '' && `${prev[name].label}을 입력하세요.`;
+        const required = prev[name].required;
+        const helperText =
+          required && value === '' && `${prev[name].label}을 입력하세요.`;
         return {
           ...prev,
           [name]: {

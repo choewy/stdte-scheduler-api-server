@@ -1,5 +1,5 @@
 import { Drawer, styled } from '@mui/material';
-import { DRAWER_WIDTH } from '../app.constants';
+import { DRAWER_WIDTH } from '../constants';
 import { closedMixin, openedMixin } from './gsb.css.object';
 
 export const CutomDrawerHeader = styled('div')(({ theme }) => ({

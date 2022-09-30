@@ -8,7 +8,7 @@ import {
   ChevronRight as ChevronRightIcon,
 } from '@mui/icons-material';
 import { CustomDrawer, CutomDrawerHeader } from './gsb.styled.component';
-import { globalNavigationListItems } from './gsb.constants';
+import { globalNavigationListItems } from './constants';
 
 export const AppGlobalSideBar: FC = () => {
   const theme = useTheme();

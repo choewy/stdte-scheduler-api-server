@@ -12,6 +12,7 @@ export class SignUpState {
     error: false,
     helperText: '',
     onChange: undefined,
+    required: true,
   };
 
   password: TextFieldProps = {
@@ -24,6 +25,7 @@ export class SignUpState {
     error: false,
     helperText: '',
     onChange: undefined,
+    required: true,
   };
 
   confirmPassword: TextFieldProps = {
@@ -36,6 +38,7 @@ export class SignUpState {
     error: false,
     helperText: '',
     onChange: undefined,
+    required: true,
   };
 
   nickname: TextFieldProps = {
@@ -48,6 +51,7 @@ export class SignUpState {
     error: false,
     helperText: '',
     onChange: undefined,
+    required: true,
   };
 
   email: TextFieldProps = {
@@ -60,6 +64,7 @@ export class SignUpState {
     error: false,
     helperText: '',
     onChange: undefined,
+    required: false,
   };
 }
 

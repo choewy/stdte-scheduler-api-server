@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { List } from '@mui/material';
-import { GlobaNavigationItem } from './gsb.interface';
+import { GlobaNavigationItem } from './interface';
 import { GlobaSidebarListItem } from './gsb.list.item';
 
 interface Props {
