@@ -1,5 +1,5 @@
-import { UserStatus } from '@/utils/apis';
-import { userApi } from '@/utils/apis/user';
+import { UserStatus } from '@/apis';
+import { userApi } from '@/apis/user';
 import { Switch } from '@mui/material';
 import { ChangeEventHandler, FC } from 'react';
 import { useSetRecoilState } from 'recoil';

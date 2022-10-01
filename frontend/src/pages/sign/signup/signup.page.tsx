@@ -1,9 +1,9 @@
 import { FC, FormEvent } from 'react';
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
-import { alertState } from '@/components';
+import { alertState } from '@/app';
 import { SignUpState, signUpState } from './signup.state';
 import { useNavigate } from 'react-router-dom';
-import { authApi } from '@/utils/apis';
+import { authApi } from '@/apis';
 import { SignUpHelmet } from './signup.helmet';
 import { Typography } from '@mui/material';
 import {

@@ -1,5 +1,5 @@
 import { ROUTER } from '@/configs';
-import { RoleType } from '@/utils/apis';
+import { RoleType } from '@/apis';
 import {
   Home as HomeIcon,
   Mail as MailIcon,

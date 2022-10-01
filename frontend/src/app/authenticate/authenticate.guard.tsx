@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { authenticateState } from './authenticate.state';
-import { UserStatus } from '@/utils/apis';
+import { UserStatus } from '@/apis';
 
 export const useAuthenticateGuard = () => {
   const navigate = useNavigate();

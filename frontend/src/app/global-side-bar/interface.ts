@@ -1,4 +1,4 @@
-import { RoleType } from '@/utils/apis';
+import { RoleType } from '@/apis';
 import { ReactElement } from 'react';
 
 export interface GlobaNavigationItem {

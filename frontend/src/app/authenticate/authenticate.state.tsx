@@ -3,7 +3,7 @@ import {
   AuthRoleData,
   AuthTeamData,
   UserStatus,
-} from '@/utils/apis/auth';
+} from '@/apis/auth';
 import { atom } from 'recoil';
 
 export class AuthenticateState implements AuthResponseData {

@@ -1,6 +1,6 @@
-import { alertState } from '@/components';
+import { alertState } from '@/app';
 import { CustomTable } from '@/components/elements/custom-table';
-import { userApi } from '@/utils/apis/user';
+import { userApi } from '@/apis/user';
 import { FC, MouseEventHandler, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';

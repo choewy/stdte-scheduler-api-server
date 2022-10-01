@@ -1,4 +1,4 @@
-import { AlertState } from '@/components';
+import { AlertState } from '@/app';
 import { AxiosError } from 'axios';
 import { SetterOrUpdater } from 'recoil';
 

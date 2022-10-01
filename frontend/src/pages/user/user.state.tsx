@@ -1,10 +1,6 @@
 import { atom } from 'recoil';
-import { UserStatus } from '@/utils/apis';
-import {
-  UserResponseData,
-  UserRoleData,
-  UserTeamData,
-} from '@/utils/apis/user';
+import { UserStatus } from '@/apis';
+import { UserResponseData, UserRoleData, UserTeamData } from '@/apis/user';
 
 export class UserState implements UserResponseData {
   id: number = 0;

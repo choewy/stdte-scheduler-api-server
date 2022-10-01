@@ -1,4 +1,4 @@
-import { AlertState } from '@/components';
+import { AlertState } from '@/app';
 import { Dispatch, SetStateAction } from 'react';
 import { NavigateFunction } from 'react-router-dom';
 import { Resetter, SetterOrUpdater } from 'recoil';
