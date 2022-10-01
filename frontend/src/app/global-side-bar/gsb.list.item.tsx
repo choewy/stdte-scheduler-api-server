@@ -3,8 +3,9 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Tooltip,
 } from '@mui/material';
-import { FC, useCallback } from 'react';
+import { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GlobaNavigationItem } from './interface';
 
@@ -15,12 +16,16 @@ interface Props {
 
 export const GlobaSidebarListItem: FC<Props> = ({
   open,
-  item: { label, IconComponent, to },
+  item: { blank, label, IconComponent, to },
 }) => {
   const navigate = useNavigate();
-  const onItemClick = useCallback(() => {
+  const onItemClick = () => {
+    if (blank) {
+      return window.open(to);
+    }
+
     navigate(to, { replace: true });
-  }, [navigate]);
+  };
 
   return (
     <ListItem disablePadding sx={{ display: 'block' }}>
@@ -32,15 +37,17 @@ export const GlobaSidebarListItem: FC<Props> = ({
         }}
         onClick={onItemClick}
       >
-        <ListItemIcon
-          sx={{
-            minWidth: 0,
-            mr: open ? 3 : 'auto',
-            justifyContent: 'center',
-          }}
-        >
-          {IconComponent}
-        </ListItemIcon>
+        <Tooltip title={label as string}>
+          <ListItemIcon
+            sx={{
+              minWidth: 0,
+              mr: open ? 3 : 'auto',
+              justifyContent: 'center',
+            }}
+          >
+            {IconComponent}
+          </ListItemIcon>
+        </Tooltip>
         <ListItemText primary={label} sx={{ opacity: open ? 1 : 0 }} />
       </ListItemButton>
     </ListItem>

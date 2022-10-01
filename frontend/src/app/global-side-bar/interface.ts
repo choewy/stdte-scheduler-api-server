@@ -1,10 +1,13 @@
+import { RoleType } from '@/utils/apis';
 import { ReactElement } from 'react';
 
 export interface GlobaNavigationItem {
-  key: string;
   to: string;
   label: string;
   IconComponent: ReactElement;
+  blank?: boolean;
+  login?: boolean;
+  roles?: RoleType[];
 }
 
 export interface GlobalNavigatinItems {

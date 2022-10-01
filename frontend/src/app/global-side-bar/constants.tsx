@@ -1,6 +1,10 @@
+import { ROUTER } from '@/configs';
+import { RoleType } from '@/utils/apis';
 import {
-  MoveToInbox as MoveToInboxIcon,
+  Home as HomeIcon,
   Mail as MailIcon,
+  Group as UserGroupIcon,
+  GitHub as GitHubIcon,
 } from '@mui/icons-material';
 import { GlobalNavigatinItems } from './interface';
 
@@ -9,28 +13,15 @@ export const globalNavigationListItems: GlobalNavigatinItems[] = [
     key: 'global-navigation-list-item-groups-top',
     items: [
       {
-        key: 'global-navigation-list-item-top-1',
-        to: '#',
-        label: 'Item 1',
-        IconComponent: <MoveToInboxIcon />,
+        to: ROUTER.home,
+        label: '홈',
+        IconComponent: <HomeIcon />,
       },
       {
-        key: 'global-navigation-list-item-top-2',
-        to: '#',
-        label: 'Item 2',
-        IconComponent: <MoveToInboxIcon />,
-      },
-      {
-        key: 'global-navigation-list-item-top-3',
-        to: '#',
-        label: 'Item 3',
-        IconComponent: <MoveToInboxIcon />,
-      },
-      {
-        key: 'global-navigation-list-item-top-4',
-        to: '#',
-        label: 'Item 4',
-        IconComponent: <MoveToInboxIcon />,
+        to: 'https://github.com/choewy',
+        blank: true,
+        label: 'GitHub',
+        IconComponent: <GitHubIcon />,
       },
     ],
   },
@@ -38,27 +29,28 @@ export const globalNavigationListItems: GlobalNavigatinItems[] = [
     key: 'global-navigation-list-item-groups-bottom',
     items: [
       {
-        key: 'global-navigation-list-item-bottom-1',
-        to: '#',
-        label: 'Item 1',
-        IconComponent: <MailIcon />,
+        to: ROUTER.users,
+        label: '사용자 계정 목록',
+        IconComponent: <UserGroupIcon />,
+        login: true,
+        roles: [RoleType.Master, RoleType.Admin],
       },
       {
-        key: 'global-navigation-list-item-bottom-2',
         to: '#',
         label: 'Item 2',
+        login: true,
         IconComponent: <MailIcon />,
       },
       {
-        key: 'global-navigation-list-item-bottom-3',
         to: '#',
         label: 'Item 3',
+        login: true,
         IconComponent: <MailIcon />,
       },
       {
-        key: 'global-navigation-list-item-bottom-4',
         to: '#',
         label: 'Item 4',
+        login: true,
         IconComponent: <MailIcon />,
       },
     ],

@@ -1,6 +1,6 @@
 import { IconButton, Divider, useTheme } from '@mui/material';
 import { FC, Fragment, useCallback } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { appState } from '../app.state';
 import { AppGlobalNavigationList } from './gsb.list';
 import {
@@ -9,10 +9,12 @@ import {
 } from '@mui/icons-material';
 import { CustomDrawer, CutomDrawerHeader } from './gsb.styled.component';
 import { globalNavigationListItems } from './constants';
+import { authenticateState } from '../authenticate';
 
 export const AppGlobalSideBar: FC = () => {
   const theme = useTheme();
 
+  const user = useRecoilValue(authenticateState);
   const [state, setState] = useRecoilState(appState);
 
   const onCloseSidebar = useCallback(() => {
@@ -33,7 +35,11 @@ export const AppGlobalSideBar: FC = () => {
       {globalNavigationListItems.map(({ key, items }) => (
         <Fragment key={key}>
           <Divider />
-          <AppGlobalNavigationList open={state.open} items={items} />
+          <AppGlobalNavigationList
+            user={user}
+            open={state.open}
+            items={items}
+          />
         </Fragment>
       ))}
     </CustomDrawer>
