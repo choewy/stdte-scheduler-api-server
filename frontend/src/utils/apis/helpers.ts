@@ -2,7 +2,7 @@ import { AlertState } from '@/components';
 import { AxiosError } from 'axios';
 import { SetterOrUpdater } from 'recoil';
 
-export const exceptionHandler = (
+export const apiExceptionHandler = (
   e: unknown,
   setAlert: SetterOrUpdater<AlertState>,
 ) => {

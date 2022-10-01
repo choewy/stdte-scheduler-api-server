@@ -1,5 +1,12 @@
 import { PolicyRange, RoleType, UserStatus } from '@/utils/apis';
 
+export interface UpdateUserRequestBody {
+  nickname?: string;
+  password?: string;
+  email?: string;
+  status?: UserStatus;
+}
+
 export interface UserTeamData {
   id: Number;
   name: string;
