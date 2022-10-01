@@ -1,6 +1,5 @@
 import { PASS_ROUTERS } from '@/configs';
 import { AxiosError, AxiosRequestConfig } from 'axios';
-import { useLocation } from 'react-router-dom';
 import { getBearerAuth, removeTokens } from '../cookie';
 
 export const requestInterceptorCallback = (
@@ -24,7 +23,7 @@ export const responseInterceptorCallback = (
 export const responseInterceptorError = async (
   e: AxiosError,
 ): Promise<void> => {
-  const { pathname } = useLocation();
+  const { pathname } = window.location;
   if (!PASS_ROUTERS.includes(pathname)) {
     switch (e.response?.status) {
       case 401:
