@@ -26,7 +26,7 @@ export class UserController {
   }
 
   @UserRouter.CreateUser({ method: 'POST' })
-  async createUser(@Body() body: CreateUserDto): Promise<void> {
+  async createUser(@Body() body: CreateUserDto): Promise<UserRowDto> {
     return await createUserEvent(this.repository, body);
   }
 
@@ -34,7 +34,7 @@ export class UserController {
   async updateUser(
     @Param() param: UserParamDto,
     @Body() body: UpdateUserDto,
-  ): Promise<void> {
+  ): Promise<UserRowDto> {
     return await updateUserEvent(this.repository, param, body);
   }
 
