@@ -1,8 +1,8 @@
-import { FC, Fragment } from 'react';
+import { FC } from 'react';
 import { ROUTER } from '@/configs';
 import { Route, Routes } from 'react-router-dom';
 import { Authenticate } from '@/app/authenticate';
-import { BackNavigator, GlobalNavigator, RouteComponent } from '@/components';
+import { BackNavigator, RouteComponent } from '@/components';
 import {
   HomePage,
   BlockPage,

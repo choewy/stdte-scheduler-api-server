@@ -1,4 +1,4 @@
-import { authApi } from '@/utils/apis';
+import { authApi } from '@/apis';
 import { useSetRecoilState } from 'recoil';
 import { useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';

@@ -1,4 +1,4 @@
-import { PolicyRange, RoleType, UserStatus } from '@/utils/apis';
+import { PolicyRange, RoleType, UserStatus } from '@/apis';
 
 export interface UserTeamData {
   id: Number;

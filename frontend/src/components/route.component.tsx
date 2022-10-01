@@ -1,5 +1,5 @@
 import { authenticateState } from '@/app/authenticate';
-import { UserStatus } from '@/utils/apis';
+import { UserStatus } from '@/apis';
 import { FC, Fragment } from 'react';
 import { useRecoilValue } from 'recoil';
 

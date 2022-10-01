@@ -6,8 +6,7 @@ import reportWebVitals from './reportWebVitals';
 
 import { RecoilRoot } from 'recoil';
 import { BrowserRouter } from 'react-router-dom';
-import { AlertContainer, LoaderController } from '@/components';
-import { App } from '@/app';
+import { App, AlertContainer, AppLoading } from '@/app';
 import { HelmetProvider } from 'react-helmet-async';
 
 const root = ReactDOM.createRoot(
@@ -17,7 +16,7 @@ root.render(
   // <React.StrictMode>
   <RecoilRoot>
     <AlertContainer>
-      <Suspense fallback={<LoaderController />}>
+      <Suspense fallback={<AppLoading />}>
         <BrowserRouter basename={process.env.PUBLIC_URL}>
           <HelmetProvider>
             <App />

@@ -2,8 +2,8 @@ import {
   Check as CheckIcon,
   CancelOutlined as CancelIcon,
 } from '@mui/icons-material';
-import { UserStatus } from '@/utils/apis';
-import { userApi } from '@/utils/apis/user';
+import { UserStatus } from '@/apis';
+import { userApi } from '@/apis/user';
 import { Box, Button, IconButton } from '@mui/material';
 import { FC, MouseEventHandler, useCallback, useState } from 'react';
 import { useSetRecoilState } from 'recoil';

@@ -1,5 +1,5 @@
-import { alertState } from '@/components';
-import { userApi, UserResponseData } from '@/utils/apis/user';
+import { alertState } from '@/app';
+import { userApi, UserResponseData } from '@/apis/user';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
