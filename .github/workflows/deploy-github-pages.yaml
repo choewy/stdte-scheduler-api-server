@@ -42,7 +42,8 @@ jobs:
         working-directory: ${{ env.working-directory }}
         run: |
           touch .env
-          echo ${{ secrets.FRONTEND_ENVS }} >> .env
+          ENVS=${{ secrets.FRONTEND_ENVS }}
+          echo "$ENVS" >> .env
           cat .env
 
       # Build React
