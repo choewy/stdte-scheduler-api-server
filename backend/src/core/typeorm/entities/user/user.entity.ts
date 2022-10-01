@@ -15,6 +15,7 @@ import { Team } from '../team/team.entity';
 
 export enum UserStatus {
   Wait = 'wait',
+  Reject = 'reject',
   Enable = 'enable',
   Disable = 'disable',
 }
