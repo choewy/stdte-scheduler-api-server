@@ -1,5 +1,6 @@
 export enum UserStatus {
   Wait = 'wait',
+  Reject = 'reject',
   Enable = 'enable',
   Disable = 'disable',
 }

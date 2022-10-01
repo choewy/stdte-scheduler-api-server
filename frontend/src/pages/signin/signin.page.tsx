@@ -1,11 +1,8 @@
-import { AxiosError } from 'axios';
-import { FC, FormEvent, useCallback } from 'react';
+import { FC, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { SignInState, signInState } from './signin.state';
-import { CustomCardBox, errorState } from '@/components';
-import { saveTokens } from '@/utils/cookie';
-import { ROUTER } from '@/configs';
+import { CustomCardBox, alertState } from '@/components';
 import { authApi } from '@/utils/apis';
 import { SignInHelmet } from './signin.helmet';
 import {
@@ -18,29 +15,27 @@ import { Typography } from '@mui/material';
 
 export const SignInPage: FC = () => {
   const navigate = useNavigate();
-  const setError = useSetRecoilState(errorState);
+
   const [state, setState] = useRecoilState(signInState);
+  const resetState = useResetRecoilState(signInState);
+  const setAlert = useSetRecoilState(alertState);
 
   const onChange = useInputChangeEvent(setState);
-  const onSubmit = useCallback(
-    async (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      try {
-        const data = await authApi.signin({
-          username: state.username.value as string,
-          password: state.password.value as string,
-        });
-        saveTokens(data);
-        setState(new SignInState());
-        navigate(ROUTER.home, { replace: true });
-      } catch (e) {
-        const error = e as AxiosError;
-        const { data } = error.response as any;
-        setError({ message: data.message });
-      }
-    },
-    [authApi, state, setError],
-  );
+
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const body = {
+      username: state.username.value as string,
+      password: state.password.value as string,
+    };
+
+    await authApi.signin(body, {
+      navigate,
+      resetState,
+      setAlert,
+    });
+  };
 
   return (
     <CustomCardBox>

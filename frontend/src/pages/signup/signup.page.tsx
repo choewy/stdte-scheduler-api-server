@@ -1,10 +1,7 @@
-import { FC, FormEvent, useCallback } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { AxiosError } from 'axios';
-import { errorState } from '@/components';
+import { FC, FormEvent } from 'react';
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { alertState } from '@/components';
 import { SignUpState, signUpState } from './signup.state';
-import { saveTokens } from '@/utils/cookie';
-import { ROUTER } from '@/configs';
 import { useNavigate } from 'react-router-dom';
 import { authApi } from '@/utils/apis';
 import { SignUpHelmet } from './signup.helmet';
@@ -19,33 +16,30 @@ import {
 
 export const SignUpPage: FC = () => {
   const navigate = useNavigate();
-  const setError = useSetRecoilState(errorState);
 
   const [state, setState] = useRecoilState(signUpState);
+  const resetState = useResetRecoilState(signUpState);
+  const setAlert = useSetRecoilState(alertState);
 
   const onChange = useInputChangeEvent(setState);
-  const onSubmit = useCallback(
-    async (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      try {
-        const data = await authApi.signup({
-          username: state.username.value as string,
-          password: state.password.value as string,
-          confirmPassword: state.confirmPassword.value as string,
-          nickname: state.nickname.value as string,
-          email: state.email.value as string,
-        });
-        saveTokens(data);
-        setState(new SignUpState());
-        navigate(ROUTER.home, { replace: true });
-      } catch (e) {
-        const error = e as AxiosError;
-        const { data } = error.response as any;
-        setError({ message: data.message });
-      }
-    },
-    [authApi, state, setError],
-  );
+
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const body = {
+      username: state.username.value as string,
+      password: state.password.value as string,
+      confirmPassword: state.confirmPassword.value as string,
+      nickname: state.nickname.value as string,
+      email: (state.email.value as string) || undefined,
+    };
+
+    await authApi.signup(body, {
+      navigate,
+      resetState,
+      setAlert,
+    });
+  };
 
   return (
     <CustomCardBox>

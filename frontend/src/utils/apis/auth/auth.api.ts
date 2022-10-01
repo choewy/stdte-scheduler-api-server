@@ -1,8 +1,12 @@
+import { ROUTER } from '@/configs';
 import { axiosInstance } from '@/utils/axios';
+import { saveTokens } from '@/utils/cookie';
+import { AxiosError } from 'axios';
+import { exceptionHandler } from '../helpers';
+import { DefaultApiProps } from '../interfaces';
 import {
   AuthResponseData,
   SignInRequestBody,
-  SignResponseData,
   SignUpRequestBody,
 } from './interfaces';
 
@@ -20,30 +24,36 @@ export const auth = async (): Promise<AuthResponseData> => {
 
 export const signin = async (
   body: SignInRequestBody,
-): Promise<SignResponseData> => {
+  { navigate, resetState, setAlert }: DefaultApiProps,
+): Promise<void> => {
   try {
     const { data } = await axiosInstance({
       method: 'POST',
       url: '/auth/signin',
       data: body,
     });
-    return data;
+    saveTokens(data);
+    resetState();
+    navigate(ROUTER.home, { replace: true });
   } catch (e) {
-    throw e;
+    exceptionHandler(e, setAlert);
   }
 };
 
 export const signup = async (
   body: SignUpRequestBody,
-): Promise<SignResponseData> => {
+  { navigate, resetState, setAlert }: DefaultApiProps,
+): Promise<void> => {
   try {
     const { data } = await axiosInstance({
       method: 'POST',
       url: '/auth/signup',
       data: body,
     });
-    return data;
+    saveTokens(data);
+    resetState();
+    navigate(ROUTER.home, { replace: true });
   } catch (e) {
-    throw e;
+    exceptionHandler(e, setAlert);
   }
 };
