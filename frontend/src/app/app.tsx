@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { ROUTER } from '@/configs';
 import { Route, Routes } from 'react-router-dom';
 import { Authenticate } from '@/app/authenticate';
@@ -17,8 +17,27 @@ import { AppHelmet } from './app.helmet';
 import { AppGlobalNavigationBar } from './global-navigation-bar';
 import { AppGlobalSideBar } from './global-side-bar';
 import { AppLayout } from './app.styled.component';
+import { useSetRecoilState } from 'recoil';
+import { alertState } from './alert';
+import { NoticeEventData, onSubcribeNoticeEvent } from '@/events';
+import { ChatRoomListPage } from '@/pages/chat-room';
 
 export const App: FC = () => {
+  const setAlert = useSetRecoilState(alertState);
+
+  const onConnectSocket = (data: NoticeEventData) => {
+    setAlert({
+      type: data.type || 'info',
+      message: data.message,
+      duration: data.duration || 5000,
+      open: true,
+    });
+  };
+
+  useEffect(() => {
+    return onSubcribeNoticeEvent(onConnectSocket);
+  }, []);
+
   return (
     <AppLayout>
       <AppHelmet />
@@ -60,6 +79,10 @@ export const App: FC = () => {
             element={<RouteComponent Component={UserDetailPage} login={true} />}
           />
         </Route>
+        <Route
+          path={ROUTER.chatRooms}
+          element={<RouteComponent Component={ChatRoomListPage} />}
+        />
         <Route path="*" element={<BackNavigator />} />
       </Routes>
     </AppLayout>

@@ -14,7 +14,7 @@ export const AlertSnackbar: FC = () => {
     <Snackbar
       open={state.open}
       onClose={onClose}
-      autoHideDuration={3000}
+      autoHideDuration={state.duration}
       anchorOrigin={{
         vertical: 'top',
         horizontal: 'right',

@@ -3,6 +3,7 @@ import { RoleType } from '@/apis';
 import {
   Home as HomeIcon,
   Mail as MailIcon,
+  Chat as ChatIcon,
   Group as UserGroupIcon,
   GitHub as GitHubIcon,
 } from '@mui/icons-material';
@@ -10,7 +11,7 @@ import { GlobalNavigatinItems } from './interface';
 
 export const globalNavigationListItems: GlobalNavigatinItems[] = [
   {
-    key: 'global-navigation-list-item-groups-top',
+    key: 'global-navigation-list-item-groups-common',
     items: [
       {
         to: ROUTER.home,
@@ -26,7 +27,18 @@ export const globalNavigationListItems: GlobalNavigatinItems[] = [
     ],
   },
   {
-    key: 'global-navigation-list-item-groups-bottom',
+    key: 'global-navigation-list-item-groups-user',
+    items: [
+      {
+        to: ROUTER.chatRooms,
+        label: '채팅',
+        IconComponent: <ChatIcon />,
+        login: true,
+      },
+    ],
+  },
+  {
+    key: 'global-navigation-list-item-groups-admin',
     items: [
       {
         to: ROUTER.users,
