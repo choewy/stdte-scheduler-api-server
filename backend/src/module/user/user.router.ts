@@ -59,7 +59,10 @@ export class UserRouter {
       this.CommonGuards(),
       this.CommonSummary('사용자 생성 API'),
       SwaggerBody({ formats: ['xwwwForm'], type: CreateUserDto }),
-      SwaggerResponse({ status: 201, type: null }),
+      SwaggerResponse({
+        status: 201,
+        type: UserRowDto,
+      }),
       SwaggerResponse({
         status: 400,
         description: '이미 사용 중인 아이디',
@@ -73,7 +76,10 @@ export class UserRouter {
       this.CommonGuards(),
       this.CommonSummary('사용자 수정 API'),
       SwaggerBody({ formats: ['xwwwForm'], type: UpdateUserDto }),
-      SwaggerResponse({ status: 200, type: null }),
+      SwaggerResponse({
+        status: 200,
+        type: UserRowDto,
+      }),
       SwaggerResponse({
         status: 400,
         description: '이미 사용 중인 이메일',

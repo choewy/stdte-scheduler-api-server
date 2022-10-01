@@ -10,6 +10,7 @@ export class SignUpDto {
 
   @ApiPropertyOptional()
   @IsOptional()
+  @IsString()
   @IsEmail()
   email: string;
 

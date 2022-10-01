@@ -26,15 +26,19 @@ export const signUpEvent = async (
   }
 
   const params = { username };
-
-  if (email) {
-    params['email'] = email;
-  }
-
   const check = await repository.findUser(params);
 
   if (check) {
     throw AlreadyUsedUsernameOrEmailException;
+  }
+
+  if (email) {
+    const params = { email };
+    const check = await repository.findUser(params);
+
+    if (check) {
+      throw AlreadyUsedUsernameOrEmailException;
+    }
   }
 
   const roles = await repository.findRoles([RoleType.Default]);

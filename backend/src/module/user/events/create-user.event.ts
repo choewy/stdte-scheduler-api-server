@@ -1,6 +1,6 @@
 import { localDateTime } from '@/core/datetime';
 import { RoleType, User, UserStatus } from '@/core/typeorm/entities';
-import { CreateUserDto } from '../dto';
+import { CreateUserDto, UserRowDto } from '../dto';
 import { AlreadyUsedUsernameException } from '../user.exception';
 import { UserRepository } from '../user.repository';
 
@@ -9,7 +9,7 @@ const EXCLUDE_ROLE_TYPES = [RoleType.Master, RoleType.Admin];
 export const createUserEvent = async (
   repository: UserRepository,
   body: Partial<User> & CreateUserDto,
-): Promise<void> => {
+): Promise<UserRowDto> => {
   const { roleIds, teamIds, ...data } = body;
   const param = { username: body.username };
   const check = await repository.findUser(param, EXCLUDE_ROLE_TYPES);
@@ -34,5 +34,7 @@ export const createUserEvent = async (
     user.teams = await repository.findTeamsByIds(teamIds);
   }
 
-  return await repository.saveUser(body);
+  const newUser = await repository.saveUser(body);
+
+  return new UserRowDto(newUser);
 };

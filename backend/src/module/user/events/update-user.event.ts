@@ -1,7 +1,7 @@
 import { localDateTime } from '@/core/datetime';
 import { RoleType, UserStatus } from '@/core/typeorm/entities';
 import { UserRepository } from '../user.repository';
-import { UpdateUserDto, UserParamDto } from '../dto';
+import { UpdateUserDto, UserParamDto, UserRowDto } from '../dto';
 import {
   AlreadyUsedEmailException,
   NotFoundUserException,
@@ -13,7 +13,7 @@ export const updateUserEvent = async (
   repository: UserRepository,
   param: UserParamDto,
   { status, ...body }: UpdateUserDto,
-): Promise<void> => {
+): Promise<UserRowDto> => {
   const user = await repository.findUser(param, EXCLUDE_ROLE_TYPES);
 
   if (!user) {
@@ -35,5 +35,7 @@ export const updateUserEvent = async (
     user.disabledAt = status === disable ? localDateTime() : null;
   }
 
-  return await repository.saveUser(Object.assign(user, body));
+  const newUser = await repository.saveUser(Object.assign(user, body));
+
+  return new UserRowDto(newUser);
 };
