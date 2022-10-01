@@ -13,7 +13,11 @@ export function CustomTableHead<T>({ columns }: Props<T>) {
           <TableCell
             key={JSON.stringify(column)}
             align={column.align}
-            style={{ minWidth: column.minWidth }}
+            style={{
+              minWidth: column.minWidth,
+              background: '#eee',
+              fontWeight: 600,
+            }}
           >
             {column.label}
           </TableCell>
