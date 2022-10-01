@@ -9,3 +9,4 @@ declare global {
 export * from './api.config';
 export * from './auth.config';
 export * from './router.config';
+export * from './socket.config';

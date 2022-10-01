@@ -7,6 +7,7 @@ export const ROUTER = {
   signout: '/signout',
   users: '/users',
   profile: '/me',
+  chatRooms: '/chat-rooms',
 };
 
 export const PASS_ROUTERS = [

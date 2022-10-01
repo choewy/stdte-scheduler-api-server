@@ -1,4 +1,5 @@
 import { ROUTER } from '@/configs';
+import { emitUserSignEvent } from '@/events';
 import { axiosInstance } from '@/utils/axios';
 import { saveTokens } from '@/utils/cookie';
 import { apiExceptionHandler } from '../helpers';
@@ -15,6 +16,7 @@ export const auth = async (): Promise<AuthResponseData> => {
       method: 'GET',
       url: '/auth',
     });
+    emitUserSignEvent(data);
     return data;
   } catch (e) {
     throw e;
