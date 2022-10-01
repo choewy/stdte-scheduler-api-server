@@ -42,7 +42,9 @@ jobs:
         working-directory: ${{ env.working-directory }}
         run: |
           touch .env
-          ENVS=$(cat <<EOF ${{ secrets.FRONTEND_ENVS }}EOF)
+          ENVS=$( cat <<EOF 
+          ${{ secrets.FRONTEND_ENVS }}
+          EOF)
           echo "$ENVS" >> .env
           cat .env
 
