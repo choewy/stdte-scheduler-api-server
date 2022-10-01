@@ -1,8 +1,7 @@
 import { ROUTER } from '@/configs';
 import { axiosInstance } from '@/utils/axios';
 import { saveTokens } from '@/utils/cookie';
-import { AxiosError } from 'axios';
-import { exceptionHandler } from '../helpers';
+import { apiExceptionHandler } from '../helpers';
 import { DefaultApiProps } from '../interfaces';
 import {
   AuthResponseData,
@@ -33,10 +32,10 @@ export const signin = async (
       data: body,
     });
     saveTokens(data);
-    resetState();
-    navigate(ROUTER.home, { replace: true });
+    resetState && resetState();
+    navigate && navigate(ROUTER.home, { replace: true });
   } catch (e) {
-    exceptionHandler(e, setAlert);
+    apiExceptionHandler(e, setAlert);
   }
 };
 
@@ -51,9 +50,9 @@ export const signup = async (
       data: body,
     });
     saveTokens(data);
-    resetState();
-    navigate(ROUTER.home, { replace: true });
+    resetState && resetState();
+    navigate && navigate(ROUTER.home, { replace: true });
   } catch (e) {
-    exceptionHandler(e, setAlert);
+    apiExceptionHandler(e, setAlert);
   }
 };
