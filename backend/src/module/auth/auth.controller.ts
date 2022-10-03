@@ -1,5 +1,5 @@
-import { CurrentUser } from '@/appllication/param';
-import { UserDto } from '@/appllication/dto';
+import { CurrentUser } from '@/server/param';
+import { UserDto } from '@/server/dto';
 import { SwaggerController } from '@/core/swagger';
 import { Body } from '@nestjs/common';
 import { AuthRouter } from './auth.router';
@@ -7,6 +7,7 @@ import { SignInDto, SignUpDto, JwtTokenDto } from './dto';
 import { AuthRepository } from './auth.repository';
 import { JwtAuthService } from '@/core/jwt-auth';
 import { signInEvent, signUpEvent } from './events';
+import { User } from '@/core/typeorm/entities';
 
 @SwaggerController({ path: '/auth', tag: '인증 및 인가' })
 export class AuthController {
@@ -16,8 +17,8 @@ export class AuthController {
   ) {}
 
   @AuthRouter.CheckAuth({ method: 'GET' })
-  async checkAuth(@CurrentUser() user: UserDto) {
-    return user;
+  async checkAuth(@CurrentUser() user: User): Promise<UserDto> {
+    return new UserDto(user);
   }
 
   @AuthRouter.SignUp({ method: 'POST', path: 'signup' })

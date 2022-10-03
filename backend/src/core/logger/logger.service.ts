@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ExceptionDto } from '@/appllication/dto';
+import { ExceptionDto } from '@/server/dto';
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { LoggerRepository } from './logger.repository';
 import { Log } from '../typeorm/entities';

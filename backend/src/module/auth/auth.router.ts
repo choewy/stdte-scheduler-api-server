@@ -1,4 +1,4 @@
-import { UserDto } from '@/appllication/dto';
+import { UserDto } from '@/server/dto';
 import {
   SwaggerAuthGuard,
   SwaggerBody,

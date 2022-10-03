@@ -1,4 +1,4 @@
-import { ExceptionDto } from '@/appllication/dto';
+import { ExceptionDto } from '@/server/dto';
 import { MulterFilesInterceptor } from '@/core/multer';
 import { applyDecorators, UseInterceptors } from '@nestjs/common';
 import { ApiBody, ApiBodyOptions, ApiConsumes } from '@nestjs/swagger';
