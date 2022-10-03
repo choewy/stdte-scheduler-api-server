@@ -1,4 +1,4 @@
-import { ExceptionDto } from '@/appllication/dto';
+import { ExceptionDto } from '@/server/dto';
 import { HttpStatus } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 

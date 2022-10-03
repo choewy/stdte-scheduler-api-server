@@ -5,11 +5,13 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { DateTimeColumn } from '../../columns';
 import { DateTimeEntity } from '../datetime.entity';
+import { ChatRoom } from '../chat-room/chat-room.entity';
 import { Role } from '../role/role.entity';
 import { Team } from '../team/team.entity';
 
@@ -28,6 +30,9 @@ class Relation extends DateTimeEntity {
   @ManyToMany(() => Team, (e) => e.users)
   @JoinTable({ name: 'user_teams' })
   teams: Team[];
+
+  @OneToMany(() => ChatRoom, (e) => e.host, { cascade: true })
+  chatRooms: ChatRoom[];
 }
 
 @Entity('user')

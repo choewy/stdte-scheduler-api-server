@@ -16,10 +16,10 @@ import {
   ServerConfig,
 } from '@/core/config';
 import { existsSync, mkdirSync } from 'fs';
-import { ErrorFilter } from './appllication/filter/error.filter';
-import { HttpExceptionFilter } from './appllication/filter';
-import { PipeValidator } from './appllication/validator';
-import { ClassInterceptor, LogInterceptor } from './appllication/interceptor';
+import { ErrorFilter } from './server/filter/error.filter';
+import { HttpExceptionFilter } from './server/filter';
+import { PipeValidator } from './server/validator';
+import { ClassInterceptor, LogInterceptor } from './server/interceptor';
 import { LoggerService } from './core/logger';
 
 export class Bootstrap {

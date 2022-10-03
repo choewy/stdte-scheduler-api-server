@@ -4,13 +4,13 @@ import { Log } from '../typeorm/entities';
 
 @Injectable()
 export class LoggerRepository {
-  private readonly target: Repository<Log>;
+  private readonly repository: Repository<Log>;
 
   constructor(private readonly dataSource: DataSource) {
-    this.target = this.dataSource.getRepository(Log);
+    this.repository = this.dataSource.getRepository(Log);
   }
 
   async insertOne(log: Log): Promise<void> {
-    await this.target.insert(log);
+    await this.repository.insert(log);
   }
 }

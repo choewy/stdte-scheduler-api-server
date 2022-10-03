@@ -1,4 +1,4 @@
-import { HashPassword } from '@/appllication/transformer';
+import { HashPassword } from '@/server/transformer';
 import { UserStatus } from '@/core/typeorm/entities';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEmail, IsEnum, IsOptional, IsString } from 'class-validator';

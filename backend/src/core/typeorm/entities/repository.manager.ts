@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
+import { SocketManager } from './socket';
 import { RoleManager } from './role';
 import { TaskManager } from './task';
 import { TeamManager } from './team';
 import { UserManager } from './user';
+import { ChatRoomManager } from './chat-room';
+import { ChatMessageManager } from './chat-message';
 
 @Injectable()
 export class IRepositoryManager {
@@ -30,6 +33,10 @@ export class IRepositoryManager {
     }
   }
 
+  protected get socket() {
+    return new SocketManager(this.dataSource, 'socket');
+  }
+
   protected get user() {
     return new UserManager(this.dataSource, 'user');
   }
@@ -44,5 +51,13 @@ export class IRepositoryManager {
 
   protected get task() {
     return new TaskManager(this.dataSource, 'task');
+  }
+
+  protected get chatMessage() {
+    return new ChatMessageManager(this.dataSource, 'chatMessage');
+  }
+
+  protected get chatRoom() {
+    return new ChatRoomManager(this.dataSource, 'chatRoom');
   }
 }

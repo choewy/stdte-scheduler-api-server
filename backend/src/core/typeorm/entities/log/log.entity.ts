@@ -1,4 +1,4 @@
-import { ExceptionDto } from '@/appllication/dto';
+import { ExceptionDto } from '@/server/dto';
 import { Request } from 'express';
 import { DateTime } from 'luxon';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';

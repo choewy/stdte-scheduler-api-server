@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { ExceptionDto, UserDto } from '@/appllication/dto';
+import { ExceptionDto, UserDto } from '@/server/dto';
 import { BaseRepository } from '@/core/typeorm/repositories';
 import { SwaggerResponse } from './swagger.response';
 import { Reflector } from '@nestjs/core';

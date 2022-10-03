@@ -7,7 +7,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { SwaggerResponse } from './swagger.response';
-import { UserDto, ExceptionDto } from '@/appllication/dto';
+import { UserDto, ExceptionDto } from '@/server/dto';
 import { JwtAuthService, JwtType } from '@/core/jwt-auth';
 import { DataSource } from 'typeorm';
 import { IRepositoryManager } from '@/core/typeorm/entities';

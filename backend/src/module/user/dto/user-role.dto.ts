@@ -1,4 +1,4 @@
-import { RolePolicyDto } from '@/appllication/dto';
+import { RolePolicyDto } from '@/server/dto';
 import { Role, RoleType } from '@/core/typeorm/entities';
 import { ApiResponseProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';

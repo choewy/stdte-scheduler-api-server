@@ -1,4 +1,4 @@
-import { HashPassword } from '@/appllication/transformer';
+import { HashPassword } from '@/server/transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsArray,
