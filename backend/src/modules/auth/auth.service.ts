@@ -6,7 +6,7 @@ import { User, UserQuery } from '@/typeorm';
 import { BcryptService, classConstructor, ConfigKey } from '@/core';
 import { WsException } from '@nestjs/websockets';
 import { SignInDto, SignUpDto } from './dto';
-import { AuthRvo } from './rvo';
+import { AuthTokenRvo } from './rvo';
 
 @Injectable()
 export class AuthService {
@@ -51,13 +51,10 @@ export class AuthService {
       }),
     );
 
-    return {
-      user: classConstructor(new AuthRvo(), user),
-      tokens: {
-        accessToken: this.jwtService.sign({ uid }, this.config),
-        refreshToken: this.jwtService.sign({ uid }, this.config),
-      },
-    };
+    return classConstructor(new AuthTokenRvo(), {
+      accessToken: this.jwtService.sign({ uid }, this.config),
+      refreshToken: this.jwtService.sign({ uid }, this.config),
+    });
   }
 
   async signInWithEmail({ email, password }: SignInDto) {
@@ -83,12 +80,9 @@ export class AuthService {
 
     const { uid } = user;
 
-    return {
-      user: classConstructor(new AuthRvo(), user),
-      tokens: {
-        accessToken: this.jwtService.sign({ uid }, this.config),
-        refreshToken: this.jwtService.sign({ uid }, this.config),
-      },
-    };
+    return classConstructor(new AuthTokenRvo(), {
+      accessToken: this.jwtService.sign({ uid }, this.config),
+      refreshToken: this.jwtService.sign({ uid }, this.config),
+    });
   }
 }

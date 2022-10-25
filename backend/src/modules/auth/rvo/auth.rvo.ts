@@ -1,12 +1,11 @@
 import { Expose } from 'class-transformer';
+import { AuthTokenRvo } from './auth-token.rvo';
+import { AuthUserRvo } from './auth-user.rvo';
 
 export class AuthRvo {
   @Expose()
-  uid: number;
+  user: AuthUserRvo;
 
   @Expose()
-  name: string;
-
-  @Expose()
-  email: string;
+  tokens: AuthTokenRvo;
 }

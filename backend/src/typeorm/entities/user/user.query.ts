@@ -1,6 +1,7 @@
 import { DataSource, EntityManager, IsNull, SelectQueryBuilder } from 'typeorm';
-import { createRepository } from './helpers';
-import { User } from '../entities';
+import { createRepository } from '../helpers';
+import { User } from './user.entity';
+import { RoleAndUser } from '../role_and_user';
 
 export class UserQuery {
   constructor(
@@ -75,5 +76,32 @@ export class UserQuery {
     );
 
     return await query.getOne();
+  }
+
+  async selectUserByKeywordNotInRoleExecute(rid: number, keyword: string) {
+    keyword = `%${keyword.trim()}%`;
+
+    const subQuery = this.base
+      .getRepository(RoleAndUser)
+      .createQueryBuilder('role_and_user')
+      .select('role_and_user.uid')
+      .where(`role_and_user.rid = ${rid}`)
+      .getQuery();
+
+    const orWhereQuery = [
+      'user.name LIKE :keyword',
+      'user.email LIKE :keyword',
+    ].join(' OR ');
+
+    return await this.repository
+      .createQueryBuilder('user')
+      .select('user.uid', 'uid')
+      .addSelect('user.name', 'name')
+      .addSelect('user.email', 'email')
+      .where('user.deleted_at IS NULL')
+      .andWhere(`user.uid NOT IN (${subQuery})`)
+      .andWhere(`(${orWhereQuery})`, { keyword })
+      .limit(15)
+      .getRawMany();
   }
 }

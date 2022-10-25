@@ -4,8 +4,6 @@ import {
   WsExceptionFilter,
   WsValidationPipe,
 } from '@/app';
-import { AuthGuard } from '@/modules/auth';
-import { AuthGateway } from '@/modules/auth/auth.gateway';
 import {
   applyDecorators,
   UseFilters,

@@ -1,28 +1,21 @@
+import { DateTimeColumn } from '@/typeorm/helpers';
+import { DateTime } from 'luxon';
 import {
   BeforeInsert,
   BeforeUpdate,
   Column,
   Entity,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
-import { DateTime } from 'luxon';
-import { DateTimeColumn } from '@/typeorm/helpers';
-import { OAuthPlatform } from './enums';
-import { OAuthRelation } from './oauth.relation';
+import { TeamRelation } from './team.relation';
 
-@Entity('oauth')
-export class OAuth extends OAuthRelation {
-  @PrimaryColumn()
-  oid: string;
-
-  @PrimaryColumn()
-  platform: OAuthPlatform;
+@Entity('team')
+export class Team extends TeamRelation {
+  @PrimaryGeneratedColumn()
+  readonly tid: number;
 
   @Column()
-  nickname: string;
-
-  @Column()
-  profile_image: string;
+  name: string;
 
   @DateTimeColumn()
   created_at: DateTime;
@@ -30,10 +23,14 @@ export class OAuth extends OAuthRelation {
   @DateTimeColumn()
   updated_at: DateTime;
 
+  @DateTimeColumn({ default: null })
+  deleted_at: DateTime;
+
   @BeforeInsert()
   protected beforeInsert() {
     this.created_at = DateTime.local();
     this.updated_at = DateTime.local();
+    this.deleted_at = null;
   }
 
   @BeforeUpdate()

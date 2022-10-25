@@ -1,15 +1,15 @@
-import { UseGuards } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
   SubscribeMessage,
 } from '@nestjs/websockets';
+import { UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto, SignUpDto } from './dto';
 import { Socket } from 'socket.io';
 import { AuthGuard } from './auth.guard';
 import { classConstructor, WSModuleGateway } from '@/core';
-import { AuthRvo } from './rvo';
+import { AuthTokenRvo, AuthUserRvo } from './rvo';
 
 @WSModuleGateway()
 export class AuthGateway {
@@ -17,9 +17,9 @@ export class AuthGateway {
 
   @UseGuards(AuthGuard)
   @SubscribeMessage('authorize')
-  async authorize(@ConnectedSocket() socket: Socket) {
-    const user = socket['user'];
-    return classConstructor(new AuthRvo(), {
+  async authorize(@ConnectedSocket() socket: Socket): Promise<AuthUserRvo> {
+    const user = await socket['user'];
+    return classConstructor(new AuthUserRvo(), {
       uid: user.uid,
       name: user.name,
       email: user.email,
@@ -32,12 +32,12 @@ export class AuthGateway {
   }
 
   @SubscribeMessage('auth:signup')
-  async signUp(@MessageBody() body: SignUpDto) {
+  async signUp(@MessageBody() body: SignUpDto): Promise<AuthTokenRvo> {
     return await this.authService.signUpUser(body);
   }
 
   @SubscribeMessage('auth:signin-email')
-  async signInWithEmail(@MessageBody() body: SignInDto) {
+  async signInWithEmail(@MessageBody() body: SignInDto): Promise<AuthTokenRvo> {
     return await this.authService.signInWithEmail(body);
   }
 }
