@@ -1,58 +1,48 @@
-import { Request, Response } from 'express';
-import { ExceptionDto } from '@/server/dto';
-import { HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { LoggerRepository } from './logger.repository';
-import { Log } from '../typeorm/entities';
+import { Socket } from 'socket.io';
+import { Injectable, Logger } from '@nestjs/common';
+import { connectMaps } from '../redis';
+import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class LoggerService {
-  private httpStatus: Record<number, string>;
+  constructor(private readonly logger: Logger) {}
 
-  constructor(
-    private readonly logger: Logger,
-    private readonly repository: LoggerRepository,
-  ) {
-    const entries = Object.entries(HttpStatus);
-    this.httpStatus = Object.fromEntries(
-      entries.map(([key, value]) => [value, key]),
-    );
+  async log(socket: Socket) {
+    const nsp = socket.nsp.name;
+    const ip = socket.conn.remoteAddress;
+    const ctxName = socket['context'];
+
+    const message = `(nsp: ${nsp}, ${socket.id}, ${ip}) - ${JSON.stringify(
+      connectMaps[nsp],
+      null,
+    )}`;
+
+    this.logger.verbose(message, ctxName);
   }
 
-  private successMessage(request: Request, { statusCode }: Response): string {
-    return [
-      `${this.httpStatus[statusCode]}(${statusCode})`,
-      `${request.method}(${request.ip})`,
-      `${request.path}`,
-    ].join(' - ');
+  async warn(socket: Socket, exception: WsException) {
+    const nsp = socket.nsp.name;
+    const ip = socket.conn.remoteAddress;
+    const ctxName = socket['context'];
+
+    const message = `(nsp: ${nsp}, ${socket.id}, ${ip}) - ${JSON.stringify(
+      exception.getError(),
+      null,
+    )}`;
+
+    this.logger.warn(message, ctxName);
   }
 
-  private failMessage(request: Request, dto: ExceptionDto) {
-    return [
-      `${dto.error}(${dto.status})`,
-      `${request.method}(${request.ip})`,
-      `${request.path}`,
-    ].join(' - ');
-  }
+  async error(socket: Socket, error: Error) {
+    const nsp = socket.nsp.name;
+    const ip = socket.conn.remoteAddress;
+    const ctxName = socket['context'];
 
-  async verbose(request: Request, response: Response) {
-    const log = new Log('error', request);
-    await this.repository.insertOne(log);
-    this.logger.verbose(this.successMessage(request, response));
-  }
+    const message = `(nsp: ${nsp}, ${socket.id}, ${ip}) - ${JSON.stringify(
+      error,
+      null,
+    )}`;
 
-  async warn(request: Request, dto: ExceptionDto) {
-    const log = new Log('error', request, dto);
-    await this.repository.insertOne(log);
-    this.logger.warn(this.failMessage(request, dto), request['context']);
-  }
-
-  async error(request: Request, dto: ExceptionDto, stack?: string) {
-    const log = new Log('error', request, dto, stack);
-    await this.repository.insertOne(log);
-    this.logger.error(
-      this.failMessage(request, dto),
-      request['context'],
-      stack,
-    );
+    this.logger.error(message, ctxName, error.stack);
   }
 }

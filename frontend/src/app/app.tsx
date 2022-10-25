@@ -1,90 +1,34 @@
-import { FC, useEffect } from 'react';
-import { ROUTER } from '@/configs';
-import { Route, Routes } from 'react-router-dom';
-import { Authenticate } from '@/app/authenticate';
-import { BackNavigator, RouteComponent } from '@/components';
 import {
-  HomePage,
-  BlockPage,
-  WaitPage,
-  SignInPage,
-  SignUpPage,
+  SignInWithEmailPage,
   SignOutPage,
-  UserDetailPage,
-  UserListPage,
-} from '@/pages';
-import { AppHelmet } from './app.helmet';
-import { AppGlobalNavigationBar } from './global-navigation-bar';
-import { AppGlobalSideBar } from './global-side-bar';
-import { AppLayout } from './app.styled.component';
-import { useSetRecoilState } from 'recoil';
-import { alertState } from './alert';
-import { NoticeEventData, onSubcribeNoticeEvent } from '@/events';
-import { ChatRoomListPage } from '@/pages/chat-room';
+  SignUpPage,
+  RolesPage,
+  RolePage,
+} from '@/modules';
+import { FC, Fragment } from 'react';
+import { Link, Route, Routes } from 'react-router-dom';
+import { AppException } from './components';
+import { useRootConnection } from './hooks';
 
 export const App: FC = () => {
-  const setAlert = useSetRecoilState(alertState);
-
-  const onConnectSocket = (data: NoticeEventData) => {
-    setAlert({
-      type: data.type || 'info',
-      message: data.message,
-      duration: data.duration || 5000,
-      open: true,
-    });
-  };
-
-  useEffect(() => {
-    return onSubcribeNoticeEvent(onConnectSocket);
-  }, []);
+  useRootConnection();
 
   return (
-    <AppLayout>
-      <AppHelmet />
-      <AppGlobalNavigationBar />
-      <AppGlobalSideBar />
-      <Authenticate />
+    <Fragment>
+      <AppException />
+      <Link to="/">Home</Link>
+      <Link to="/signup">SignUp</Link>
+      <Link to="/signin/email">SignInWithEmail</Link>
+      <Link to="/signout">SignOut</Link>
+      <Link to="/roles">Role</Link>
       <Routes>
-        <Route
-          path={ROUTER.home}
-          element={<RouteComponent Component={HomePage} />}
-        />
-        <Route
-          path={ROUTER.block}
-          element={<RouteComponent Component={BlockPage} block={true} />}
-        />
-        <Route
-          path={ROUTER.wait}
-          element={<RouteComponent Component={WaitPage} wait={true} />}
-        />
-        <Route
-          path={ROUTER.signin}
-          element={<RouteComponent Component={SignInPage} login={false} />}
-        />
-        <Route
-          path={ROUTER.signup}
-          element={<RouteComponent Component={SignUpPage} login={false} />}
-        />
-        <Route
-          path={ROUTER.signout}
-          element={<RouteComponent Component={SignOutPage} login={true} />}
-        />
-        <Route path={ROUTER.users}>
-          <Route
-            path=""
-            element={<RouteComponent Component={UserListPage} login={true} />}
-          />
-          <Route
-            path=":id"
-            element={<RouteComponent Component={UserDetailPage} login={true} />}
-          />
-        </Route>
-        <Route
-          path={ROUTER.chatRooms}
-          element={<RouteComponent Component={ChatRoomListPage} />}
-        />
-        <Route path="*" element={<BackNavigator />} />
+        <Route path="/" element={<div>HOME</div>} />
+        <Route path="signup" element={<SignUpPage />} />
+        <Route path="signin/email" element={<SignInWithEmailPage />} />
+        <Route path="signout" element={<SignOutPage />} />
+        <Route path="roles" element={<RolesPage />} />
+        <Route path="roles/:rid" element={<RolePage />} />
       </Routes>
-    </AppLayout>
+    </Fragment>
   );
 };
