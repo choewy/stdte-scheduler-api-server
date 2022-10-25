@@ -1,13 +1,7 @@
-import { Bootstrap } from './bootstrap';
-import { AppServerModule } from '@/server';
 import { Settings as Luxon } from 'luxon';
+import { AppModule } from '@/app';
+import { Bootstrap } from '@/bootstrap';
 
 Luxon.defaultZone = 'Asia/Seoul';
 
-const bootstrap = async () => {
-  const app = new Bootstrap(AppServerModule);
-  await app.init();
-  await app.listen();
-};
-
-bootstrap();
+new Bootstrap().create(AppModule);
