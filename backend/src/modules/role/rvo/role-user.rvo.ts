@@ -14,7 +14,7 @@ export class RoleUserRvo {
 }
 
 export const roleUsersConstructor = (role: Role) => {
-  return role.users.map((user) =>
+  return role.members.map((user) =>
     classConstructor(new RoleUserRvo(), {
       uid: user.uid,
       name: user.name,

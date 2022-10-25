@@ -94,6 +94,10 @@ export class RoleService {
   }
 
   async searchMember(gid: number, keyword: string): Promise<RoleUserRvo[]> {
+    if (!keyword) {
+      return [];
+    }
+
     const rows = await this.userQuery.selectUserByKeywordNotInRoleExecute(
       gid,
       keyword,

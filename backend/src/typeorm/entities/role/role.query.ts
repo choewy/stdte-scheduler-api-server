@@ -23,10 +23,10 @@ export class RoleQuery {
       .createQueryBuilder('role')
       .select()
       .leftJoinAndMapMany(
-        'role.users',
+        'role.members',
         User,
-        'users',
-        `users.uid IN (${subQuery})`,
+        'members',
+        `members.uid IN (${subQuery})`,
       )
       .where('role.is_admin IS FALSE');
 
@@ -43,26 +43,5 @@ export class RoleQuery {
     }
 
     return query;
-  }
-
-  async selectRolesExecute() {
-    const subQuery = this.base
-      .createQueryBuilder()
-      .select('uid')
-      .from(RoleAndUser, 'role_and_user')
-      .where('role_and_user.rid = role.rid')
-      .getQuery();
-
-    return await this.repository
-      .createQueryBuilder('role')
-      .select()
-      .leftJoinAndMapMany(
-        'role.users',
-        User,
-        'users',
-        `users.uid IN (${subQuery})`,
-      )
-      .where('role.is_admin IS FALSE')
-      .getMany();
   }
 }
