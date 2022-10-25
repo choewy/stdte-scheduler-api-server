@@ -38,11 +38,8 @@ export class LoggerService {
     const ip = socket.conn.remoteAddress;
     const ctxName = socket['context'];
 
-    const message = `(nsp: ${nsp}, ${socket.id}, ${ip}) - ${JSON.stringify(
-      error,
-      null,
-    )}`;
+    const message = `(nsp: ${nsp}, ${socket.id}, ${ip}) - ${error.name}`;
 
-    this.logger.error(message, ctxName, error.stack);
+    this.logger.error(message, error, ctxName, error.stack);
   }
 }

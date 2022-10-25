@@ -47,7 +47,7 @@ export class RoleRvo {
   delete_task: boolean;
 
   @Expose()
-  users: RoleUserRvo[];
+  members: RoleUserRvo[];
 }
 
 export const roleRvoConstructor = (role: Role) => {
@@ -66,6 +66,6 @@ export const roleRvoConstructor = (role: Role) => {
     write_task: role.write_task,
     update_task: role.update_task,
     delete_task: role.delete_task,
-    users: roleUsersConstructor(role),
+    members: roleUsersConstructor(role),
   });
 };

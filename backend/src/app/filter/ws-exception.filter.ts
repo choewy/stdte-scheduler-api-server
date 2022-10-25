@@ -11,11 +11,11 @@ export class WsExceptionFilter extends BaseWsExceptionFilter {
   }
 
   async catch(exception: WsException, host: ArgumentsHost) {
-    super.catch(exception, host);
     const ws = host.switchToWs();
     const socket = ws.getClient<Socket>();
 
     if (exception instanceof WsException) {
+      super.catch(exception, host);
       await this.loggerService.warn(socket, exception);
     } else {
       await this.loggerService.error(socket, exception);
