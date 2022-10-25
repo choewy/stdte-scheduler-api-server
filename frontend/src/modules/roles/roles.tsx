@@ -35,7 +35,7 @@ export const RolesPage: FC = () => {
           return (
             <div key={JSON.stringify(role)}>
               <Link to={`/roles/${role.rid}`}>
-                {role.name}({role.users.length})
+                {role.name}({role.members.length})
               </Link>
             </div>
           );

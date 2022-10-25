@@ -1,7 +1,8 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { rolesState, RoleType } from '../states';
+import { RoleType } from '../constants';
+import { rolesState } from '../states';
 
 const initRoleState: RoleType = {
   rid: -1,
@@ -18,7 +19,7 @@ const initRoleState: RoleType = {
   write_task: false,
   update_task: false,
   delete_task: false,
-  users: [],
+  members: [],
 };
 
 export const useRoleState = (): [
