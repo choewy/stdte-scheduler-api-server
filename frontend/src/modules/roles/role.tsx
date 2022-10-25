@@ -1,8 +1,7 @@
-import { ChangeEvent, FormEvent, Fragment, useCallback, useState } from 'react';
+import { ChangeEvent, FormEvent, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { RolePolicyKeyType, rolePolicyLabel, RoleUserType } from './constants';
 import { useRolesConnection, useRoleState } from './hooks';
-import { RoleUserType } from './states';
-import { rolePolicyLabel } from './states/role';
 
 export const RolePage = () => {
   const navigate = useNavigate();
@@ -10,10 +9,9 @@ export const RolePage = () => {
 
   const [role, setRole] = useRoleState();
 
-  const { rid, name, users, ...policies } = role;
+  const { rid, name, members, ...policies } = role;
 
-  const [keyword, setKeyword] = useState<string>('');
-  const [members, setMembers] = useState<RoleUserType[]>([]);
+  const [users, setUsers] = useState<RoleUserType[]>([]);
 
   const onDelete = useCallback(async () => {
     await connection.emit('role:delete', { rid }, () => {
@@ -54,15 +52,22 @@ export const RolePage = () => {
 
   const onChangeKeyword = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value.trim();
+
+      if (!value) {
+        setUsers([]);
+        return;
+      }
+
       await connection.emit(
         'role:member:search',
-        { rid, keyword: e.target.value },
+        { rid, keyword: value },
         (rows: RoleUserType[]) => {
-          setMembers(rows);
+          setUsers(rows);
         },
       );
     },
-    [connection, rid, keyword, setMembers],
+    [connection, rid, setUsers],
   );
 
   const onMemberRemove = useCallback(
@@ -78,11 +83,11 @@ export const RolePage = () => {
     (uid: number) => {
       return async () => {
         await connection.emit('role:member:append', { rid, uid }, () => {
-          setMembers(members.filter((member) => member.uid !== uid));
+          setUsers(users.filter((user) => user.uid !== uid));
         });
       };
     },
-    [connection, members, setMembers, rid],
+    [connection, users, setUsers, rid],
   );
 
   return (
@@ -101,7 +106,7 @@ export const RolePage = () => {
       </form>
       <div>
         {Object.entries(policies).map(([key, value]) => {
-          const label = rolePolicyLabel[key as keyof typeof rolePolicyLabel];
+          const label = rolePolicyLabel[key as RolePolicyKeyType];
 
           return (
             <div key={JSON.stringify(key + value)} style={{ display: 'flex' }}>
@@ -117,12 +122,12 @@ export const RolePage = () => {
         })}
       </div>
       <div>
-        {users.map((user) => {
+        {members.map((member) => {
           return (
-            <div key={'user' + JSON.stringify(user)}>
+            <div key={'member' + JSON.stringify(member)}>
               <div>
-                <span>{user.name}</span>
-                <button onClick={onMemberRemove(user.uid)}>제거</button>
+                <span>{member.name}</span>
+                <button onClick={onMemberRemove(member.uid)}>제거</button>
               </div>
             </div>
           );
@@ -138,14 +143,14 @@ export const RolePage = () => {
         </div>
         <div>
           <h3>검색 결과</h3>
-          {members.map((member) => {
+          {users.map((user) => {
             return (
-              <div key={'member' + JSON.stringify(member)}>
+              <div key={'user' + JSON.stringify(user)}>
                 <div>
                   <span>
-                    {member.name}({member.email})
+                    {user.name}({user.email})
                   </span>
-                  <button onClick={onMemberAppend(member.uid)}>추가</button>
+                  <button onClick={onMemberAppend(user.uid)}>추가</button>
                 </div>
               </div>
             );

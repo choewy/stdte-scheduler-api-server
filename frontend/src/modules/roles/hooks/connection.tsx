@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { useMountConnection } from '@/app/hooks';
-import { rolesState, RoleType } from '../states';
+import { rolesState } from '../states';
+import { RoleType } from '../constants';
 
 export const useRolesConnection = () => {
   const connection = useMountConnection();

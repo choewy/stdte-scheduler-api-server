@@ -4,10 +4,7 @@ export type RoleUserType = {
   email: string;
 };
 
-export type RoleType = {
-  rid: number;
-  name: string;
-
+export type RolePolicyType = {
   read_team: boolean;
   write_team: boolean;
   update_team: boolean;
@@ -22,6 +19,14 @@ export type RoleType = {
   write_task: boolean;
   update_task: boolean;
   delete_task: boolean;
-
-  users: RoleUserType[];
 };
+
+export type RoleType = {
+  rid: number;
+  name: string;
+  members: RoleUserType[];
+} & RolePolicyType;
+
+export type RolePolicyKeyType = keyof RolePolicyType;
+
+export type RolePolicyLabelType = Record<RolePolicyKeyType, string>;
