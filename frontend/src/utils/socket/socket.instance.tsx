@@ -18,10 +18,6 @@ const socket = io(uri, {
 });
 
 export class SocketInstance extends CookieInstance implements SocketInterface {
-  status() {
-    return socket.connected;
-  }
-
   connect() {
     socket.auth = {
       bearer: this.getBearerAuth(),
@@ -30,11 +26,11 @@ export class SocketInstance extends CookieInstance implements SocketInterface {
     socket.connect();
   }
 
-  authorize(authorizeHandler: SocketAuthorizeHandler) {
+  async authorize(authorizeHandler: SocketAuthorizeHandler) {
     socket.emit('authorize', authorizeHandler);
   }
 
-  refresh() {
+  async refresh() {
     socket.auth = {
       ...socket.auth,
       refresh: this.getRefreshToken(),
@@ -45,16 +41,16 @@ export class SocketInstance extends CookieInstance implements SocketInterface {
     });
   }
 
+  async emit(event: string, ...args: any[]) {
+    await Promise.resolve(socket.emit(event, ...args));
+  }
+
   exception(exceptionHandler: SocketExceptionHandler) {
     socket.on('exception', exceptionHandler);
   }
 
   on(event: string, callback: SocketEventListener) {
     socket.on(event, callback);
-  }
-
-  async emit(event: string, ...args: any[]) {
-    await Promise.resolve(socket.emit(event, ...args));
   }
 
   clean(...callbacks: Array<SocketEventListener>) {

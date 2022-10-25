@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { authorizeState, connectionState, exceptionState } from '../states';
+import { isIncludeSignPathname } from './helpers';
 
 export const useRootConnection = () => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ export const useRootConnection = () => {
 
   useEffect(() => {
     connection.connect();
-    connection.authorize((user) => {
+    connection.authorize(async (user) => {
       if (!user) {
         navigate('/signin/email', {
           replace: true,
@@ -25,21 +26,28 @@ export const useRootConnection = () => {
       setAuthorize(user);
     });
 
-    connection.exception((error) => {
+    connection.exception(async (error) => {
       if (error.status === 401) {
+        const { pathname } = window.location;
+
         switch (error.error) {
           case 'Unauthorized':
           case 'NotFound':
             connection.removeTokens();
-            setException('다시 로그인하세요.');
-            resetAuthorize();
-            navigate('/signin/email', {
-              replace: true,
-            });
+
+            if (!isIncludeSignPathname(pathname)) {
+              setException('로그인이 필요한 페이지입니다.');
+              resetAuthorize();
+              navigate('/signin/email', {
+                replace: true,
+              });
+            }
+
             return;
 
           case 'BadRequest':
-            connection.refresh();
+            await connection.refresh();
+
             return;
         }
       }

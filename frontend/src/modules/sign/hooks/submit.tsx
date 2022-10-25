@@ -1,9 +1,7 @@
-import { connectionState } from '@/app/states';
 import { SocketInstance } from '@/utils';
 import { FormEvent, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { TokenType, userState, UserType } from '../states';
+import { TokenType } from '../states';
 
 export type Props = {
   connection: SocketInstance;
@@ -24,22 +22,15 @@ export const useAuthSubmitCallback = ({
   redirect,
 }: Props) => {
   const navigate = useNavigate();
-  const setUser = useSetRecoilState(userState);
-
   const callback = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      await connection.emit(
-        event,
-        account,
-        (data: { user: UserType; tokens: TokenType }) => {
-          setUser(data.user);
-          connection.setTokens(data.tokens);
-          navigate(redirect, { replace: true });
-        },
-      );
+      await connection.emit(event, account, (data: TokenType) => {
+        connection.setTokens(data);
+        navigate(redirect, { replace: true });
+      });
     },
-    [connection, setUser, navigate, account],
+    [connection, navigate, account],
   );
 
   return callback;
