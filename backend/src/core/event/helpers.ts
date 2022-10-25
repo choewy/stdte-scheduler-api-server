@@ -34,10 +34,8 @@ export const validateSocketAuth = async (
   );
 
   try {
-    const payload = jwtService.verify<Payload>(token, config);
-    const user = await userQuery.selectUserExecute({
-      uid: payload.uid,
-    });
+    const { uid } = jwtService.verify<Payload>(token, config);
+    const user = await userQuery.selectUserQuery({ uid }).getOne();
 
     if (!user) {
       throw new WsException({
