@@ -2,25 +2,25 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { RoutePath } from '@/app';
-import { initRoleState } from './init';
-import { rolesState } from './roles';
-import { RoleParamType, RoleType } from './types';
+import { TeamParamType, TeamType } from './types';
+import { teamsState } from './teams';
+import { initTeamState } from './init';
 
-export const useRoleState = (): [
-  RoleType,
-  Dispatch<SetStateAction<RoleType>>,
+export const useTeamState = (): [
+  TeamType,
+  Dispatch<SetStateAction<TeamType>>,
 ] => {
   const navigate = useNavigate();
-  const params = useParams<RoleParamType>();
-  const rows = useRecoilValue(rolesState);
+  const params = useParams<TeamParamType>();
+  const rows = useRecoilValue(teamsState);
 
-  const [row, setRow] = useState<RoleType>(initRoleState);
+  const [row, setRow] = useState<TeamType>(initTeamState);
 
   useEffect(() => {
-    const id = parseInt(params.rid as string, 10);
+    const id = parseInt(params.tid as string, 10);
 
     if (id && !isNaN(id)) {
-      const row = rows.find((row) => row.rid === id) as RoleType;
+      const row = rows.find((row) => row.tid === id) as TeamType;
 
       if (row) {
         setRow(row);

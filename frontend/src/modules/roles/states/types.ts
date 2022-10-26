@@ -1,3 +1,7 @@
+export type RoleParamType = {
+  rid: string;
+};
+
 export type RoleUserType = {
   uid: number;
   name: string;

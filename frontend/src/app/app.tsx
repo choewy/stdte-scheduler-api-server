@@ -5,6 +5,7 @@ import {
   RolesPage,
   RolePage,
   TeamsPage,
+  TeamPage,
 } from '@/modules';
 import { CSSProperties, FC, Fragment } from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
@@ -45,6 +46,7 @@ export const App: FC = () => {
 
       <Routes>
         <Route path={RoutePath.Home} element={<div>HOME</div>} />
+
         <Route path={RoutePath.SignUp} element={<SignUpPage />} />
         <Route path={RoutePath.SignIn} element={<SignInPage />} />
         <Route path={RoutePath.SignOut} element={<SignOutPage />} />
@@ -56,7 +58,7 @@ export const App: FC = () => {
 
         <Route path={RoutePath.Teams}>
           <Route path={RouteTeamPath.Root} element={<TeamsPage />} />
-          <Route path={RouteTeamPath.Team} element={<div></div>} />
+          <Route path={RouteTeamPath.Team} element={<TeamPage />} />
         </Route>
       </Routes>
     </Fragment>

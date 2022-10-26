@@ -1,8 +1,8 @@
 export enum RoleEvent {
-  EmitAll = 'role:all',
   OnCreateSync = 'role:create:sync',
   OnUpdateSync = 'role:update:sync',
   OnDeleteSync = 'role:delete:sync',
+  EmitAll = 'role:all',
   EmitDelete = 'role:delete',
   EmitCreate = 'role:create',
   EmitUpdate = 'role:update',
