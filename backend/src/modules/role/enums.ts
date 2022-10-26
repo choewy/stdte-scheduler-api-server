@@ -6,7 +6,7 @@ export enum RoleMessage {
   SyncCreate = 'role:create:sync',
   SyncUpdate = 'role:update:sync',
   SyncDelete = 'role:delete:sync',
-  SearchMember = 'role:member:search',
+  SearchUser = 'role:user:search',
   AppendMember = 'role:member:append',
   RemoveMember = 'role:member:remove',
 }

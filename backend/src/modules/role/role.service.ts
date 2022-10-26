@@ -93,7 +93,7 @@ export class RoleService {
     await this.roleQuery.repository.delete({ rid });
   }
 
-  async searchMember(rid: number, keyword: string): Promise<RoleUserRvo[]> {
+  async searchUser(rid: number, keyword: string): Promise<RoleUserRvo[]> {
     if (!keyword) {
       return [];
     }
