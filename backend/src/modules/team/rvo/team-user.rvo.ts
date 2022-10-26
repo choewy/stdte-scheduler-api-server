@@ -1,8 +1,8 @@
 import { classConstructor } from '@/core';
-import { Role } from '@/typeorm';
+import { Team } from '@/typeorm';
 import { Expose } from 'class-transformer';
 
-export class RoleUserRvo {
+export class TeamUserRvo {
   @Expose()
   uid: number;
 
@@ -13,9 +13,9 @@ export class RoleUserRvo {
   email: string;
 }
 
-export const roleUsersConstructor = (row: Role) => {
-  return row.members.map((user) =>
-    classConstructor(new RoleUserRvo(), {
+export const teamUserConstructor = (team: Team) => {
+  return team.members.map((user) =>
+    classConstructor(new TeamUserRvo(), {
       uid: user.uid,
       name: user.name,
       email: user.email,

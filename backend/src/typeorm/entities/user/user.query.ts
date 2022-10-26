@@ -4,6 +4,7 @@ import { User } from './user.entity';
 import { RoleAndUser } from '../role_and_user';
 import { UserWhereOptions } from './types';
 import { Role } from '../role';
+import { TeamAndUser } from '../team_and_user';
 
 export class UserQuery {
   constructor(
@@ -82,6 +83,33 @@ export class UserQuery {
       .createQueryBuilder('role_and_user')
       .select('role_and_user.uid')
       .where(`role_and_user.rid = ${rid}`)
+      .getQuery();
+
+    const orWhereQuery = [
+      'user.name LIKE :keyword',
+      'user.email LIKE :keyword',
+    ].join(' OR ');
+
+    return await this.repository
+      .createQueryBuilder('user')
+      .select('user.uid', 'uid')
+      .addSelect('user.name', 'name')
+      .addSelect('user.email', 'email')
+      .where('user.deleted_at IS NULL')
+      .andWhere(`user.uid NOT IN (${subQuery})`)
+      .andWhere(`(${orWhereQuery})`, { keyword })
+      .limit(15)
+      .getRawMany();
+  }
+
+  async selectUserByKeywordNotInTeamExecute(tid: number, keyword: string) {
+    keyword = `%${keyword.trim()}%`;
+
+    const subQuery = this.base
+      .getRepository(TeamAndUser)
+      .createQueryBuilder('team_and_user')
+      .select('team_and_user.uid')
+      .where(`team_and_user.tid = ${tid}`)
       .getQuery();
 
     const orWhereQuery = [
