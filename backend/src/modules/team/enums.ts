@@ -6,7 +6,7 @@ export enum TeamMessage {
   SyncCreate = 'team:create:sync',
   SyncUpdate = 'team:update:sync',
   SyncDelete = 'team:delete:sync',
-  SearchMember = 'team:member:search',
+  SearchUser = 'team:user:search',
   AppendMember = 'team:member:append',
   RemoveMember = 'team:member:remove',
 }

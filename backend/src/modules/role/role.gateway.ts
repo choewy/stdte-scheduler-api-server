@@ -31,8 +31,7 @@ export class RoleGateway {
     private readonly roleService: RoleService,
   ) {}
 
-  @RolePolicyMetadata(adminOnly)
-  @UseGuards(AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard)
   @SubscribeMessage(RoleMessage.All)
   async getRoles() {
     return await this.roleService.getRoles();
