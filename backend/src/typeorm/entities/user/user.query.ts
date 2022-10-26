@@ -1,7 +1,9 @@
-import { DataSource, EntityManager, IsNull, SelectQueryBuilder } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 import { createRepository } from '../helpers';
 import { User } from './user.entity';
 import { RoleAndUser } from '../role_and_user';
+import { UserWhereOptions } from './types';
+import { Role } from '../role';
 
 export class UserQuery {
   constructor(
@@ -9,73 +11,67 @@ export class UserQuery {
     public repository = createRepository(base, User),
   ) {}
 
-  private userWhere(
-    query: SelectQueryBuilder<User>,
-    whereStack: number,
-    whereOptions: Partial<{
-      uid: number;
-      name: string;
-      email: string;
-    }>,
-  ) {
-    Object.entries(whereOptions).forEach(([key, value]) => {
-      query[whereStack === 0 ? 'where' : 'andWhere']({
-        [key]: value,
-      });
-
-      whereStack += 1;
-    });
-
-    return whereStack;
-  }
-
-  private withDeleteWhere(
-    query: SelectQueryBuilder<User>,
-    whereStack: number,
-    withDeleted: boolean,
-  ) {
-    if (withDeleted) {
-      return 0;
-    }
-
-    query[whereStack === 0 ? 'where' : 'andWhere']({
-      deleted_at: IsNull(),
-    });
-
-    return 1;
-  }
-
-  async selectUsersExecute(withDeleted = false) {
-    const query = this.repository
-      .createQueryBuilder('user')
-      .select()
-      .innerJoinAndSelect('user.oauths', 'oauths', 'oauths.uid = user.uid');
-
-    this.withDeleteWhere(query, 0, withDeleted);
-
-    return await query.getMany();
-  }
-
-  async selectUserExecute(
-    whereOptions: Partial<{
-      uid: number;
-      name: string;
-      email: string;
-    }>,
-    withDeleted = false,
-  ) {
+  selectUserOnlyQuery(whereOptions: UserWhereOptions) {
     const query = this.repository
       .createQueryBuilder('user')
       .select()
       .leftJoinAndSelect('user.oauths', 'oauths', 'oauths.uid = user.uid');
 
-    this.userWhere(
-      query,
-      this.withDeleteWhere(query, 0, withDeleted),
-      whereOptions,
-    );
+    if (whereOptions) {
+      const { uid, name, email } = whereOptions;
 
-    return await query.getOne();
+      if (uid) {
+        query.andWhere('user.uid = :uid', { uid });
+      }
+
+      if (name) {
+        query.andWhere('user.name = :name', { name });
+      }
+
+      if (email) {
+        query.andWhere('user.email = :email', { email });
+      }
+    }
+
+    return query;
+  }
+
+  selectUserQuery(whereOptions: UserWhereOptions) {
+    const subQuery = this.base
+      .createQueryBuilder()
+      .select('rid')
+      .from(RoleAndUser, 'role_and_user')
+      .where('role_and_user.uid = user.uid')
+      .getQuery();
+
+    const query = this.repository
+      .createQueryBuilder('user')
+      .select()
+      .leftJoinAndMapMany(
+        'user.roles',
+        Role,
+        'roles',
+        `roles.rid IN (${subQuery})`,
+      )
+      .where('user.deleted_at IS NULL');
+
+    if (whereOptions) {
+      const { uid, name, email } = whereOptions;
+
+      if (uid) {
+        query.andWhere('user.uid = :uid', { uid });
+      }
+
+      if (name) {
+        query.andWhere('user.name = :name', { name });
+      }
+
+      if (email) {
+        query.andWhere('user.email = :email', { email });
+      }
+    }
+
+    return query;
   }
 
   async selectUserByKeywordNotInRoleExecute(rid: number, keyword: string) {

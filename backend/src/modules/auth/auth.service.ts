@@ -31,9 +31,7 @@ export class AuthService {
       });
     }
 
-    const user = await this.userQuery.selectUserExecute({
-      email,
-    });
+    const user = await this.userQuery.selectUserOnlyQuery({ email }).getOne();
 
     if (user) {
       throw new WsException({
@@ -58,9 +56,7 @@ export class AuthService {
   }
 
   async signInWithEmail({ email, password }: SignInDto) {
-    const user = await this.userQuery.selectUserExecute({
-      email,
-    });
+    const user = await this.userQuery.selectUserOnlyQuery({ email }).getOne();
 
     if (!user) {
       throw new WsException({

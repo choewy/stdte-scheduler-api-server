@@ -7,6 +7,7 @@ import { ConfigKey, configs } from './configs';
 import { DocumentModule } from './document';
 import { LoggerModule, LoggerService } from './logger';
 import { BcryptService } from './bcrypt';
+import { RedisService } from './redis';
 
 @Global()
 @Module({
@@ -30,7 +31,7 @@ import { BcryptService } from './bcrypt';
     LoggerModule,
     EventModule,
   ],
-  providers: [JwtService, LoggerService, BcryptService],
-  exports: [JwtService, LoggerService, BcryptService],
+  providers: [JwtService, LoggerService, BcryptService, RedisService],
+  exports: [JwtService, LoggerService, BcryptService, RedisService],
 })
 export class CoreModule {}
