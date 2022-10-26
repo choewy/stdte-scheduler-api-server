@@ -16,6 +16,10 @@ import {
   SearchUsersDto,
   UpdateRoleDto,
 } from './dto';
+import { RoleMessage } from './enums';
+import { adminOnly } from './policy';
+import { RoleGuard } from './role.guard';
+import { RolePolicyMetadata } from './role.metadata';
 import { RoleService } from './role.service';
 
 @WSModuleGateway()
@@ -27,70 +31,77 @@ export class RoleGateway {
     private readonly roleService: RoleService,
   ) {}
 
-  @UseGuards(AuthGuard)
-  @SubscribeMessage('role:all')
+  @RolePolicyMetadata(adminOnly)
+  @UseGuards(AuthGuard, RoleGuard)
+  @SubscribeMessage(RoleMessage.All)
   async getRoles() {
     return await this.roleService.getRoles();
   }
 
-  @UseGuards(AuthGuard)
-  @SubscribeMessage('role:create')
+  @RolePolicyMetadata(adminOnly)
+  @UseGuards(AuthGuard, RoleGuard)
+  @SubscribeMessage(RoleMessage.Create)
   async createRole(
     @ConnectedSocket() socket: Socket,
     @MessageBody() body: CreateRoleDto,
   ) {
     const sessions = await this.redisService.getSessions(socket.nsp.name);
     const row = await this.roleService.createRole(body);
-    return this.server.to(sessions).emit('role:create:sync', row);
+    return this.server.to(sessions).emit(RoleMessage.SyncCreate, row);
   }
 
-  @UseGuards(AuthGuard)
-  @SubscribeMessage('role:update')
+  @RolePolicyMetadata(adminOnly)
+  @UseGuards(AuthGuard, RoleGuard)
+  @SubscribeMessage(RoleMessage.Update)
   async updateRole(
     @ConnectedSocket() socket: Socket,
     @MessageBody() body: UpdateRoleDto,
   ) {
     const sessions = await this.redisService.getSessions(socket.nsp.name);
     const row = await this.roleService.updateRole(body);
-    return this.server.to(sessions).emit('role:update:sync', row);
+    return this.server.to(sessions).emit(RoleMessage.SyncUpdate, row);
   }
 
-  @UseGuards(AuthGuard)
-  @SubscribeMessage('role:delete')
+  @RolePolicyMetadata(adminOnly)
+  @UseGuards(AuthGuard, RoleGuard)
+  @SubscribeMessage(RoleMessage.Delete)
   async deleteRole(
     @ConnectedSocket() socket: Socket,
     @MessageBody() body: RoleParamDto,
   ) {
     const sessions = await this.redisService.getSessions(socket.nsp.name);
     await this.roleService.deleteRole(body.rid);
-    return this.server.to(sessions).emit('role:delete:sync', body.rid);
+    return this.server.to(sessions).emit(RoleMessage.SyncDelete, body.rid);
   }
 
-  @UseGuards(AuthGuard)
-  @SubscribeMessage('role:member:search')
+  @RolePolicyMetadata(adminOnly)
+  @UseGuards(AuthGuard, RoleGuard)
+  @SubscribeMessage(RoleMessage.SearchMember)
   async searchMember(@MessageBody() body: SearchUsersDto) {
     return await this.roleService.searchMember(body.rid, body.keyword);
   }
 
-  @UseGuards(AuthGuard)
-  @SubscribeMessage('role:member:append')
+  @RolePolicyMetadata(adminOnly)
+  @UseGuards(AuthGuard, RoleGuard)
+  @SubscribeMessage(RoleMessage.AppendMember)
   async appendMember(
     @ConnectedSocket() socket: Socket,
     @MessageBody() body: RoleMemberParamDto,
   ) {
     const sessions = await this.redisService.getSessions(socket.nsp.name);
     const row = await this.roleService.appendMember(body.rid, body.uid);
-    return this.server.to(sessions).emit('role:update:sync', row);
+    return this.server.to(sessions).emit(RoleMessage.SyncUpdate, row);
   }
 
-  @UseGuards(AuthGuard)
-  @SubscribeMessage('role:member:remove')
+  @RolePolicyMetadata(adminOnly)
+  @UseGuards(AuthGuard, RoleGuard)
+  @SubscribeMessage(RoleMessage.RemoveMember)
   async removeMember(
     @ConnectedSocket() socket: Socket,
     @MessageBody() body: RoleMemberParamDto,
   ) {
     const sessions = await this.redisService.getSessions(socket.nsp.name);
     const row = await this.roleService.removeMember(body.rid, body.uid);
-    return this.server.to(sessions).emit('role:update:sync', row);
+    return this.server.to(sessions).emit(RoleMessage.SyncUpdate, row);
   }
 }
