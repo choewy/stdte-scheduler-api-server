@@ -1,22 +1,30 @@
 import { ChangeEvent, FormEvent, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RolePolicyKeyType, rolePolicyLabel, RoleUserType } from './constants';
-import { useRolesConnection, useRoleState } from './hooks';
+import { RolePolicyKeyType, rolePolicyLabel } from './constants';
+import { RoleEvent } from './enums';
+import {
+  useRoleDeleteCallback,
+  useRoleMemberAppendCallback,
+  useRolesConnection,
+  useRoleSearchUserCallback,
+} from './hooks';
+import { RoleUserType, useRoleState } from './states';
 
 export const RolePage = () => {
   const navigate = useNavigate();
   const connection = useRolesConnection();
 
   const [role, setRole] = useRoleState();
-
   const { rid, name, members, ...policies } = role;
 
   const [users, setUsers] = useState<RoleUserType[]>([]);
 
   const onDelete = useCallback(async () => {
-    await connection.emit('role:delete', { rid }, () => {
-      navigate('/roles', { replace: true });
-    });
+    await connection.emit(
+      RoleEvent.EmitDelete,
+      { rid },
+      useRoleDeleteCallback(navigate),
+    );
   }, [connection, navigate, rid]);
 
   const onChange = useCallback(
@@ -30,11 +38,8 @@ export const RolePage = () => {
   const onChecked = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
       const { name, checked } = e.target;
-
-      await connection.emit('role:update', {
-        rid,
-        [name]: checked,
-      });
+      const body = { rid, [name]: checked };
+      await connection.emit(RoleEvent.EmitUpdate, body);
     },
     [connection, rid],
   );
@@ -42,10 +47,8 @@ export const RolePage = () => {
   const onSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      await connection.emit('role:update', {
-        rid,
-        name,
-      });
+      const body = { rid, name };
+      await connection.emit(RoleEvent.EmitUpdate, body);
     },
     [connection, rid, name],
   );
@@ -60,11 +63,9 @@ export const RolePage = () => {
       }
 
       await connection.emit(
-        'role:member:search',
+        RoleEvent.EmitSearchUser,
         { rid, keyword: value },
-        (rows: RoleUserType[]) => {
-          setUsers(rows);
-        },
+        useRoleSearchUserCallback(setUsers),
       );
     },
     [connection, rid, setUsers],
@@ -73,7 +74,7 @@ export const RolePage = () => {
   const onMemberRemove = useCallback(
     (uid: number) => {
       return async () => {
-        await connection.emit('role:member:remove', { rid, uid });
+        await connection.emit(RoleEvent.EmitMemberRemove, { rid, uid });
       };
     },
     [connection, rid],
@@ -82,9 +83,11 @@ export const RolePage = () => {
   const onMemberAppend = useCallback(
     (uid: number) => {
       return async () => {
-        await connection.emit('role:member:append', { rid, uid }, () => {
-          setUsers(users.filter((user) => user.uid !== uid));
-        });
+        await connection.emit(
+          RoleEvent.EmitMemberAppend,
+          { rid, uid },
+          useRoleMemberAppendCallback(uid, users, setUsers),
+        );
       };
     },
     [connection, users, setUsers, rid],

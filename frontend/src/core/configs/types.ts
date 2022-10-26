@@ -6,12 +6,12 @@ declare global {
   }
 }
 
-export interface ApiConfig {
+export type ApiConfig = {
   baseURL: string;
   withCredentials: boolean;
-}
+};
 
-export interface SocketConfig {
+export type SocketConfig = {
   uri: string;
   path: string;
-}
+};

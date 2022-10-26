@@ -1,26 +1,10 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { RoleType } from '../constants';
-import { rolesState } from '../states';
-
-const initRoleState: RoleType = {
-  rid: -1,
-  name: '',
-  read_team: false,
-  write_team: false,
-  update_team: false,
-  delete_team: false,
-  read_member: false,
-  write_member: false,
-  update_member: false,
-  delete_member: false,
-  read_task: false,
-  write_task: false,
-  update_task: false,
-  delete_task: false,
-  members: [],
-};
+import { RoutePath } from '@/app';
+import { initRoleState } from './init';
+import { rolesState } from './roles';
+import { RoleType } from './types';
 
 export const useRoleState = (): [
   RoleType,
@@ -41,7 +25,7 @@ export const useRoleState = (): [
         setRole(role);
       }
     } else {
-      navigate('/roles', { replace: true });
+      navigate(RoutePath.Roles, { replace: true });
       return;
     }
   }, [params, navigate, roles, setRole]);

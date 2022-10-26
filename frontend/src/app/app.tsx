@@ -10,7 +10,7 @@ import { CSSProperties, FC, Fragment } from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
 import { AppException } from './components';
 import { RoutePath, RouteRolePath, RouteTeamPath } from './enums';
-import { useRootConnection } from './hooks';
+import { useAppConnection } from './hooks';
 
 const linkStyle: CSSProperties = {
   padding: '5px',
@@ -18,7 +18,7 @@ const linkStyle: CSSProperties = {
 };
 
 export const App: FC = () => {
-  useRootConnection();
+  useAppConnection();
 
   return (
     <Fragment>
