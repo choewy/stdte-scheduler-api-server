@@ -1,4 +1,5 @@
 import { Expose } from 'class-transformer';
+import { AuthRoleRvo } from './auth-role.rvo';
 
 export class AuthUserRvo {
   @Expose()
@@ -9,4 +10,7 @@ export class AuthUserRvo {
 
   @Expose()
   email: string;
+
+  @Expose()
+  role: AuthRoleRvo;
 }

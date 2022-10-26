@@ -1,21 +1,32 @@
 import { SetterOrUpdater } from 'recoil';
-import { TeamType } from '../states';
+import { TeamsStateType, TeamType } from '../states';
 
 export const useTeamCreateSyncListener =
-  (setTeams: SetterOrUpdater<TeamType[]>) => (row: TeamType) => {
-    setTeams((prev) => [...prev, row]);
+  (setTeams: SetterOrUpdater<TeamsStateType>) => (row: TeamType) => {
+    setTeams((prev) => ({
+      load: false,
+      rows: [...prev.rows, row],
+    }));
   };
 
 export const useTeamUpdateSyncListener =
-  (setTeams: SetterOrUpdater<TeamType[]>) => (row: TeamType) => {
+  (setTeams: SetterOrUpdater<TeamsStateType>) => (row: TeamType) => {
     setTeams((prev) => {
-      return prev.map((prev) => (prev.tid === row.tid ? row : prev));
+      return {
+        load: false,
+        rows: prev.rows.map((prevRow) =>
+          prevRow.tid === row.tid ? row : prevRow,
+        ),
+      };
     });
   };
 
 export const useTeamDeleteSyncLisetner =
-  (setTeams: SetterOrUpdater<TeamType[]>) => (tid: number) => {
+  (setTeams: SetterOrUpdater<TeamsStateType>) => (tid: number) => {
     setTeams((prev) => {
-      return prev.filter((prev) => prev.tid !== tid);
+      return {
+        load: false,
+        rows: prev.rows.filter((prevRow) => prevRow.tid !== tid),
+      };
     });
   };

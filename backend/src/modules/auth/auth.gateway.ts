@@ -10,6 +10,8 @@ import { Socket } from 'socket.io';
 import { AuthGuard } from './auth.guard';
 import { classConstructor, WSModuleGateway } from '@/core';
 import { AuthTokenRvo, AuthUserRvo } from './rvo';
+import { User } from '@/typeorm';
+import { AuthRoleRvo } from './rvo/auth-role.rvo';
 
 @WSModuleGateway()
 export class AuthGateway {
@@ -18,11 +20,20 @@ export class AuthGateway {
   @UseGuards(AuthGuard)
   @SubscribeMessage('authorize')
   async authorize(@ConnectedSocket() socket: Socket): Promise<AuthUserRvo> {
-    const user = await socket['user'];
+    const user = (await socket['user']) as User;
+
+    const role = new AuthRoleRvo();
+    user.roles.forEach((row) => {
+      Object.entries(row).forEach(([key, value]) => {
+        role[key] = role[key] || value;
+      });
+    });
+
     return classConstructor(new AuthUserRvo(), {
       uid: user.uid,
       name: user.name,
       email: user.email,
+      role,
     });
   }
 
@@ -31,12 +42,12 @@ export class AuthGateway {
     console.log(socket.handshake.auth.refresh);
   }
 
-  @SubscribeMessage('auth:signup')
+  @SubscribeMessage('authorize:signup')
   async signUp(@MessageBody() body: SignUpDto): Promise<AuthTokenRvo> {
     return await this.authService.signUpUser(body);
   }
 
-  @SubscribeMessage('auth:signin:email')
+  @SubscribeMessage('authorize:signin:email')
   async signInWithEmail(@MessageBody() body: SignInDto): Promise<AuthTokenRvo> {
     return await this.authService.signInWithEmail(body);
   }

@@ -1,14 +1,21 @@
 import { FC, ChangeEvent, useState, useCallback, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { InputAdornment } from '@mui/material';
+import { Mail as MailIcon, Lock as PasswordIcon } from '@mui/icons-material';
+import { TitleElement } from '@/core';
 import { SignEvent } from './enums';
+import { initSignInAccountState } from './states';
 import { useSignCallback, useSignConnection } from './hooks';
-import { initSignUpAccountState } from './states';
+import {
+  SignButtonElement,
+  SignFormElement,
+  SignInputElement,
+} from './elements';
 
 export const SignInPage: FC = () => {
   const navigate = useNavigate();
   const connection = useSignConnection();
-
-  const [account, setAccount] = useState(initSignUpAccountState);
+  const [account, setAccount] = useState(initSignInAccountState);
 
   const onChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -22,10 +29,10 @@ export const SignInPage: FC = () => {
   );
 
   const onSubmit = useCallback(
-    async (e: FormEvent<HTMLFormElement>) => {
+    (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
-      await connection.emit(
+      connection.emit(
         SignEvent.SignInEmail,
         account,
         useSignCallback(connection, navigate),
@@ -35,43 +42,39 @@ export const SignInPage: FC = () => {
   );
 
   return (
-    <div
-      style={{
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <form
-        style={{
-          width: '400px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
+    <SignFormElement onSubmit={onSubmit}>
+      <TitleElement title="로그인" />
+      <SignInputElement
+        type="text"
+        name="email"
+        label="이메일"
+        placeholder="이메일 계정을 입력하세요."
+        value={account.email}
+        onChange={onChange}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <MailIcon />
+            </InputAdornment>
+          ),
         }}
-        onSubmit={onSubmit}
-      >
-        <input
-          name="email"
-          type="email"
-          placeholder="이메일"
-          autoComplete="off"
-          value={account.email}
-          onChange={onChange}
-        />
-        <input
-          name="password"
-          type="password"
-          placeholder="비밀번호"
-          autoComplete="off"
-          value={account.password}
-          onChange={onChange}
-        />
-        <button type="submit">로그인</button>
-      </form>
-    </div>
+      />
+      <SignInputElement
+        type="password"
+        name="password"
+        label="비밀번호"
+        placeholder="비밀번호를 입력하세요."
+        value={account.password}
+        onChange={onChange}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <PasswordIcon />
+            </InputAdornment>
+          ),
+        }}
+      />
+      <SignButtonElement text="로그인" />
+    </SignFormElement>
   );
 };

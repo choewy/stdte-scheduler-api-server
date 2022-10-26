@@ -13,3 +13,8 @@ export type TeamType = {
   name: string;
   members: TeamUserType[];
 };
+
+export type TeamsStateType = {
+  load: boolean;
+  rows: TeamType[];
+};

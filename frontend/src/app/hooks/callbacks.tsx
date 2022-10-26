@@ -2,21 +2,20 @@ import { NavigateFunction } from 'react-router-dom';
 import { SetterOrUpdater } from 'recoil';
 import { SocketAuthorizeHandler } from '@/utils';
 import { RoutePath } from '../enums';
-import { AuthorizeState } from '../states';
+import { AuthorizeStateType } from '../states';
 
 export const useAuthorizeCallback =
   (
     navigate: NavigateFunction,
-    setAuthorize: SetterOrUpdater<AuthorizeState>,
+    setAuthorize: SetterOrUpdater<AuthorizeStateType>,
   ): SocketAuthorizeHandler =>
-  async (user) => {
-    if (!user) {
-      navigate(RoutePath.SignIn, {
-        replace: true,
-      });
-
+  (user) => {
+    if (user) {
+      setAuthorize(user);
       return;
     }
 
-    setAuthorize(user);
+    navigate(RoutePath.SignIn, {
+      replace: true,
+    });
   };

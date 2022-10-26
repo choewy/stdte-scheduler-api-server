@@ -26,11 +26,11 @@ export class SocketInstance extends CookieInstance implements SocketInterface {
     socket.connect();
   }
 
-  async authorize(authorizeHandler: SocketAuthorizeHandler) {
+  authorize(authorizeHandler: SocketAuthorizeHandler) {
     socket.emit('authorize', authorizeHandler);
   }
 
-  async refresh() {
+  refresh() {
     socket.auth = {
       ...socket.auth,
       refresh: this.getRefreshToken(),
@@ -41,8 +41,8 @@ export class SocketInstance extends CookieInstance implements SocketInterface {
     });
   }
 
-  async emit(event: string, ...args: any[]) {
-    await Promise.resolve(socket.emit(event, ...args));
+  emit(event: string, ...args: any[]) {
+    socket.emit(event, ...args);
   }
 
   exception(exceptionHandler: SocketExceptionHandler) {
@@ -50,7 +50,9 @@ export class SocketInstance extends CookieInstance implements SocketInterface {
   }
 
   on(event: string, callback: SocketEventListener) {
-    socket.on(event, callback);
+    socket.on(event, (...args: any[]) => {
+      callback(...args);
+    });
   }
 
   clean(...callbacks: Array<SocketEventListener>) {

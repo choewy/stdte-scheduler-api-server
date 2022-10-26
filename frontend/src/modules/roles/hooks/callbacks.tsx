@@ -2,11 +2,14 @@ import { RoutePath } from '@/app/enums';
 import { Dispatch, SetStateAction } from 'react';
 import { NavigateFunction } from 'react-router-dom';
 import { SetterOrUpdater } from 'recoil';
-import { RoleType, RoleUserType } from '../states';
+import { RoleStateType, RoleType, RoleUserType } from '../states';
 
 export const useRoleAllCallback =
-  (setRoles: SetterOrUpdater<RoleType[]>) => async (rows: RoleType[]) => {
-    setRoles(rows);
+  (setRoles: SetterOrUpdater<RoleStateType>) => async (rows: RoleType[]) => {
+    setRoles({
+      load: false,
+      rows,
+    });
   };
 
 export const useRoleDeleteCallback =

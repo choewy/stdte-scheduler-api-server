@@ -1,6 +1,6 @@
 import './index.css';
 
-import { StrictMode, Suspense } from 'react';
+import { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
 
@@ -8,6 +8,7 @@ import { RecoilRoot } from 'recoil';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from '@/app';
 import { HelmetProvider } from 'react-helmet-async';
+import { AppLoadingComponent } from './app/components';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -15,7 +16,7 @@ const root = ReactDOM.createRoot(
 root.render(
   // <React.StrictMode>
   <RecoilRoot>
-    <Suspense fallback={<div>Loading</div>}>
+    <Suspense fallback={<AppLoadingComponent load={true} />}>
       <BrowserRouter basename={process.env.PUBLIC_URL}>
         <HelmetProvider>
           <App />

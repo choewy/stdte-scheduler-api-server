@@ -1,4 +1,4 @@
 export enum SignEvent {
-  SignUp = 'auth:signup',
-  SignInEmail = 'auth:signin:email',
+  SignUp = 'authorize:signup',
+  SignInEmail = 'authorize:signin:email',
 }

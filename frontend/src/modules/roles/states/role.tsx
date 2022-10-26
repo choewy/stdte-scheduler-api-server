@@ -12,9 +12,9 @@ export const useRoleState = (): [
 ] => {
   const navigate = useNavigate();
   const params = useParams<RoleParamType>();
-  const rows = useRecoilValue(rolesState);
 
   const [row, setRow] = useState<RoleType>(initRoleState);
+  const { rows } = useRecoilValue(rolesState);
 
   useEffect(() => {
     const id = parseInt(params.rid as string, 10);
@@ -24,11 +24,11 @@ export const useRoleState = (): [
 
       if (row) {
         setRow(row);
+        return;
       }
-    } else {
-      navigate(RoutePath.Teams, { replace: true });
-      return;
     }
+
+    navigate(RoutePath.Teams, { replace: true });
   }, [params, navigate, rows, setRow]);
 
   return [row, setRow];

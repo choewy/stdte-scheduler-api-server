@@ -1,16 +1,30 @@
-import { RoutePath } from '@/app';
-import { ChangeEvent, FC, FormEvent, useCallback, useState } from 'react';
+import { loadingState, RoutePath } from '@/app';
+import {
+  FC,
+  ChangeEvent,
+  FormEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { Link } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { TeamEvent } from './enums';
 import { useTeamConnection } from './hooks';
 import { teamsState } from './states';
 
 export const TeamsPage: FC = () => {
   const connection = useTeamConnection();
+  const setLoading = useSetRecoilState(loadingState);
 
   const teams = useRecoilValue(teamsState);
   const [name, setName] = useState<string>('');
+
+  const { load, rows } = teams;
+
+  useEffect(() => {
+    setLoading(load);
+  }, [load]);
 
   const onChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -21,9 +35,9 @@ export const TeamsPage: FC = () => {
   );
 
   const onSubmit = useCallback(
-    async (e: FormEvent<HTMLFormElement>) => {
+    (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      await connection.emit(TeamEvent.EmitCreate, { name });
+      connection.emit(TeamEvent.EmitCreate, { name });
       setName('');
     },
     [connection, name, setName],
@@ -33,11 +47,11 @@ export const TeamsPage: FC = () => {
     <div>
       <h1>TEAMS PAGE</h1>
       <div>
-        {teams.map((team) => {
+        {rows.map((row) => {
           return (
-            <div key={JSON.stringify(team)}>
-              <Link to={`${RoutePath.Teams}/${team.tid}`}>
-                {team.name}({team.members.length})
+            <div key={JSON.stringify(row)}>
+              <Link to={`${RoutePath.Teams}/${row.tid}`}>
+                {row.name}({row.members.length})
               </Link>
             </div>
           );

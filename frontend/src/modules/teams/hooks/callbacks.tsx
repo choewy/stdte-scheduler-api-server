@@ -2,11 +2,14 @@ import { RoutePath } from '@/app';
 import { Dispatch, SetStateAction } from 'react';
 import { NavigateFunction } from 'react-router-dom';
 import { SetterOrUpdater } from 'recoil';
-import { TeamType, TeamUserType } from '../states';
+import { TeamsStateType, TeamType, TeamUserType } from '../states';
 
 export const useTeamAllCallback =
-  (setTeams: SetterOrUpdater<TeamType[]>) => async (rows: TeamType[]) => {
-    setTeams(rows);
+  (setTeams: SetterOrUpdater<TeamsStateType>) => (rows: TeamType[]) => {
+    setTeams({
+      load: false,
+      rows,
+    });
   };
 
 export const useTeamDeleteCallback =
