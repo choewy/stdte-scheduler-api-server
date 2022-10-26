@@ -1,7 +1,10 @@
 import { atom } from 'recoil';
-import { TeamType } from './types';
+import { TeamsStateType } from './types';
 
-export const teamsState = atom<TeamType[]>({
+export const teamsState = atom<TeamsStateType>({
   key: 'teamsState',
-  default: [],
+  default: {
+    load: true,
+    rows: [],
+  },
 });

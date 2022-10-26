@@ -1,18 +1,17 @@
-import { sidebarState } from '@/app/states';
+import { FC, useCallback } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { Box } from '@mui/material';
+import { authorizeState, sidebarState } from '@/app/states';
 import {
-  Box,
-  Divider,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-} from '@mui/material';
-import { Inbox as InboxIcon, Mail as MailIcon } from '@mui/icons-material';
-import { useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
+  AdminMenuListComponent,
+  CommonMenuListComponent,
+  VisitorMenuListComponent,
+  UserMenuListComponent,
+  UserButtonMenuListComponent,
+} from './menus';
 
-export const SidebarListComponent = () => {
+export const SidebarListComponent: FC = () => {
+  const { uid, role } = useRecoilValue(authorizeState);
   const setSidebar = useSetRecoilState(sidebarState);
 
   const onClose = useCallback(() => {
@@ -26,31 +25,10 @@ export const SidebarListComponent = () => {
       onClick={onClose}
       onKeyDown={onClose}
     >
-      <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+      <CommonMenuListComponent />
+      {uid > 0 ? <UserMenuListComponent /> : <VisitorMenuListComponent />}
+      {role.is_admin && <AdminMenuListComponent />}
+      {uid > 0 && <UserButtonMenuListComponent />}
     </Box>
   );
 };

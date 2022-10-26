@@ -12,8 +12,8 @@ export const useTeamState = (): [
 ] => {
   const navigate = useNavigate();
   const params = useParams<TeamParamType>();
-  const rows = useRecoilValue(teamsState);
 
+  const { rows } = useRecoilValue(teamsState);
   const [row, setRow] = useState<TeamType>(initTeamState);
 
   useEffect(() => {

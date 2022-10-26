@@ -30,3 +30,8 @@ export type RoleType = {
   name: string;
   members: RoleUserType[];
 } & RolePolicyType;
+
+export type RoleStateType = {
+  load: boolean;
+  rows: RoleType[];
+};

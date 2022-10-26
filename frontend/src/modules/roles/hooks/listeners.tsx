@@ -1,21 +1,32 @@
 import { SetterOrUpdater } from 'recoil';
-import { RoleType } from '../states';
+import { RoleStateType, RoleType } from '../states';
 
 export const useRoleCreateSyncListener =
-  (setRoles: SetterOrUpdater<RoleType[]>) => (row: RoleType) => {
-    setRoles((prev) => [...prev, row]);
+  (setRoles: SetterOrUpdater<RoleStateType>) => (row: RoleType) => {
+    setRoles((prev) => ({
+      load: false,
+      rows: [...prev.rows, row],
+    }));
   };
 
 export const useRoleUpdateSyncListener =
-  (setRoles: SetterOrUpdater<RoleType[]>) => (row: RoleType) => {
+  (setRoles: SetterOrUpdater<RoleStateType>) => (row: RoleType) => {
     setRoles((prev) => {
-      return prev.map((prev) => (prev.rid === row.rid ? row : prev));
+      return {
+        load: false,
+        rows: prev.rows.map((prevRow) =>
+          prevRow.rid === row.rid ? row : prevRow,
+        ),
+      };
     });
   };
 
 export const useRoleDeleteSyncLisetner =
-  (setRoles: SetterOrUpdater<RoleType[]>) => (rid: number) => {
+  (setRoles: SetterOrUpdater<RoleStateType>) => (rid: number) => {
     setRoles((prev) => {
-      return prev.filter((prev) => prev.rid !== rid);
+      return {
+        load: false,
+        rows: prev.rows.filter((prevRow) => prevRow.rid !== rid),
+      };
     });
   };

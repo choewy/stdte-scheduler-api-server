@@ -19,10 +19,20 @@ export const AppExceptionComponent: FC = () => {
   }, [exception, setOpen]);
 
   useEffect(() => {
+    if (open === true) {
+      const timeout = setTimeout(() => {
+        setOpen(false);
+      }, 3000);
+
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+
     if (open === false) {
       const timeout = setTimeout(() => {
         setException('');
-      }, 1000);
+      }, 500);
 
       return () => {
         clearTimeout(timeout);
@@ -33,7 +43,6 @@ export const AppExceptionComponent: FC = () => {
   return (
     <Snackbar
       open={open}
-      autoHideDuration={5000}
       TransitionComponent={SlideTransition}
       sx={{
         width: '100%',

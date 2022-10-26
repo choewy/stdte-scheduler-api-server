@@ -1,4 +1,4 @@
-import { SocketErrorType } from './types';
+import { SocketAuthorizeType, SocketErrorType } from './types';
 
 export interface SocketEventListener {
   (...args: any[]): void;
@@ -9,7 +9,7 @@ export interface SocketExceptionHandler {
 }
 
 export interface SocketAuthorizeHandler {
-  (user: { uid: number; name: string; email: string }): void;
+  (user: SocketAuthorizeType): void;
 }
 
 export interface SocketInterface {
