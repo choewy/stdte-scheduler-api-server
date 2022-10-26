@@ -1,8 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { RolePolicies } from './interfaces';
 import { RoleRelation } from './role.relation';
 
 @Entity('role')
-export class Role extends RoleRelation {
+export class Role extends RoleRelation implements RolePolicies {
   @PrimaryGeneratedColumn()
   readonly rid: number;
 
