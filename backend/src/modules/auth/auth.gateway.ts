@@ -36,7 +36,7 @@ export class AuthGateway {
     return await this.authService.signUpUser(body);
   }
 
-  @SubscribeMessage('auth:signin-email')
+  @SubscribeMessage('auth:signin:email')
   async signInWithEmail(@MessageBody() body: SignInDto): Promise<AuthTokenRvo> {
     return await this.authService.signInWithEmail(body);
   }

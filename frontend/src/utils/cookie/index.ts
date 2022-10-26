@@ -1,1 +1,1 @@
-export * from './cookie.instance';
+export * from './instance';

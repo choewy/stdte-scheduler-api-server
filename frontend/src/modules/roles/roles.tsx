@@ -1,6 +1,8 @@
+import { RoutePath } from '@/app';
 import { ChangeEvent, FC, FormEvent, useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { RoleEvent } from './enums';
 import { useRolesConnection } from './hooks';
 import { rolesState } from './states';
 
@@ -21,7 +23,7 @@ export const RolesPage: FC = () => {
   const onSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      await connection.emit('role:create', { name });
+      await connection.emit(RoleEvent.EmitCreate, { name });
       setName('');
     },
     [connection, name, setName],
@@ -34,7 +36,7 @@ export const RolesPage: FC = () => {
         {roles.map((role) => {
           return (
             <div key={JSON.stringify(role)}>
-              <Link to={`/roles/${role.rid}`}>
+              <Link to={`${RoutePath.Roles}/${role.rid}`}>
                 {role.name}({role.members.length})
               </Link>
             </div>

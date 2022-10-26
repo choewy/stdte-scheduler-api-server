@@ -1,8 +1,8 @@
-import { classConstructor } from '@/core';
-import { Role, RoleQuery, RoleAndUserQuery, UserQuery } from '@/typeorm';
+import { DataSource } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
-import { DataSource } from 'typeorm';
+import { classConstructor } from '@/core';
+import { Role, RoleQuery, RoleAndUserQuery, UserQuery } from '@/typeorm';
 import { CreateRoleDto, UpdateRoleDto } from './dto';
 import { RoleRvo, roleRvoConstructor, RoleUserRvo } from './rvo';
 
@@ -80,26 +80,40 @@ export class RoleService {
   }
 
   async deleteRole(rid: number): Promise<void> {
-    const role = await this.roleQuery.selectRoleQuery({ rid }).getOne();
+    let exception: WsException;
 
-    if (!role) {
-      throw new WsException({
-        status: 400,
-        error: 'NotFound',
-        message: '존재하지 않는 역할입니다.',
-      });
+    await this.dataSource.transaction(async (em) => {
+      const roleQuery = new RoleQuery(em);
+      const roleAndUserQuery = new RoleAndUserQuery(em);
+
+      const role = await roleQuery.selectRoleQuery({ rid }, true).getOne();
+
+      if (!role) {
+        exception = new WsException({
+          status: 400,
+          error: 'NotFound',
+          message: '존재하지 않는 역할입니다.',
+        });
+
+        return;
+      }
+
+      await roleQuery.repository.delete({ rid });
+      await roleAndUserQuery.repository.delete({ rid });
+    });
+
+    if (exception) {
+      throw exception;
     }
-
-    await this.roleQuery.repository.delete({ rid });
   }
 
-  async searchMember(gid: number, keyword: string): Promise<RoleUserRvo[]> {
+  async searchUser(rid: number, keyword: string): Promise<RoleUserRvo[]> {
     if (!keyword) {
       return [];
     }
 
     const rows = await this.userQuery.selectUserByKeywordNotInRoleExecute(
-      gid,
+      rid,
       keyword,
     );
 

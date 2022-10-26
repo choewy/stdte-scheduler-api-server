@@ -1,22 +1,38 @@
-import { FC, ChangeEvent, useState } from 'react';
-import { useAuthSubmitCallback } from './hooks';
-import { useMountConnection } from '@/app/hooks';
+import { FC, ChangeEvent, useState, useCallback, FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { SignEvent } from './enums';
+import { useSignCallback, useSignConnection } from './hooks';
+import { initSignUpAccountState } from './states';
 
 export const SignInPage: FC = () => {
-  const connection = useMountConnection();
+  const navigate = useNavigate();
+  const connection = useSignConnection();
 
-  const [account, setAccount] = useState({
-    email: '',
-    password: '',
-  });
+  const [account, setAccount] = useState(initSignUpAccountState);
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setAccount({
-      ...account,
-      [name]: value,
-    });
-  };
+  const onChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      setAccount({
+        ...account,
+        [name]: value,
+      });
+    },
+    [account, setAccount],
+  );
+
+  const onSubmit = useCallback(
+    async (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+
+      await connection.emit(
+        SignEvent.SignInEmail,
+        account,
+        useSignCallback(connection, navigate),
+      );
+    },
+    [connection, account, navigate],
+  );
 
   return (
     <div
@@ -36,12 +52,7 @@ export const SignInPage: FC = () => {
           justifyContent: 'center',
           alignItems: 'center',
         }}
-        onSubmit={useAuthSubmitCallback({
-          connection,
-          account,
-          event: 'auth:signin-email',
-          redirect: '/',
-        })}
+        onSubmit={onSubmit}
       >
         <input
           name="email"

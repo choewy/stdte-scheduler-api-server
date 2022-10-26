@@ -31,8 +31,7 @@ export class RoleGateway {
     private readonly roleService: RoleService,
   ) {}
 
-  @RolePolicyMetadata(adminOnly)
-  @UseGuards(AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard)
   @SubscribeMessage(RoleMessage.All)
   async getRoles() {
     return await this.roleService.getRoles();
@@ -76,9 +75,9 @@ export class RoleGateway {
 
   @RolePolicyMetadata(adminOnly)
   @UseGuards(AuthGuard, RoleGuard)
-  @SubscribeMessage(RoleMessage.SearchMember)
-  async searchMember(@MessageBody() body: SearchUsersDto) {
-    return await this.roleService.searchMember(body.rid, body.keyword);
+  @SubscribeMessage(RoleMessage.SearchUser)
+  async searchUser(@MessageBody() body: SearchUsersDto) {
+    return await this.roleService.searchUser(body.rid, body.keyword);
   }
 
   @RolePolicyMetadata(adminOnly)

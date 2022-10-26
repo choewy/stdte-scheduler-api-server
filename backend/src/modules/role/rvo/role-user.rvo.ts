@@ -13,8 +13,8 @@ export class RoleUserRvo {
   email: string;
 }
 
-export const roleUsersConstructor = (role: Role) => {
-  return role.members.map((user) =>
+export const roleUsersConstructor = (row: Role) => {
+  return row.members.map((user) =>
     classConstructor(new RoleUserRvo(), {
       uid: user.uid,
       name: user.name,

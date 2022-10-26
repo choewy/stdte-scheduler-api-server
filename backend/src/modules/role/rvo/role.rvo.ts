@@ -50,22 +50,22 @@ export class RoleRvo {
   members: RoleUserRvo[];
 }
 
-export const roleRvoConstructor = (role: Role) => {
+export const roleRvoConstructor = (row: Role) => {
   return classConstructor(new RoleRvo(), {
-    rid: role.rid,
-    name: role.name,
-    read_team: role.read_team,
-    write_team: role.write_team,
-    update_team: role.update_team,
-    delete_team: role.delete_team,
-    read_member: role.read_member,
-    write_member: role.write_member,
-    update_member: role.update_member,
-    delete_member: role.delete_member,
-    read_task: role.read_task,
-    write_task: role.write_task,
-    update_task: role.update_task,
-    delete_task: role.delete_task,
-    members: roleUsersConstructor(role),
+    rid: row.rid,
+    name: row.name,
+    read_team: row.read_team,
+    write_team: row.write_team,
+    update_team: row.update_team,
+    delete_team: row.delete_team,
+    read_member: row.read_member,
+    write_member: row.write_member,
+    update_member: row.update_member,
+    delete_member: row.delete_member,
+    read_task: row.read_task,
+    write_task: row.write_task,
+    update_task: row.update_task,
+    delete_task: row.delete_task,
+    members: roleUsersConstructor(row),
   });
 };

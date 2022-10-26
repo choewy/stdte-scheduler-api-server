@@ -1,4 +1,4 @@
-import { SocketConfig } from './interfaces';
+import { SocketConfig } from './types';
 
 export const socketConfig = (): SocketConfig => ({
   uri: process.env.REACT_APP_SOCKET_URI,
