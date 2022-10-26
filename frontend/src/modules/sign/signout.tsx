@@ -11,7 +11,7 @@ export const SignOutPage = () => {
   useEffect(() => {
     connection.removeTokens();
     resetAuthorize();
-    navigate('/signin/email', { replace: true });
+    navigate('/signin', { replace: true });
   }, [connection, resetAuthorize, navigate]);
 
   return <></>;
