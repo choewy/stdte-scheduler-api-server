@@ -2,7 +2,7 @@ import { FC, ChangeEvent, useState } from 'react';
 import { useAuthSubmitCallback } from './hooks';
 import { useMountConnection } from '@/app/hooks';
 
-export const SignInWithEmailPage: FC = () => {
+export const SignInPage: FC = () => {
   const connection = useMountConnection();
 
   const [account, setAccount] = useState({
