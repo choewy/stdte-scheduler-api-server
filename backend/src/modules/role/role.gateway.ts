@@ -1,5 +1,5 @@
 import { WSModuleGateway } from '@/core';
-import { connectMaps } from '@/core/redis';
+import { RedisService } from '@/core/redis';
 import { UseGuards } from '@nestjs/common';
 import {
   ConnectedSocket,
@@ -22,7 +22,10 @@ import { RoleService } from './role.service';
 export class RoleGateway {
   @WebSocketServer() private readonly server: Server;
 
-  constructor(private readonly roleService: RoleService) {}
+  constructor(
+    private readonly redisService: RedisService,
+    private readonly roleService: RoleService,
+  ) {}
 
   @UseGuards(AuthGuard)
   @SubscribeMessage('role:all')
@@ -36,10 +39,9 @@ export class RoleGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() body: CreateRoleDto,
   ) {
+    const sessions = await this.redisService.getSessions(socket.nsp.name);
     const row = await this.roleService.createRole(body);
-    return this.server
-      .to(connectMaps[socket.nsp.name])
-      .emit('role:create:sync', row);
+    return this.server.to(sessions).emit('role:create:sync', row);
   }
 
   @UseGuards(AuthGuard)
@@ -48,10 +50,9 @@ export class RoleGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() body: UpdateRoleDto,
   ) {
+    const sessions = await this.redisService.getSessions(socket.nsp.name);
     const row = await this.roleService.updateRole(body);
-    return this.server
-      .to(connectMaps[socket.nsp.name])
-      .emit('role:update:sync', row);
+    return this.server.to(sessions).emit('role:update:sync', row);
   }
 
   @UseGuards(AuthGuard)
@@ -60,10 +61,9 @@ export class RoleGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() body: RoleParamDto,
   ) {
+    const sessions = await this.redisService.getSessions(socket.nsp.name);
     await this.roleService.deleteRole(body.rid);
-    return this.server
-      .to(connectMaps[socket.nsp.name])
-      .emit('role:delete:sync', body.rid);
+    return this.server.to(sessions).emit('role:delete:sync', body.rid);
   }
 
   @UseGuards(AuthGuard)
@@ -78,10 +78,9 @@ export class RoleGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() body: RoleMemberParamDto,
   ) {
+    const sessions = await this.redisService.getSessions(socket.nsp.name);
     const row = await this.roleService.appendMember(body.rid, body.uid);
-    return this.server
-      .to(connectMaps[socket.nsp.name])
-      .emit('role:update:sync', row);
+    return this.server.to(sessions).emit('role:update:sync', row);
   }
 
   @UseGuards(AuthGuard)
@@ -90,9 +89,8 @@ export class RoleGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() body: RoleMemberParamDto,
   ) {
+    const sessions = await this.redisService.getSessions(socket.nsp.name);
     const row = await this.roleService.removeMember(body.rid, body.uid);
-    return this.server
-      .to(connectMaps[socket.nsp.name])
-      .emit('role:update:sync', row);
+    return this.server.to(sessions).emit('role:update:sync', row);
   }
 }

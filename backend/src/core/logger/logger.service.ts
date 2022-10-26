@@ -1,20 +1,20 @@
 import { Socket } from 'socket.io';
 import { Injectable, Logger } from '@nestjs/common';
-import { connectMaps } from '../redis';
 import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class LoggerService {
   constructor(private readonly logger: Logger) {}
 
-  async log(socket: Socket) {
+  async log(socket: Socket, sessions?: any) {
     const nsp = socket.nsp.name;
     const ip = socket.conn.remoteAddress;
     const ctxName = socket['context'];
 
     const message = `(nsp: ${nsp}, ${socket.id}, ${ip}) - ${JSON.stringify(
-      connectMaps[nsp],
+      { [nsp]: sessions },
       null,
+      2,
     )}`;
 
     this.logger.verbose(message, ctxName);
