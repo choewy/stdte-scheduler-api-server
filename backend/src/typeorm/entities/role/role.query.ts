@@ -1,4 +1,5 @@
 import { DataSource, EntityManager } from 'typeorm';
+import { LockMode } from '../enums';
 import { createRepository } from '../helpers';
 import { RoleAndUser } from '../role_and_user';
 import { User } from '../user';
@@ -11,7 +12,11 @@ export class RoleQuery {
     public readonly repository = createRepository(base, Role),
   ) {}
 
-  selectRoleQuery(whereOptions?: RoleWhereOptions) {
+  selectRoleQuery(
+    whereOptions?: RoleWhereOptions,
+    lock = false,
+    lockMode = LockMode.PerssimisticWrite,
+  ) {
     const subQuery = this.base
       .createQueryBuilder()
       .select('uid')
@@ -40,6 +45,10 @@ export class RoleQuery {
       if (name) {
         query.andWhere('role.name = :name', { name });
       }
+    }
+
+    if (lock) {
+      query.setLock(lockMode);
     }
 
     return query;

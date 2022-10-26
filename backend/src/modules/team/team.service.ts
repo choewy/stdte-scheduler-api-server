@@ -80,17 +80,31 @@ export class TeamService {
   }
 
   async deleteTeam(tid: number): Promise<void> {
-    const team = await this.teamQuery.selectTeamQuery({ tid }).getOne();
+    let exception: WsException;
 
-    if (!team) {
-      throw new WsException({
-        status: 400,
-        error: 'NotFound',
-        message: '존재하지 않는 팀입니다.',
-      });
+    await this.dataSource.transaction(async (em) => {
+      const teamQuery = new TeamQuery(em);
+      const teamAndUserQuery = new TeamAndUserQuery(em);
+
+      const team = await teamQuery.selectTeamQuery({ tid }, true).getOne();
+
+      if (!team) {
+        exception = new WsException({
+          status: 400,
+          error: 'NotFound',
+          message: '존재하지 않는 팀입니다.',
+        });
+
+        return;
+      }
+
+      await teamQuery.repository.delete({ tid });
+      await teamAndUserQuery.repository.delete({ tid });
+    });
+
+    if (exception) {
+      throw exception;
     }
-
-    await this.teamQuery.repository.delete({ tid });
   }
 
   async searchUser(tid: number, keyword: string): Promise<TeamUserRvo[]> {

@@ -1,7 +1,7 @@
 export enum TeamMessage {
   All = 'team:all',
   Create = 'team:create',
-  Update = 'team:create',
+  Update = 'team:update',
   Delete = 'team:delete',
   SyncCreate = 'team:create:sync',
   SyncUpdate = 'team:update:sync',

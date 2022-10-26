@@ -1,4 +1,5 @@
 import { DataSource, EntityManager } from 'typeorm';
+import { LockMode } from '../enums';
 import { createRepository } from '../helpers';
 import { TeamAndUser } from '../team_and_user';
 import { User } from '../user';
@@ -11,7 +12,11 @@ export class TeamQuery {
     public readonly repository = createRepository(base, Team),
   ) {}
 
-  selectTeamQuery(whereOptions?: TeamWhereOptions) {
+  selectTeamQuery(
+    whereOptions?: TeamWhereOptions,
+    lock = false,
+    lockMode = LockMode.PerssimisticWrite,
+  ) {
     const subQuery = this.base
       .createQueryBuilder()
       .select('uid')
@@ -40,6 +45,10 @@ export class TeamQuery {
       if (name) {
         query.andWhere('team.name = :name', { name });
       }
+    }
+
+    if (lock) {
+      query.setLock(lockMode);
     }
 
     return query;
