@@ -1,5 +1,7 @@
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
+import { JwtSignOptions } from '@nestjs/jwt';
 import { NextHandleFunction } from 'connect';
+import { RedisOptions } from 'ioredis';
 
 export interface ServerConfig {
   env: string;
@@ -25,3 +27,6 @@ export interface GithubConfig {
   secretKey: string;
   redirectUri: string;
 }
+
+export type JwtConfig = JwtSignOptions;
+export type RedisConfig = RedisOptions;

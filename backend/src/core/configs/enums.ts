@@ -10,4 +10,5 @@ export enum ConfigKey {
   Typeorm = 'typeorm',
   Jwt = 'jwt',
   Kakao = 'kakao',
+  Redis = 'redis',
 }
