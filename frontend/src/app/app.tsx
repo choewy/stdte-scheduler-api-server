@@ -9,7 +9,12 @@ import {
 } from '@/modules';
 import { CSSProperties, FC, Fragment } from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
-import { AppException } from './components';
+import {
+  AppExceptionComponent,
+  AppHeaderComponent,
+  AppLoadingComponent,
+  AppSidebarComponent,
+} from './components';
 import { RoutePath, RouteRolePath, RouteTeamPath } from './enums';
 import { useAppConnection } from './hooks';
 
@@ -23,7 +28,10 @@ export const App: FC = () => {
 
   return (
     <Fragment>
-      <AppException />
+      <AppHeaderComponent />
+      <AppSidebarComponent />
+      <AppExceptionComponent />
+      <AppLoadingComponent />
 
       <Link to={RoutePath.Home} style={linkStyle}>
         Home
