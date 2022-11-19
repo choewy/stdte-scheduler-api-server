@@ -1,19 +1,19 @@
 export class SwaggerAuth {
-  public static Test = new SwaggerAuth('test', 'swagger-test');
+  public static Swagger = new SwaggerAuth('swagger', 'swagger@swagger.com');
 
   private readonly $name!: string;
-  private readonly $token!: string;
+  private readonly $email!: string;
 
-  constructor(name: string, token: string) {
+  constructor(name: string, email: string) {
     this.$name = name;
-    this.$token = token;
+    this.$email = email;
   }
 
   public get name() {
     return this.$name;
   }
 
-  public get token() {
-    return this.$token;
+  public get email() {
+    return this.$email;
   }
 }

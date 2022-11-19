@@ -1,6 +1,7 @@
 import { HttpException, Logger } from '@nestjs/common';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 import { Response } from 'express';
+import { ExceptionResponseProperty } from './dto';
 import { ValidationException } from './exceptions';
 import { RequestCtx } from './types';
 
@@ -27,13 +28,18 @@ export class FilterLogCtx {
     this.details = error
       ? error
       : exception instanceof ValidationException
-      ? exception.errors
+      ? exception.error
+      : exception.cause
+      ? {
+          name: exception.cause.name,
+          message: exception.cause.message,
+        }
       : null;
 
     if (this.status >= 500) {
       logger.error(
         this.message,
-        exception.stack || error['stack'],
+        error['stack'] || exception.stack,
         this.request.ctx,
       );
     } else {
@@ -43,7 +49,7 @@ export class FilterLogCtx {
     this.response.status(this.status).send(this.body);
   }
 
-  private get body() {
+  private get body(): ExceptionResponseProperty {
     return {
       status: this.status,
       name: this.name,
