@@ -1,25 +1,22 @@
 import { BadRequestException } from '@nestjs/common';
 import { ValidationError } from 'class-validator';
-import { ValidationErrorObject } from './types';
+import { ValidationErrorType } from './types';
 
 export class ValidationException extends BadRequestException {
-  private readonly __errors: ValidationErrorObject;
+  private readonly __error: ValidationErrorType;
 
   constructor(errors: ValidationError[]) {
     super();
-    this.__errors = {};
-    errors.forEach((error) => {
-      const { property, constraints } = error;
-      this.__errors[property] = Object.keys(constraints);
-    });
+
+    const error = Object.entries(errors[0].constraints)[0];
+
+    this.__error = {
+      name: error[0],
+      message: error[1],
+    };
   }
 
   get error() {
-    Object.entries(this.__errors)[0];
-    return;
-  }
-
-  get errors(): ValidationErrorObject {
-    return this.__errors;
+    return this.__error;
   }
 }

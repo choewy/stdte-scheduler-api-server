@@ -1,10 +1,15 @@
 import { INestApplication, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import {
   DocumentBuilder,
   SwaggerCustomOptions,
   SwaggerModule,
 } from '@nestjs/swagger';
-import { NodeEnv } from '../config';
+import { DataSource, Repository } from 'typeorm';
+import { ConfigKey, JwtConfig, NodeEnv } from '../config';
+import { User } from '../typeorm/entities';
+import { BcryptService } from '../utils';
 import {
   SWAGGER_CONTACT_EMAIL,
   SWAGGER_CONTACT_NAME,
@@ -18,6 +23,19 @@ import { SwaggerAuth } from './swagger-auth';
 
 @Injectable()
 export class SwaggerService {
+  private readonly config: JwtConfig;
+  private readonly userRepo: Repository<User>;
+
+  constructor(
+    private readonly bcryptService: BcryptService,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+    private readonly dataSource: DataSource,
+  ) {
+    this.config = this.configService.get<JwtConfig>(ConfigKey.Jwt);
+    this.userRepo = this.dataSource.getRepository(User);
+  }
+
   private readonly swaggerOptions: SwaggerCustomOptions = {
     swaggerOptions: {
       defaultModelsExpandDepth: -1,
@@ -25,7 +43,6 @@ export class SwaggerService {
   };
 
   private readonly swaggerBuilder = new DocumentBuilder()
-    .setBasePath(SWAGGER_PATH)
     .setTitle(SWAGGER_TITLE)
     .setVersion(SWAGGER_VERSION)
     .setDescription(SWAGGER_DESCRIPTION)
@@ -33,29 +50,51 @@ export class SwaggerService {
       SWAGGER_CONTACT_NAME,
       SWAGGER_CONTACT_URL,
       SWAGGER_CONTACT_EMAIL,
-    )
-    .addBearerAuth({
-      type: 'http',
-      in: 'header',
-      scheme: 'bearer',
-      bearerFormat: 'bearer',
-    });
+    );
 
-  applyToApplication(app: INestApplication) {
+  async applyToApplication(app: INestApplication) {
     const builder = this.swaggerBuilder;
     const options = this.swaggerOptions;
 
-    if (!NodeEnv.Prod.equal()) {
-      builder.addBearerAuth(undefined, SwaggerAuth.Test.name);
+    if (NodeEnv.Prod.equal()) {
+      builder.addBearerAuth(
+        {
+          type: 'http',
+          in: 'header',
+          scheme: 'bearer',
+          bearerFormat: 'bearer',
+        },
+        'bearer',
+      );
+    } else {
+      let user = await this.userRepo.findOneBy({
+        name: SwaggerAuth.Swagger.name,
+      });
+
+      const swagger = new User();
+
+      swagger.id = user?.id || undefined;
+      swagger.name = SwaggerAuth.Swagger.name;
+      swagger.email = SwaggerAuth.Swagger.email;
+      swagger.password = this.bcryptService.hash('swagger');
+
+      user = await this.userRepo.save(swagger);
+
+      const token = this.jwtService.sign(
+        { id: user.id },
+        { ...this.config, expiresIn: '20y' },
+      );
+
+      builder.addBearerAuth(undefined, 'bearer');
       options.swaggerOptions.authAction = {
-        [SwaggerAuth.Test.name]: {
+        bearer: {
           schema: {
             type: 'http',
             in: 'header',
             scheme: 'bearer',
             bearerFormat: 'bearer',
           },
-          value: SwaggerAuth.Test.token,
+          value: token,
         },
       };
     }

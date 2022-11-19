@@ -4,6 +4,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigKey, JwtConfig, registers, TypeOrmConfig } from './config';
 import { SwaggerService } from './swagger';
+import { BcryptService } from './utils';
 
 @Global()
 @Module({
@@ -23,7 +24,7 @@ import { SwaggerService } from './swagger';
         configService.get<JwtConfig>(ConfigKey.Jwt),
     }),
   ],
-  providers: [Logger, SwaggerService, JwtService],
-  exports: [Logger, SwaggerService, JwtService],
+  providers: [Logger, SwaggerService, JwtService, BcryptService],
+  exports: [Logger, SwaggerService, JwtService, BcryptService],
 })
 export class CoreModule {}

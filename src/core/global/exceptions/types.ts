@@ -1,1 +1,4 @@
-export type ValidationErrorObject = { [key: string]: string[] };
+export type ValidationErrorType = {
+  name: string;
+  message: string;
+};

@@ -52,7 +52,7 @@ export class Bootstrap extends NestFactoryStatic {
 
     this.app.useGlobalPipes(new ValidatePipe());
 
-    this.app.get(SwaggerService).applyToApplication(this.app);
+    await this.app.get(SwaggerService).applyToApplication(this.app);
   }
 
   public static async listen(): Promise<void> {
