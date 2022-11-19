@@ -1,6 +1,7 @@
 import {
   applyDecorators,
   CanActivate,
+  CustomDecorator,
   NestInterceptor,
   UseGuards,
   UseInterceptors,
@@ -11,6 +12,7 @@ type ApiRequestOptions = {
   summary: string;
   description?: string;
   guards?: Array<Function | CanActivate>;
+  metadata?: Array<CustomDecorator>;
   interceptors?: Array<Function | NestInterceptor>;
   consume?: 'multipart' | 'x-www-form';
 };
@@ -23,6 +25,7 @@ enum Consume {
 export const ApiRequestType = ({
   summary,
   description,
+  metadata,
   guards,
   interceptors,
   consume,
@@ -30,6 +33,12 @@ export const ApiRequestType = ({
   const decorators = [];
 
   decorators.push(ApiOperation({ summary, description }));
+
+  if (metadata && metadata.length > 0) {
+    metadata.forEach((metadata) => {
+      decorators.push(metadata);
+    });
+  }
 
   if (guards && guards.length > 0) {
     decorators.push(UseGuards(...guards));
