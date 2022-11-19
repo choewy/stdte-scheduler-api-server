@@ -8,25 +8,16 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { DateTimeColumn } from '../../columns';
-import { UserType } from './enums';
+import { User } from '../user';
 
-@Entity('user')
-export class User {
+class MapTypes {
+  users: User[];
+}
+
+@Entity()
+export class Team extends MapTypes {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Column({
-    type: 'enum',
-    enum: UserType,
-    default: UserType.User,
-  })
-  type: UserType;
-
-  @Column({ unique: true })
-  email: string;
-
-  @Column()
-  password: string;
 
   @Column()
   name: string;
@@ -38,7 +29,7 @@ export class User {
   updatedAt: DateTime;
 
   @DateTimeColumn({ default: null })
-  deletedAt: DateTime;
+  deletedAt: DateTime | null;
 
   @BeforeInsert()
   protected beforeInsert() {
