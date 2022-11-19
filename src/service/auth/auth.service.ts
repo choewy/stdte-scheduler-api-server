@@ -1,11 +1,13 @@
 import { ConfigKey, JwtConfig } from '@/core/config';
-import { User } from '@/core/typeorm/entities';
+import { User, UserStatus } from '@/core/typeorm/entities';
 import { BcryptService } from '@/core/utils';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { plainToInstance } from 'class-transformer';
 import { AuthRepository } from './auth.repository';
 import {
+  AuthResponse,
   SignInBody,
   SignResponse,
   SignUpBody,
@@ -14,6 +16,8 @@ import {
 import {
   AlreadyExistEmailException,
   CannotChangeCurrentPasswordException,
+  AccessDeninedAsRejectStatusException,
+  AccessDeninedAsWaitStatusException,
   IncorrectPasswordException,
 } from './exceptions';
 
@@ -30,6 +34,24 @@ export class AuthService {
     this.config = this.configService.get<JwtConfig>(ConfigKey.Jwt);
   }
 
+  async auth(user: User): Promise<AuthResponse> {
+    if (user.status === UserStatus.Wait) {
+      throw new AccessDeninedAsWaitStatusException();
+    }
+
+    if (user.status === UserStatus.Reject) {
+      throw new AccessDeninedAsRejectStatusException();
+    }
+
+    return plainToInstance(AuthResponse, {
+      id: user.id,
+      type: user.type,
+      name: user.name,
+      email: user.email,
+      status: user.status,
+    });
+  }
+
   async signUp(body: SignUpBody): Promise<SignResponse> {
     if (body.password !== body.confirmPassword) {
       throw new IncorrectPasswordException();
@@ -44,6 +66,7 @@ export class AuthService {
         email: body.email,
         name: body.name,
         password: this.bcryptService.hash(body.password),
+        status: UserStatus.Wait,
       }),
     );
 
@@ -65,6 +88,14 @@ export class AuthService {
 
     if (!user || !this.bcryptService.verify(body.password, user.password)) {
       throw new UnauthorizedException();
+    }
+
+    if (user.status === UserStatus.Wait) {
+      throw new AccessDeninedAsWaitStatusException();
+    }
+
+    if (user.status === UserStatus.Reject) {
+      throw new AccessDeninedAsRejectStatusException();
     }
 
     const payload = { id: user.id };

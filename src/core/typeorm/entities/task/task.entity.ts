@@ -8,31 +8,54 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { DateTimeColumn } from '../../columns';
-import { UserStatus, UserType } from './enums';
+import { Team } from '../team';
+import { TaskStatus, TaskType } from './enums';
 
-@Entity('user')
-export class User {
+class MapTypes {
+  teams: Team[];
+}
+
+@Entity()
+export class Task extends MapTypes {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'tinyint' })
-  type: UserType;
-
-  @Column({ unique: true })
-  email: string;
+  @Column({
+    type: 'enum',
+    enum: TaskType,
+  })
+  type: TaskType;
 
   @Column()
-  password: string;
+  code: string;
 
   @Column()
   name: string;
 
   @Column({
-    type: 'enum',
-    enum: UserStatus,
-    default: UserStatus.Wait,
+    type: 'text',
+    nullable: true,
   })
-  status: UserStatus;
+  summary: string;
+
+  @Column({ default: null })
+  revenue: string;
+
+  @Column({
+    type: 'enum',
+    enum: TaskStatus,
+    default: TaskStatus.Staging,
+  })
+  status: TaskStatus;
+
+  @DateTimeColumn({ default: null })
+  startAt: DateTime;
+
+  @DateTimeColumn({ default: null })
+  endAt: DateTime;
+
+  @DateTimeColumn({ default: null })
+  warrantyAt: DateTime;
 
   @DateTimeColumn({ update: false })
   createdAt: DateTime;
@@ -41,7 +64,7 @@ export class User {
   updatedAt: DateTime;
 
   @DateTimeColumn({ default: null })
-  deletedAt: DateTime;
+  deletedAt: DateTime | null;
 
   @BeforeInsert()
   protected beforeInsert() {

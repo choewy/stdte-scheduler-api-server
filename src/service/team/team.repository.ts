@@ -1,4 +1,10 @@
-import { Team, TeamAndUser, User } from '@/core/typeorm/entities';
+import {
+  Task,
+  Team,
+  TeamAndTask,
+  TeamAndUser,
+  User,
+} from '@/core/typeorm/entities';
 import { Injectable } from '@nestjs/common';
 import { DateTime } from 'luxon';
 import { DataSource, IsNull, Not, Repository } from 'typeorm';
@@ -23,7 +29,19 @@ export class TeamRepository {
         'team.users',
         User,
         'users',
-        'users.id = team_and_user.userId',
+        ['users.id = team_and_user.userId', 'users.deletedAt IS NULL'].join(
+          ' AND ',
+        ),
+      )
+      .leftJoin(TeamAndTask, 'team_and_task', 'team_and_task.teamId = team.id')
+      .leftJoinAndMapMany(
+        'team.tasks',
+        Task,
+        'tasks',
+        [
+          'tasks.deletedAt IS NULL',
+          '(tasks.id = team_and_task.taskId OR tasks.type = "global")',
+        ].join(' AND '),
       )
       .where('team.deletedAt IS NULL');
 
@@ -33,27 +51,44 @@ export class TeamRepository {
   async findById(teamId: number): Promise<Team> {
     return this.teamRepo
       .createQueryBuilder('team')
-
       .leftJoin(TeamAndUser, 'team_and_user', 'team_and_user.teamId = team.id')
       .leftJoinAndMapMany(
         'team.users',
         User,
         'users',
-        'users.id = team_and_user.userId',
+        ['users.id = team_and_user.userId', 'users.deletedAt IS NULL'].join(
+          ' AND ',
+        ),
+      )
+      .leftJoin(TeamAndTask, 'team_and_task', 'team_and_task.teamId = team.id')
+      .leftJoinAndMapMany(
+        'team.tasks',
+        Task,
+        'tasks',
+        [
+          'tasks.deletedAt IS NULL',
+          '(tasks.id = team_and_task.taskId OR tasks.type = "global")',
+        ].join(' AND '),
       )
       .where('team.deletedAt IS NULL')
       .andWhere('team.id = :teamId', { teamId })
+      .orderBy('tasks.id', 'ASC')
+      .addOrderBy('users.name', 'ASC')
       .getOne();
   }
 
   async findByName(name: string): Promise<Team> {
-    return this.teamRepo.findOneBy({ name });
+    return this.teamRepo.findOneBy({
+      name,
+      deletedAt: IsNull(),
+    });
   }
 
   async findByNameOmitId(teamId: number, name: string): Promise<Team> {
     return this.teamRepo.findOneBy({
       name,
       id: Not(teamId),
+      deletedAt: IsNull(),
     });
   }
 

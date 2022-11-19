@@ -24,6 +24,8 @@ import {
 import {
   AlreadyExistEmailException,
   CannotChangeCurrentPasswordException,
+  AccessDeninedAsRejectStatusException,
+  AccessDeninedAsWaitStatusException,
   IncorrectPasswordException,
 } from './exceptions';
 
@@ -39,14 +41,15 @@ export class AuthController {
   })
   @ApiResponseType({
     type: AuthResponse,
-    errors: [UnauthorizedException, ForbiddenException],
+    errors: [
+      UnauthorizedException,
+      ForbiddenException,
+      AccessDeninedAsWaitStatusException,
+      AccessDeninedAsRejectStatusException,
+    ],
   })
   async auth(@Client() user: User): Promise<AuthResponse> {
-    return Object.assign(new AuthResponse(), {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-    });
+    return this.service.auth(user);
   }
 
   @Post('signin')
@@ -57,7 +60,12 @@ export class AuthController {
   @ApiResponseType({
     status: HttpStatus.OK,
     type: SignResponse,
-    errors: [BadRequestException, AlreadyExistEmailException],
+    errors: [
+      BadRequestException,
+      AlreadyExistEmailException,
+      AccessDeninedAsWaitStatusException,
+      AccessDeninedAsRejectStatusException,
+    ],
   })
   async signIn(@Body() body: SignInBody): Promise<SignResponse> {
     return this.service.signIn(body);
