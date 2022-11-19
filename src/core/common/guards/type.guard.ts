@@ -27,6 +27,6 @@ export class TypeGuard implements CanActivate {
       ctx.getHandler(),
     );
 
-    return user.type === type;
+    return user.type <= type;
   }
 }

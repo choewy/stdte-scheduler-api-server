@@ -21,6 +21,10 @@ export class DateTimeTransformer implements ValueTransformer {
   }
 
   from(value: DateTime | null): DateTime | null {
+    if (value instanceof Date) {
+      return DateTime.fromJSDate(value);
+    }
+
     return value;
   }
 }

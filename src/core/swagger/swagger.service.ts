@@ -8,7 +8,7 @@ import {
 } from '@nestjs/swagger';
 import { DataSource, Repository } from 'typeorm';
 import { ConfigKey, JwtConfig, NodeEnv } from '../config';
-import { User } from '../typeorm/entities';
+import { User, UserStatus, UserType } from '../typeorm/entities';
 import { BcryptService } from '../utils';
 import {
   SWAGGER_CONTACT_EMAIL,
@@ -77,6 +77,8 @@ export class SwaggerService {
       swagger.name = SwaggerAuth.Swagger.name;
       swagger.email = SwaggerAuth.Swagger.email;
       swagger.password = this.bcryptService.hash('swagger');
+      swagger.type = UserType.Admin;
+      swagger.status = UserStatus.Accept;
 
       user = await this.userRepo.save(swagger);
 

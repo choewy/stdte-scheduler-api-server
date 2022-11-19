@@ -1,4 +1,4 @@
-import { Team } from '@/core/typeorm/entities';
+import { TaskType, Team } from '@/core/typeorm/entities';
 import { Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import {
@@ -7,6 +7,7 @@ import {
   TeamListResponse,
   TeamMemberMethod,
   TeamResponse,
+  TeamTaskResponse,
   TeamUserResponse,
   UpdateTeambody,
 } from './dto';
@@ -29,10 +30,14 @@ export class TeamService {
     res.count = count;
     res.rows = plainToInstance(
       TeamResponse,
-      rows.map(({ id, name, users }) => ({
+      rows.map(({ id, name, users, tasks }) => ({
         id,
         name,
-        count: users.length,
+        userCount: users.length,
+        globalTaskCount: tasks.filter(({ type }) => type === TaskType.Global)
+          .length,
+        teamTaskCount: tasks.filter(({ type }) => type === TaskType.Team)
+          .length,
       })),
     );
 
@@ -46,7 +51,7 @@ export class TeamService {
       throw new NotFoundTeamException();
     }
 
-    const { id, name, users } = row;
+    const { id, name, users, tasks } = row;
 
     return plainToInstance(TeamDetailResponse, {
       id,
@@ -59,6 +64,38 @@ export class TeamService {
           name,
           email,
         })),
+      ),
+      tasks: plainToInstance(
+        TeamTaskResponse,
+        tasks.map(
+          ({
+            id,
+            type,
+            name,
+            code,
+            revenue,
+            summary,
+            status,
+            createdAt,
+            updatedAt,
+            startAt,
+            endAt,
+            warrantyAt,
+          }) => ({
+            id,
+            type,
+            name,
+            code,
+            revenue,
+            summary,
+            status,
+            createdAt: createdAt.toISODate(),
+            updatedAt: updatedAt.toISODate(),
+            startAt: startAt?.toISODate() || null,
+            endAt: endAt?.toISODate() || null,
+            warrantyAt: warrantyAt?.toISODate() || null,
+          }),
+        ),
       ),
     });
   }

@@ -8,10 +8,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { DateTimeColumn } from '../../columns';
+import { Task } from '../task';
 import { User } from '../user';
 
 class MapTypes {
   users: User[];
+  tasks: Task[];
 }
 
 @Entity()

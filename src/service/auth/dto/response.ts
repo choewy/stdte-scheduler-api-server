@@ -1,3 +1,4 @@
+import { UserStatus, UserType } from '@/core/typeorm/entities';
 import { ApiResponseProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
@@ -18,9 +19,17 @@ export class AuthResponse {
 
   @ApiResponseProperty()
   @Expose()
+  type: UserType;
+
+  @ApiResponseProperty()
+  @Expose()
   name: string;
 
   @ApiResponseProperty()
   @Expose()
   email: string;
+
+  @ApiResponseProperty()
+  @Expose()
+  status: UserStatus;
 }

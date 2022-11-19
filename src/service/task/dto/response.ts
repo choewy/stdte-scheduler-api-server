@@ -1,9 +1,9 @@
 import { ListResponseType } from '@/core/common';
 import { TaskStatus, TaskType } from '@/core/typeorm/entities';
-import { ApiResponseProperty, PickType } from '@nestjs/swagger';
+import { ApiResponseProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
-export class TeamResponse {
+export class TaskTeamResponse {
   @ApiResponseProperty()
   @Expose()
   id: number;
@@ -11,41 +11,9 @@ export class TeamResponse {
   @ApiResponseProperty()
   @Expose()
   name: string;
-
-  @ApiResponseProperty()
-  @Expose()
-  userCount: number;
-
-  @ApiResponseProperty()
-  @Expose()
-  globalTaskCount: number;
-
-  @ApiResponseProperty()
-  @Expose()
-  teamTaskCount: number;
 }
 
-export class TeamListResponse extends ListResponseType(TeamResponse) {}
-
-export class TeamUserResponse {
-  @ApiResponseProperty()
-  @Expose()
-  id: number;
-
-  @ApiResponseProperty()
-  @Expose()
-  type: string;
-
-  @ApiResponseProperty()
-  @Expose()
-  name: string;
-
-  @ApiResponseProperty()
-  @Expose()
-  email: string;
-}
-
-export class TeamTaskResponse {
+export class TaskResponse {
   @ApiResponseProperty()
   @Expose()
   id: number;
@@ -93,18 +61,12 @@ export class TeamTaskResponse {
   @ApiResponseProperty()
   @Expose()
   updatedAt: string;
-}
-
-export class TeamDetailResponse extends PickType(TeamResponse, ['id', 'name']) {
-  @ApiResponseProperty({
-    type: [TeamUserResponse],
-  })
-  @Expose()
-  users: TeamUserResponse[];
 
   @ApiResponseProperty({
-    type: [TeamTaskResponse],
+    type: [TaskTeamResponse],
   })
   @Expose()
-  tasks: TeamTaskResponse[];
+  teams: TaskTeamResponse;
 }
+
+export class TaskListResponse extends ListResponseType(TaskResponse) {}
