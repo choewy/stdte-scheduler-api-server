@@ -1,8 +1,13 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppOptions, AppModule } from '@/app';
+import { Bootstrap } from '@/bootstrap';
+import { Settings as Luxon } from 'luxon';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
-}
-bootstrap();
+Luxon.defaultZone = process.env.TZ;
+
+const main = async () => {
+  await Bootstrap.create(AppModule, AppOptions);
+  await Bootstrap.setup();
+  await Bootstrap.listen();
+};
+
+main();
