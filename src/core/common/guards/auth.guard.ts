@@ -1,15 +1,11 @@
 import { ConfigKey, JwtConfig } from '@/core/config';
 import { RequestCtx } from '@/core/global';
 import { User } from '@/core/typeorm/entities';
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { DataSource, Repository } from 'typeorm';
+import { JwtExpiredException, JwtInvalidException } from './exceptions';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -38,7 +34,13 @@ export class AuthGuard implements CanActivate {
       const { id } = this.jwtService.verify(bearer, this.config);
       request.user = await this.userRepo.findOneBy({ id });
     } catch (e) {
-      throw new UnauthorizedException(e);
+      switch (e.message) {
+        case 'jwt expired':
+          throw new JwtExpiredException(e);
+
+        default:
+          throw new JwtInvalidException(e);
+      }
     }
 
     return true;

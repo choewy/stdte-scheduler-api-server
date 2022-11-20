@@ -1,5 +1,5 @@
 import { ConfigKey, JwtConfig } from '@/core/config';
-import { User, UserStatus } from '@/core/typeorm/entities';
+import { User, UserStatus, UserType } from '@/core/typeorm/entities';
 import { BcryptService } from '@/core/utils';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -16,8 +16,6 @@ import {
 import {
   AlreadyExistEmailException,
   CannotChangeCurrentPasswordException,
-  AccessDeninedAsRejectStatusException,
-  AccessDeninedAsWaitStatusException,
   IncorrectPasswordException,
 } from './exceptions';
 
@@ -35,14 +33,6 @@ export class AuthService {
   }
 
   async auth(user: User): Promise<AuthResponse> {
-    if (user.status === UserStatus.Wait) {
-      throw new AccessDeninedAsWaitStatusException();
-    }
-
-    if (user.status === UserStatus.Reject) {
-      throw new AccessDeninedAsRejectStatusException();
-    }
-
     return plainToInstance(AuthResponse, {
       id: user.id,
       type: user.type,
@@ -63,6 +53,7 @@ export class AuthService {
 
     const user = await this.repository.saveOne(
       Object.assign(new User(), {
+        type: UserType.User,
         email: body.email,
         name: body.name,
         password: this.bcryptService.hash(body.password),
@@ -88,14 +79,6 @@ export class AuthService {
 
     if (!user || !this.bcryptService.verify(body.password, user.password)) {
       throw new UnauthorizedException();
-    }
-
-    if (user.status === UserStatus.Wait) {
-      throw new AccessDeninedAsWaitStatusException();
-    }
-
-    if (user.status === UserStatus.Reject) {
-      throw new AccessDeninedAsRejectStatusException();
     }
 
     const payload = { id: user.id };
