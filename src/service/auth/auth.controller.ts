@@ -60,12 +60,7 @@ export class AuthController {
   @ApiResponseType({
     status: HttpStatus.OK,
     type: SignResponse,
-    errors: [
-      BadRequestException,
-      AlreadyExistEmailException,
-      AccessDeninedAsWaitStatusException,
-      AccessDeninedAsRejectStatusException,
-    ],
+    errors: [BadRequestException, AlreadyExistEmailException],
   })
   async signIn(@Body() body: SignInBody): Promise<SignResponse> {
     return this.service.signIn(body);
